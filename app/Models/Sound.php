@@ -23,4 +23,25 @@ class Sound extends Model {
 		];
 	}
 
+	protected $fillable = [
+		'user_id',
+		'name',
+		'description',
+		'slug',
+		'duration_seconds',
+		'duration_string',
+		'file_size',
+		'bit_depth',
+		'bit_rate',
+		'sample_rate',
+		'file_url'
+	];
+
+	/**
+	 *  Belongs to tags
+	 */
+	public function tag() {
+		return $this->belongsToMany( Tag::class );
+	}
+
 }

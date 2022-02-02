@@ -43,13 +43,13 @@ class SoundController extends Controller {
 		// Get user id
 		$userId = auth()->user()->id;
 
-				// Validation
-				$request->validate( [
-					'name'        => 'required |string|min:1|max:100',
-					'description' => 'required |string|min:1|max:200',
-					'sound_file'  => 'required |file|mimes:audio/mp3,wav',
+		// Validation
+		$request->validate( [
+			'name'        => 'required |string|min:1|max:100',
+			'description' => 'required |string|min:1|max:200',
+			'sound_file'  => 'required |file|mimes:audio/mp3,wav',
 
-				] );
+		] );
 
 		// Create slug for assets using the name from request
 		$slug = SlugService::createSlug( Sound::class, 'slug', $request->name );
@@ -58,22 +58,23 @@ class SoundController extends Controller {
 		// Upload sound file
 		if ( $request->hasFile( 'sound_file' ) ) {
 
+			$audioFile = $request->sound_file;
+
 			// Initialize id3 engine
 			// Initialize id3 engine
 			$id3       = new getID3();
-			$audioData = $id3->analyze( $request->sound_file );
+			$audioData = $id3->analyze( $audioFile );
 
-			dd( $audioData );
 
 			$bit_depth        = $audioData['audio']['bits_per_sample'];
 			$duration_seconds = $audioData['playtime_seconds'];
 			$duration_string  = $audioData['playtime_string'];
 			$bit_rate         = $audioData['audio']['bitrate'];
 			$sample_rate      = $audioData['audio']['sample_rate'];
-			$file_size = $audioData['filesize'];
+			$file_size        = $audioData['filesize'];
 
 			// Folder location for sounds under user id
-			$sound_location = 'uploads/' . $userId . '/sounds/' . $slug;
+			$sound_location = 'uploads/' . $userId . '/sounds';
 
 			// Check if folder exists, make if not
 			if ( ! file_exists( $sound_location ) ) {
@@ -81,32 +82,37 @@ class SoundController extends Controller {
 
 			}
 
+			// This will return "mp3" not the file name
+			$audioType     = $audioFile->getClientOriginalExtension();
+			$audioFileName = uniqid() . '_' . $slug . '.' . $audioType;
+
+			$audioFile->move( $sound_location, $audioFileName );
+			$file_url = '/' . $sound_location . '/' . $audioFileName;
+
+//			dd( $audioFileName );
+
+
 		}
 
 		// Create Screenplay in DB
 		$sound = Sound::create( [
-			'user_id'          => Auth::id(),
-			'bit_depth'        => $bit_depth,
-			'bit_rate'         => $bit_rate,
-			'sample_rate'      => $sample_rate,
+			'user_id'          => $userId,
+			'name'             => $request->get( 'name' ),
+			'description'      => $request->get( 'description' ),
+			'slug'             => $slug,
 			'duration_seconds' => $duration_seconds,
 			'duration_string'  => $duration_string,
 			'file_size'        => $file_size,
-			'file_url'         => $sound_location,
+
+			'bit_depth'   => $bit_depth,
+			'bit_rate'    => $bit_rate,
+			'sample_rate' => $sample_rate,
+			'file_url'    => $file_url,
 
 
-			'name'        => $request->get( 'name' ),
-			'description' => $request->get( 'description' ),
-			'type'        => $request->get( 'type' ),
-			'status'      => $request->get( 'status' ),
-			'based_on'    => $request->get( 'based_on' ),
-			'page_count'  => $Pages_count,
-			'slug'        => $slug,
-			'cover_url'   => $image_path,
-			'pdf_url'     => $pdf_path,
 		] );
 
-		$screenplay->genre()->attach( $request->genre );
+	//	$screenplay->genre()->attach( $request->genre );
 
 
 

@@ -12,16 +12,17 @@ class CreateSoundTagsTable extends Migration {
 	 */
 	public function up() {
 
-		    if(  Schema::hasTable('tags')) {
-			    Schema::create( 'sound_tags', function ( Blueprint $table ) {
-				    $table->id();
-				    $table->foreignId( 'tag_id' )->constrained()->onUpdate( 'cascade' )->onDelete( 'cascade' );
-				    $table->foreignId( 'sound_id' )->constrained()->onUpdate( 'cascade' )->onDelete( 'cascade' );
-				    $table->timestamps();
-			    } );
-		    }
 
+		if ( ! Schema::hasTable( 'sound_tags' ) ) {
+			Schema::create( 'sound_tags', function ( Blueprint $table ) {
+				$table->id();
+				$table->foreignId( 'tag_id' )->constrained()->onUpdate( 'cascade' )->onDelete( 'cascade' );
+				$table->foreignId( 'sound_id' )->constrained()->onUpdate( 'cascade' )->onDelete( 'cascade' );
+				$table->timestamps();
+			} );
+		}
 	}
+
 
 	/**
 	 * Reverse the migrations.

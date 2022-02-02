@@ -24,8 +24,8 @@ class CreateSoundsTable extends Migration {
 			$table->integer( 'bit_rate' );
 			$table->integer( 'sample_rate' );
 			$table->string( 'file_url' );
-			$table->integer( 'likes' );
-			$table->integer( 'plays' );
+			$table->integer( 'likes' )->default(0);
+			$table->integer( 'plays' )->default(0);
 			$table->timestamps();
 
 
