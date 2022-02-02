@@ -17,7 +17,11 @@
                         </div>
                     </div>
                     <div class="mt-5 md:mt-0 md:col-span-2">
-                        <form action="#" method="POST">
+                        <form
+                            @submit.prevent="submit"
+                            method="POST"
+                            enctype="multipart/form-data"
+                        >
                             <div
                                 class="shadow sm:rounded-md sm:overflow-hidden"
                             >
@@ -43,6 +47,9 @@
                                                     name="name"
                                                     class="focus:ring-indigo-500 focus:border-indigo-500 flex-1 block w-full rounded-none rounded-r-md sm:text-sm border-gray-300"
                                                 />
+                                                <div v-if="errors.name">
+                                                    {{ errors.name }}
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -65,6 +72,10 @@
                                                     maxlength="200"
                                                     class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 mt-1 block w-full sm:text-sm border border-gray-300 rounded-md"
                                                 />
+
+                                                <div v-if="errors.description">
+                                                    {{ errors.description }}
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -118,12 +129,22 @@
                                                             >Upload a file</span
                                                         >
                                                         <input
+                                                            @input="
+                                                                form.sound_file =
+                                                                    $event.target.files[0]
+                                                            "
                                                             id="file-upload"
                                                             name="file-upload"
                                                             type="file"
                                                             class="sr-only"
                                                         />
                                                     </label>
+                                                    <div
+                                                        v-if="errors.sound_file"
+                                                    >
+                                                        {{ errors.sound_file }}
+                                                    </div>
+
                                                     <p class="pl-1">
                                                         or drag and drop
                                                     </p>
@@ -173,6 +194,9 @@ export default {
         Head,
         Multiselect,
     },
+    props: {
+        errors: Object,
+    },
 
     data() {
         return {
@@ -197,13 +221,14 @@ export default {
         const form = useForm({
             name: null,
             description: null,
-            bit_rate: null,
-            bit_depth: null,
-            duration: null,
+            sound_file: null,
+            // bit_rate: null,
+            // bit_depth: null,
+            // duration: null,
         });
 
         function submit() {
-            form.post("/upload");
+            form.post("/dashboard/upload");
         }
 
         return { form, submit };

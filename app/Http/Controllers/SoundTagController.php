@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\song_tag;
+use App\Models\soundTag;
 use Illuminate\Http\Request;
 
 class SoundTagController extends Controller
@@ -41,10 +41,11 @@ class SoundTagController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\song_tag  $song_tag
+     * @param  \App\Models\soundTag $song_tag
+     *
      * @return \Illuminate\Http\Response
      */
-    public function show(song_tag $song_tag)
+    public function show( soundTag $song_tag)
     {
         //
     }
@@ -52,10 +53,11 @@ class SoundTagController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\song_tag  $song_tag
+     * @param  \App\Models\soundTag  $song_tag
+     *
      * @return \Illuminate\Http\Response
      */
-    public function edit(song_tag $song_tag)
+    public function edit( soundTag $song_tag)
     {
         //
     }
@@ -64,10 +66,11 @@ class SoundTagController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\song_tag  $song_tag
+     * @param  \App\Models\soundTag  $song_tag
+     *
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, song_tag $song_tag)
+    public function update( Request $request, soundTag $song_tag)
     {
         //
     }
@@ -75,10 +78,11 @@ class SoundTagController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\song_tag  $song_tag
+     * @param  \App\Models\soundTag  $song_tag
+     *
      * @return \Illuminate\Http\Response
      */
-    public function destroy(song_tag $song_tag)
+	public function destroy( soundTag $song_tag)
     {
         //
     }

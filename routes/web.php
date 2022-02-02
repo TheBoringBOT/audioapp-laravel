@@ -4,6 +4,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -34,6 +35,12 @@ Route::get( '/dashboard/upload', [ \App\Http\Controllers\SoundController::class,
 	'auth',
 	'verified'
 ] )->name( 'upload' );
+
+//Upload Song
+Route::post( '/dashboard/upload', [ \App\Http\Controllers\SoundController::class, 'store' ] )->middleware( [
+	'auth',
+	'verified'
+] )->name( 'upload.store' );
 
 
 require __DIR__ . '/auth.php';
