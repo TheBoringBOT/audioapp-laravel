@@ -10,6 +10,7 @@
     "require": {
         "php": "^7.3|^8.0",
         "cviebrock/eloquent-sluggable": "^8.0",
+        "cviebrock/eloquent-taggable": "^8.0",
         "fruitcake/laravel-cors": "^2.0",
         "guzzlehttp/guzzle": "^7.0.1",
         "inertiajs/inertia-laravel": "^0.4.3",
@@ -20,6 +21,7 @@
         "tightenco/ziggy": "^1.0"
     },
     "require-dev": {
+        "barryvdh/laravel-ide-helper": "^2.12",
         "facade/ignition": "^2.5",
         "fakerphp/faker": "^1.9.1",
         "laravel/breeze": "^1.7",
@@ -63,7 +65,9 @@
     "config": {
         "optimize-autoloader": true,
         "preferred-install": "dist",
-        "sort-packages": true
+        "sort-packages": true,
+        "disable-tls": false,
+        "secure-http": true
     },
     "minimum-stability": "dev",
     "prefer-stable": true

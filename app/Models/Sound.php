@@ -3,11 +3,21 @@
 namespace App\Models;
 
 use Cviebrock\EloquentSluggable\Sluggable;
+use Cviebrock\EloquentTaggable\Taggable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
 
+
+/**
+ * Sound
+ *
+ * @mixin Builder
+ */
 class Sound extends Model {
-	use HasFactory, Sluggable;
+
+
+	use HasFactory, Sluggable, Taggable;
 
 
 	/**
@@ -37,11 +47,5 @@ class Sound extends Model {
 		'file_url'
 	];
 
-	/**
-	 *  Belongs to tags
-	 */
-	public function tag() {
-		return $this->belongsToMany( Tag::class );
-	}
 
 }

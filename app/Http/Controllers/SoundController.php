@@ -18,16 +18,26 @@ class SoundController extends Controller {
 	 * @return \Illuminate\Http\Response
 	 */
 	public function index() {
-		//
+		return Inertia::render( 'Frontend/Home', [
+			'canLogin'       => Route::has( 'login' ),
+			'canRegister'    => Route::has( 'register' ),
+			'laravelVersion' => Application::VERSION,
+			'phpVersion'     => PHP_VERSION,
+
+		] );
 	}
 
-	/**
-	 * Show the form for creating a new resource.
-	 *
-	 * @return \Illuminate\Http\Response
-	 */
+	//	/**
+	//	 * Display a listing of the resource.
+	//	 *
+	//	 * @return \Illuminate\Http\Response
+	//	 */
 	public function create() {
-		return Inertia::render( 'Backend/UploadSound' );
+
+		// Get all tags for used with sounds
+		$allTags = Sound::allTags();
+
+		return Inertia::render( 'Backend/UploadSound', [ 'allTags' => $allTags ] );
 	}
 
 	/**
@@ -89,7 +99,6 @@ class SoundController extends Controller {
 			$audioFile->move( $sound_location, $audioFileName );
 			$file_url = '/' . $sound_location . '/' . $audioFileName;
 
-//			dd( $audioFileName );
 
 
 		}
@@ -103,16 +112,16 @@ class SoundController extends Controller {
 			'duration_seconds' => $duration_seconds,
 			'duration_string'  => $duration_string,
 			'file_size'        => $file_size,
-
-			'bit_depth'   => $bit_depth,
-			'bit_rate'    => $bit_rate,
-			'sample_rate' => $sample_rate,
-			'file_url'    => $file_url,
+			'bit_depth'        => $bit_depth,
+			'bit_rate'         => $bit_rate,
+			'sample_rate'      => $sample_rate,
+			'file_url'         => $file_url,
 
 
 		] );
 
-	//	$screenplay->genre()->attach( $request->genre );
+
+		$sound->tag( $request->tags );
 
 
 
