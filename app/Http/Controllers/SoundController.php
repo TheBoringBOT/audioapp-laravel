@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Sound;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Storage;
 use \Cviebrock\EloquentSluggable\Services\SlugService;
@@ -12,17 +13,37 @@ use getID3;
 
 class SoundController extends Controller {
 
-	/**
-	 * Display a listing of the resource.
-	 *
-	 * @return \Illuminate\Http\Response
-	 */
+	//	/**
+	//	 * Display a listing of the resource.
+	//	 *
+	//	 * @return \Illuminate\Http\Response
+	//	 */
 	public function index() {
 		return Inertia::render( 'Frontend/Home', [
-			'canLogin'       => Route::has( 'login' ),
-			'canRegister'    => Route::has( 'register' ),
-			'laravelVersion' => Application::VERSION,
-			'phpVersion'     => PHP_VERSION,
+			'canLogin'    => Route::has( 'login' ),
+			'canRegister' => Route::has( 'register' ),
+			//			'laravelVersion' => Application::VERSION,
+			'phpVersion'  => PHP_VERSION,
+
+		] );
+	}
+
+	//	/**
+	//	 * Display a listing of the resource.
+	//	 *
+	//	 * @return \Illuminate\Http\Response
+	//	 */
+
+	public function dashboard() {
+
+		// Get all audio data
+		$audio = Sound::all();
+
+		//		dd( $audio );
+
+		return Inertia::render( 'Backend/Dashboard', [
+
+			'audio' => $audio,
 
 		] );
 	}

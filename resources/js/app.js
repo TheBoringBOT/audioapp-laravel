@@ -3,6 +3,7 @@ require("./bootstrap");
 import { createApp, h } from "vue";
 import { createInertiaApp } from "@inertiajs/inertia-vue3";
 import { InertiaProgress } from "@inertiajs/progress";
+import AudioVisual from "vue-audio-visual";
 
 const appName =
     window.document.getElementsByTagName("title")[0]?.innerText || "Laravel";
@@ -14,6 +15,8 @@ createInertiaApp({
         return createApp({ render: () => h(app, props) })
             .use(plugin)
             .mixin({ methods: { route } })
+            .use(AudioVisual)
+
             .mount(el);
     },
 });

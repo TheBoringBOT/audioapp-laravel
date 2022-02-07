@@ -2,7 +2,7 @@
     <BreezeAuthenticatedLayout>
         <template #header>
             <div>
-                {{ allTags }}
+
                 <div class="md:grid md:grid-cols-3 md:gap-6">
                     <div class="md:col-span-1">
                         <div class="px-4 sm:px-0">

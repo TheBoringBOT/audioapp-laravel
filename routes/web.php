@@ -19,9 +19,10 @@ use Inertia\Inertia;
 Route::get( '/', [ \App\Http\Controllers\SoundController::class, 'index' ] )->name( 'home' );
 
 
-Route::get( '/dashboard', function () {
-	return Inertia::render( 'Dashboard' );
-} )->middleware( [ 'auth', 'verified' ] )->name( 'dashboard' );
+Route::get( '/dashboard', [
+	\App\Http\Controllers\SoundController::class,
+	'dashboard'
+] )->middleware( [ 'auth', 'verified' ] )->name( 'dashboard' );
 
 
 //Upload Song

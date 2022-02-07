@@ -21,23 +21,52 @@
                             ></div>
                         </div>
 
-                        <div class="hidden sm:flex sm:items-center sm:ml-6">
+                        <div class="hidden md:flex md:items-center md:ml-6">
                             <BreezeNavLink
+                                class="px-3"
                                 :href="route('login')"
                                 :active="route().current('login')"
                             >
                                 Home
                             </BreezeNavLink>
                             <BreezeNavLink
+                                class="px-3"
                                 :href="route('register')"
                                 :active="route().current('register')"
                             >
                                 About
                             </BreezeNavLink>
+                            <BreezeNavLink
+                                class="px-3"
+                                :href="route('register')"
+                                :active="route().current('register')"
+                            >
+                                Contact
+                            </BreezeNavLink>
+                        </div>
+                        <div class="hidden md:flex md:items-center md:ml-6">
+                            <BreezeNavLink
+                                class="px-3"
+                                :href="route('login')"
+                                :active="route().current('login')"
+                            >
+                                Login
+                            </BreezeNavLink>
+                            <BreezeNavLink
+                                class="border-0 hover:border-white focus:border-white"
+                            >
+                                <button
+                                    class="font-semibold text-purple-600 px-6 py-2 border-2 border-purple-600 hover:bg-purple-700 hover:text-white rounded"
+                                    :href="route('register')"
+                                    :active="route().current('register')"
+                                >
+                                    Register
+                                </button>
+                            </BreezeNavLink>
                         </div>
 
                         <!-- Hamburger -->
-                        <div class="-mr-2 flex items-center sm:hidden">
+                        <div class="-mr-2 flex items-center md:hidden">
                             <button
                                 @click="
                                     showingNavigationDropdown = !showingNavigationDropdown
@@ -131,11 +160,16 @@
                     <slot name="header" />
                 </div>
             </header>
-
-            <!-- Page Content -->
-            <main>
-                <slot />
-            </main>
+            <div class="py-12">
+                <div class="max-w-7xl mx-auto">
+                    <!-- Page Content -->
+                    <main>
+                        <div class="px-4 sm:px-6 lg:px-8">
+                            <slot />
+                        </div>
+                    </main>
+                </div>
+            </div>
         </div>
     </div>
 </template>

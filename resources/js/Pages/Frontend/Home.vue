@@ -1,19 +1,36 @@
 <template>
     <Head title="Home" />
-    <BreezeGuestLayout>
-        <h1>Home {{ $inertia.page.props.appName }}</h1>
-    </BreezeGuestLayout>
+    <LoggedOutLayout>
+        <!--<h1>Home {{ $inertia.page.props.appName }}</h1>-->
+
+        <!--<div>-->
+        <!--<h4><code>av-waveform</code> component</h4>-->
+
+        <!--<av-waveform-->
+        <!--:playtime-line-width="2.8"-->
+        <!--audio-src="/uploads/1/sounds/1.wav"-->
+        <!--&gt;</av-waveform>-->
+        <!--</div>-->
+
+        <SearchBar />
+        <AudioGrid />
+    </LoggedOutLayout>
 </template>
 
 <script>
-import BreezeGuestLayout from "@/Components/Layouts/Guest.vue";
+import LoggedOutLayout from "@/Components/Layouts/LoggedOutLayout.vue";
 import { Head, Link } from "@inertiajs/inertia-vue3";
+
+import SearchBar from "@/Components/SearchBar";
+import AudioGrid from "@/Components/Grids/AudioGrid";
 
 export default {
     components: {
         Head,
         Link,
-        BreezeGuestLayout,
+        LoggedOutLayout,
+        AudioGrid,
+        SearchBar,
     },
     props: {
         canLogin: Boolean,
