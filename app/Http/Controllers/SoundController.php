@@ -163,12 +163,28 @@ class SoundController extends Controller {
 	/**
 	 * Display the specified resource.
 	 *
-	 * @param  \App\Models\Sound $song
+	 * @param  \App\Models\Sound $sound
 	 *
-	 * @return \Illuminate\Http\Response
+	 * @return \Illuminate\Http\
 	 */
-	public function show( Sound $song ) {
-		//
+	public function show( $sound ) {
+
+
+		$audio = Sound::find( $sound );
+
+		// format numbers and push back into array
+		$audio['sample_rate'] = number_format( ( $audio['sample_rate'] / 1000 ), 1 ) . ' khz';
+		$tags                 = explode( ',', $audio->tagList );
+
+
+		return Inertia::render( 'Frontend/AudioItem', [
+			'canLogin'    => Route::has( 'login' ),
+			'canRegister' => Route::has( 'register' ),
+
+			'audio' => $audio,
+			'tags'  => $tags
+
+		] );
 	}
 
 	/**

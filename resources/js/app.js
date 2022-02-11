@@ -1,10 +1,10 @@
 require("./bootstrap");
 
-import {createApp, h} from "vue";
-import {createInertiaApp} from "@inertiajs/inertia-vue3";
-import {InertiaProgress} from "@inertiajs/progress";
+import { createApp, h } from "vue";
+import { createInertiaApp } from "@inertiajs/inertia-vue3";
+import { InertiaProgress } from "@inertiajs/progress";
 import FloatingVue from "floating-vue";
-import {library} from "@fortawesome/fontawesome-svg-core";
+import { library } from "@fortawesome/fontawesome-svg-core";
 import "floating-vue/dist/style.css";
 import VueClipboard from "vue3-clipboard";
 import WaveSurferVue from "wavesurfer.js-vue";
@@ -21,7 +21,7 @@ import {
     faThumbsUp,
     faInfo,
 } from "@fortawesome/free-solid-svg-icons";
-import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
+import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 
 // Options for Toast Notifications
 const toastOptions = {
@@ -58,10 +58,10 @@ const appName =
 createInertiaApp({
     title: (title) => `${title} - ${appName}`,
     resolve: (name) => require(`./Pages/${name}.vue`),
-    setup({el, app, props, plugin}) {
-        return createApp({render: () => h(app, props)})
+    setup({ el, app, props, plugin }) {
+        return createApp({ render: () => h(app, props) })
             .use(plugin)
-            .mixin({methods: {route}})
+            .mixin({ methods: { route } })
             .component("font-awesome-icon", FontAwesomeIcon)
             .use(WaveSurferVue)
             .use(FloatingVue)
@@ -76,4 +76,4 @@ createInertiaApp({
     },
 });
 
-InertiaProgress.init({color: "#4B5563"});
+InertiaProgress.init({ color: "#ffca00" });

@@ -8,22 +8,23 @@
         class="rounded relative flex-col hover:bg-secondary-bg-hover transition duration-150 ease-in-out"
     >
         <div class="z-10 absolute top-0 right-0 p-3 flex">
-            <!-- Info -->
             <span
                 class="bg-secondary-bg backdrop-blur-sm text-primary-clr font-semibold text-xs mr-2 p-1 px-3 rounded-full"
                 ref="duration"
                 >{{ playedTime }}&nbsp;/&nbsp;{{ item.duration_string }}</span
             >
-            <button
+            <!-- Info -->
+            <Link
+                :href="/sound/ + item.id"
                 v-tooltip="'Show Info'"
-                class="bg-secondary-bg backdrop-blur-sm text-primary-clr w-6 h-6 text-white font-semibold text-xs flex justify-center items-center rounded-full hover:bg-secondary-bg-hover"
+                class="bg-secondary-bg backdrop-blur-sm text-primary-clr w-6 h-6 font-semibold text-xs flex justify-center items-center rounded-full hover:bg-secondary-bg-hover"
             >
                 <font-awesome-icon icon="info" />
-            </button>
+            </Link>
         </div>
         <!-- Waveform -->
 
-        <div class="relative h-32 hover:cursor-pointer">
+        <div class="relative h-24 hover:cursor-pointer">
             <wavesurfer
                 ref="waveform"
                 :src="item.file_url"
@@ -56,7 +57,9 @@
                     <div
                         class="text-primary-clr mx-4 flex items-center justify-center overflow-hidden"
                     >
-                        <span class="truncate">{{ item.name }} </span>
+                        <Link :href="/sound/ + item.id">
+                            <span class="truncate">{{ item.name }} </span>
+                        </Link>
                     </div>
                 </div>
 
@@ -75,7 +78,7 @@
                         </button>
                         <!-- Share -->
                         <button
-                            @click="doCopy('s/' + item.slug)"
+                            @click="doCopy(soundUrl + item.id)"
                             class="ml-4 hover:text-primary-clr"
                             v-tooltip="'Copy Link'"
                             :showTriggers="(triggers) => [...triggers, 'click']"
@@ -100,14 +103,19 @@
 import { copyText } from "vue3-clipboard";
 import { useToast } from "vue-toastification";
 import Cursor from "wavesurfer.js/dist/plugin/wavesurfer.cursor";
+import { Link } from "@inertiajs/inertia-vue3";
 
 import { formatTime } from "@/Helpers";
 
 export default {
+    components: {
+        Link,
+    },
     props: ["item"],
 
     data() {
         return {
+            soundUrl: location.host + "/sound/",
             options: {
                 plugins: [
                     Cursor.create({
@@ -131,7 +139,7 @@ export default {
                 cursorColor: "#ffca00",
                 hideScrollbar: true,
                 normalize: true,
-                height: 128,
+                height: 96,
                 progressColor: "#ffca00",
                 waveColor: "rgba(255,255,255,0.05)",
                 backgroundColor: "",

@@ -172,8 +172,12 @@
             </header>
 
             <!-- Page Content -->
-            <main>
-                <slot />
+            <main class="bg-white">
+                <div
+                    class="min-h-screen max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8"
+                >
+                    <slot name="content" />
+                </div>
             </main>
         </div>
     </div>

@@ -18,6 +18,9 @@ use Inertia\Inertia;
 
 Route::get( '/', [ \App\Http\Controllers\SoundController::class, 'index' ] )->name( 'home' );
 
+// Sound item page
+Route::get( '/sound/{id}', [ \App\Http\Controllers\SoundController::class, 'show' ] )->name( 'sound.item' );
+
 
 Route::get( '/dashboard', [
 	\App\Http\Controllers\SoundController::class,
