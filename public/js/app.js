@@ -32602,7 +32602,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var vue3_clipboard__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue3-clipboard */ "./node_modules/vue3-clipboard/dist/vue3-clipboard-es.js");
 /* harmony import */ var vue_toastification__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vue-toastification */ "./node_modules/vue-toastification/dist/index.mjs");
-/* harmony import */ var _Helpers__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @/Helpers */ "./resources/js/Helpers.js");
+/* harmony import */ var wavesurfer_js_dist_plugin_wavesurfer_cursor__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! wavesurfer.js/dist/plugin/wavesurfer.cursor */ "./node_modules/wavesurfer.js/dist/plugin/wavesurfer.cursor.js");
+/* harmony import */ var wavesurfer_js_dist_plugin_wavesurfer_cursor__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(wavesurfer_js_dist_plugin_wavesurfer_cursor__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _Helpers__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @/Helpers */ "./resources/js/Helpers.js");
+
 
 
 
@@ -32611,6 +32614,17 @@ __webpack_require__.r(__webpack_exports__);
   data: function data() {
     return {
       options: {
+        plugins: [wavesurfer_js_dist_plugin_wavesurfer_cursor__WEBPACK_IMPORTED_MODULE_2___default().create({
+          showTime: true,
+          opacity: 1,
+          color: "#ffca00",
+          customShowTimeStyle: {
+            "background-color": "#ffca00",
+            color: "#121212",
+            padding: "2px",
+            "font-size": "10px"
+          }
+        })],
         // barWidth: 2,
         // barHeight: 2,
         // barGap: 2,
@@ -32636,15 +32650,16 @@ __webpack_require__.r(__webpack_exports__);
       t.seekPlay();
     });
     wavesurferRef.on("ready", function () {
-      var duration = (0,_Helpers__WEBPACK_IMPORTED_MODULE_2__.formatTime)(wavesurferRef.backend.getDuration());
+      var duration = (0,_Helpers__WEBPACK_IMPORTED_MODULE_3__.formatTime)(wavesurferRef.backend.getDuration());
       console.log(duration);
     });
     wavesurferRef.on("audioprocess", function () {
-      t.playedTime = (0,_Helpers__WEBPACK_IMPORTED_MODULE_2__.formatTime)(wavesurferRef.backend.getCurrentTime());
+      t.playedTime = (0,_Helpers__WEBPACK_IMPORTED_MODULE_3__.formatTime)(wavesurferRef.backend.getCurrentTime());
     });
     wavesurferRef.on("finish", function () {
       wavesurferRef.stop();
       t.isAudioPlaying = false;
+      t.playedTime = "0:00";
     });
   },
   setup: function setup() {
@@ -32854,7 +32869,7 @@ __webpack_require__.r(__webpack_exports__);
   props: ["href", "active"],
   computed: {
     classes: function classes() {
-      return this.active ? "inline-flex items-center px-1 pt-1 border-b-2 border-indigo-400 text-sm font-medium leading-5 text-brand-clr focus:outline-none  transition  duration-150 ease-in-out" : "inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-sm font-medium leading-5 text-primary-clr hover:text-brand-clr  focus:outline-none focus:text-gray-700  transition duration-150 ease-in-out";
+      return this.active ? "inline-flex items-center px-1 pt-1  text-sm font-medium leading-5 text-brand-clr focus:outline-none  transition  duration-150 ease-in-out" : "inline-flex items-center px-1 pt-1 text-sm font-medium leading-5 text-primary-clr hover:text-brand-clr  focus:outline-none focus:text-gray-700  transition duration-150 ease-in-out";
     }
   }
 });
@@ -33506,19 +33521,19 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm-bundler.js");
 
 var _hoisted_1 = {
-  viewBox: "0 0 316 316",
+  id: "logo-54",
+  width: "170",
+  height: "41",
+  viewBox: "0 0 170 41",
+  fill: "none",
   xmlns: "http://www.w3.org/2000/svg"
 };
 
-var _hoisted_2 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("path", {
-  d: "M305.8 81.125C305.77 80.995 305.69 80.885 305.65 80.755C305.56 80.525 305.49 80.285 305.37 80.075C305.29 79.935 305.17 79.815 305.07 79.685C304.94 79.515 304.83 79.325 304.68 79.175C304.55 79.045 304.39 78.955 304.25 78.845C304.09 78.715 303.95 78.575 303.77 78.475L251.32 48.275C249.97 47.495 248.31 47.495 246.96 48.275L194.51 78.475C194.33 78.575 194.19 78.725 194.03 78.845C193.89 78.955 193.73 79.045 193.6 79.175C193.45 79.325 193.34 79.515 193.21 79.685C193.11 79.815 192.99 79.935 192.91 80.075C192.79 80.285 192.71 80.525 192.63 80.755C192.58 80.875 192.51 80.995 192.48 81.125C192.38 81.495 192.33 81.875 192.33 82.265V139.625L148.62 164.795V52.575C148.62 52.185 148.57 51.805 148.47 51.435C148.44 51.305 148.36 51.195 148.32 51.065C148.23 50.835 148.16 50.595 148.04 50.385C147.96 50.245 147.84 50.125 147.74 49.995C147.61 49.825 147.5 49.635 147.35 49.485C147.22 49.355 147.06 49.265 146.92 49.155C146.76 49.025 146.62 48.885 146.44 48.785L93.99 18.585C92.64 17.805 90.98 17.805 89.63 18.585L37.18 48.785C37 48.885 36.86 49.035 36.7 49.155C36.56 49.265 36.4 49.355 36.27 49.485C36.12 49.635 36.01 49.825 35.88 49.995C35.78 50.125 35.66 50.245 35.58 50.385C35.46 50.595 35.38 50.835 35.3 51.065C35.25 51.185 35.18 51.305 35.15 51.435C35.05 51.805 35 52.185 35 52.575V232.235C35 233.795 35.84 235.245 37.19 236.025L142.1 296.425C142.33 296.555 142.58 296.635 142.82 296.725C142.93 296.765 143.04 296.835 143.16 296.865C143.53 296.965 143.9 297.015 144.28 297.015C144.66 297.015 145.03 296.965 145.4 296.865C145.5 296.835 145.59 296.775 145.69 296.745C145.95 296.655 146.21 296.565 146.45 296.435L251.36 236.035C252.72 235.255 253.55 233.815 253.55 232.245V174.885L303.81 145.945C305.17 145.165 306 143.725 306 142.155V82.265C305.95 81.875 305.89 81.495 305.8 81.125ZM144.2 227.205L100.57 202.515L146.39 176.135L196.66 147.195L240.33 172.335L208.29 190.625L144.2 227.205ZM244.75 114.995V164.795L226.39 154.225L201.03 139.625V89.825L219.39 100.395L244.75 114.995ZM249.12 57.105L292.81 82.265L249.12 107.425L205.43 82.265L249.12 57.105ZM114.49 184.425L96.13 194.995V85.305L121.49 70.705L139.85 60.135V169.815L114.49 184.425ZM91.76 27.425L135.45 52.585L91.76 77.745L48.07 52.585L91.76 27.425ZM43.67 60.135L62.03 70.705L87.39 85.305V202.545V202.555V202.565C87.39 202.735 87.44 202.895 87.46 203.055C87.49 203.265 87.49 203.485 87.55 203.695V203.705C87.6 203.875 87.69 204.035 87.76 204.195C87.84 204.375 87.89 204.575 87.99 204.745C87.99 204.745 87.99 204.755 88 204.755C88.09 204.905 88.22 205.035 88.33 205.175C88.45 205.335 88.55 205.495 88.69 205.635L88.7 205.645C88.82 205.765 88.98 205.855 89.12 205.965C89.28 206.085 89.42 206.225 89.59 206.325C89.6 206.325 89.6 206.325 89.61 206.335C89.62 206.335 89.62 206.345 89.63 206.345L139.87 234.775V285.065L43.67 229.705V60.135ZM244.75 229.705L148.58 285.075V234.775L219.8 194.115L244.75 179.875V229.705ZM297.2 139.625L253.49 164.795V114.995L278.85 100.395L297.21 89.825V139.625H297.2Z"
-}, null, -1
-/* HOISTED */
-);
+var _hoisted_2 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createStaticVNode)("<path d=\"M51.8601 28.138H63.8121V24.538H56.1081V10.978H51.8601V28.138Z\" class=\"cneutral\" fill=\"#ffffff\" stop-color=\"#ffffff\"></path><path d=\"M70.8932 25.738C69.1892 25.738 68.3012 24.25 68.3012 22.018C68.3012 19.786 69.1892 18.274 70.8932 18.274C72.5972 18.274 73.5092 19.786 73.5092 22.018C73.5092 24.25 72.5972 25.738 70.8932 25.738ZM70.9172 28.522C74.8772 28.522 77.4692 25.714 77.4692 22.018C77.4692 18.322 74.8772 15.514 70.9172 15.514C66.9812 15.514 64.3412 18.322 64.3412 22.018C64.3412 25.714 66.9812 28.522 70.9172 28.522Z\" class=\"cneutral\" fill=\"#ffffff\" stop-color=\"#ffffff\"></path><path d=\"M84.3237 32.386C86.1477 32.386 87.7557 31.978 88.8357 31.018C89.8197 30.13 90.4677 28.786 90.4677 26.938V15.85H86.7237V17.17H86.6757C85.9557 16.138 84.8517 15.49 83.2197 15.49C80.1717 15.49 78.0597 18.034 78.0597 21.634C78.0597 25.402 80.6277 27.466 83.3877 27.466C84.8757 27.466 85.8117 26.866 86.5317 26.05H86.6277V27.274C86.6277 28.762 85.9317 29.626 84.2757 29.626C82.9797 29.626 82.3317 29.074 82.1157 28.426H78.3237C78.7077 30.994 80.9397 32.386 84.3237 32.386ZM84.2997 24.562C82.8357 24.562 81.8757 23.362 81.8757 21.514C81.8757 19.642 82.8357 18.442 84.2997 18.442C85.9317 18.442 86.7957 19.834 86.7957 21.49C86.7957 23.218 86.0037 24.562 84.2997 24.562Z\" class=\"cneutral\" fill=\"#ffffff\" stop-color=\"#ffffff\"></path><path d=\"M98.166 25.738C96.462 25.738 95.574 24.25 95.574 22.018C95.574 19.786 96.462 18.274 98.166 18.274C99.87 18.274 100.782 19.786 100.782 22.018C100.782 24.25 99.87 25.738 98.166 25.738ZM98.19 28.522C102.15 28.522 104.742 25.714 104.742 22.018C104.742 18.322 102.15 15.514 98.19 15.514C94.254 15.514 91.614 18.322 91.614 22.018C91.614 25.714 94.254 28.522 98.19 28.522Z\" class=\"cneutral\" fill=\"#ffffff\" stop-color=\"#ffffff\"></path><path d=\"M105.884 28.138H109.796V15.85H105.884V28.138ZM105.884 14.146H109.796V10.978H105.884V14.146Z\" class=\"cneutral\" fill=\"#ffffff\" stop-color=\"#ffffff\"></path><path d=\"M111.494 32.194H115.406V26.866H115.454C116.222 27.898 117.35 28.522 118.934 28.522C122.15 28.522 124.286 25.978 124.286 21.994C124.286 18.298 122.294 15.49 119.03 15.49C117.35 15.49 116.15 16.234 115.31 17.338H115.238V15.85H111.494V32.194ZM117.926 25.498C116.246 25.498 115.286 24.13 115.286 22.138C115.286 20.146 116.15 18.634 117.854 18.634C119.534 18.634 120.326 20.026 120.326 22.138C120.326 24.226 119.414 25.498 117.926 25.498Z\" class=\"cneutral\" fill=\"#ffffff\" stop-color=\"#ffffff\"></path><path d=\"M130.655 28.522C133.871 28.522 136.247 27.13 136.247 24.442C136.247 21.298 133.703 20.746 131.543 20.386C129.983 20.098 128.591 19.978 128.591 19.114C128.591 18.346 129.335 17.986 130.295 17.986C131.375 17.986 132.119 18.322 132.263 19.426H135.863C135.671 17.002 133.799 15.49 130.319 15.49C127.415 15.49 125.015 16.834 125.015 19.426C125.015 22.306 127.295 22.882 129.431 23.242C131.063 23.53 132.551 23.65 132.551 24.754C132.551 25.546 131.807 25.978 130.631 25.978C129.335 25.978 128.519 25.378 128.375 24.154H124.679C124.799 26.866 127.055 28.522 130.655 28.522Z\" class=\"cneutral\" fill=\"#ffffff\" stop-color=\"#ffffff\"></path><path d=\"M141.561 28.498C143.265 28.498 144.345 27.826 145.233 26.626H145.305V28.138H149.049V15.85H145.137V22.714C145.137 24.178 144.321 25.186 142.977 25.186C141.729 25.186 141.129 24.442 141.129 23.098V15.85H137.241V23.914C137.241 26.65 138.729 28.498 141.561 28.498Z\" class=\"cneutral\" fill=\"#ffffff\" stop-color=\"#ffffff\"></path><path d=\"M150.75 28.138H154.662V21.25C154.662 19.786 155.382 18.754 156.606 18.754C157.782 18.754 158.334 19.522 158.334 20.842V28.138H162.246V21.25C162.246 19.786 162.942 18.754 164.19 18.754C165.366 18.754 165.918 19.522 165.918 20.842V28.138H169.83V20.146C169.83 17.386 168.438 15.49 165.654 15.49C164.07 15.49 162.75 16.162 161.79 17.65H161.742C161.118 16.33 159.894 15.49 158.286 15.49C156.51 15.49 155.334 16.33 154.566 17.602H154.494V15.85H150.75V28.138Z\" class=\"cneutral\" fill=\"#ffffff\" stop-color=\"#ffffff\"></path><path fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M20.6841 40.138C31.7298 40.138 40.6841 31.1837 40.6841 20.138C40.6841 9.09234 31.7298 0.138031 20.6841 0.138031C9.63837 0.138031 0.684082 9.09234 0.684082 20.138C0.684082 31.1837 9.63837 40.138 20.6841 40.138ZM26.9234 9.45487C27.2271 8.37608 26.1802 7.73816 25.2241 8.41933L11.8772 17.9276C10.8403 18.6663 11.0034 20.138 12.1222 20.138L15.6368 20.138V20.1108H22.4866L16.9053 22.0801L14.4448 30.8212C14.1411 31.9 15.1879 32.5379 16.1441 31.8567L29.491 22.3485C30.5279 21.6098 30.3647 20.138 29.246 20.138L23.9162 20.138L26.9234 9.45487Z\" class=\"ccustom\" fill=\"#ffca00\" stop-color=\"#ffca00\"></path>", 10);
 
-var _hoisted_3 = [_hoisted_2];
+var _hoisted_12 = [_hoisted_2];
 function render(_ctx, _cache) {
-  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("svg", _hoisted_1, _hoisted_3);
+  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("svg", _hoisted_1, _hoisted_12);
 }
 
 /***/ }),
@@ -33688,15 +33703,15 @@ var _hoisted_2 = {
   "class": "justify-center w-full max-w-7xl flex flex-wrap sm:justify-between"
 };
 var _hoisted_3 = {
-  "class": "text-gray-400 text-center p-4"
+  "class": "text-secondary-clr text-center p-4"
 };
 
 var _hoisted_4 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
-  "class": "text-gray-400 text-center p-4"
+  "class": "text-center p-4"
 }, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("a", {
   href: "https://github.com/TheBoringBOT/audioapp-laravel"
 }, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("svg", {
-  "class": "fill-gray-400 hover:fill-gray-600",
+  "class": "fill-secondary-clr hover:fill-primary-clr transition duration-150 ease-in-out",
   height: "28",
   "aria-hidden": "true",
   viewBox: "0 0 16 16",
@@ -33776,40 +33791,37 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
 
 
 var _hoisted_1 = {
-  "class": "bg-secondary-bg rounded relative flex-col hover:bg-secondary-bg-hover transition duration-150 ease-in-out"
-};
-var _hoisted_2 = {
   "class": "z-10 absolute top-0 right-0 p-3 flex"
 };
-var _hoisted_3 = {
+var _hoisted_2 = {
   "class": "bg-secondary-bg backdrop-blur-sm text-primary-clr w-6 h-6 text-white font-semibold text-xs flex justify-center items-center rounded-full hover:bg-secondary-bg-hover"
 };
-var _hoisted_4 = {
-  "class": "relative h-32"
+var _hoisted_3 = {
+  "class": "relative h-32 hover:cursor-pointer"
 };
-var _hoisted_5 = {
+var _hoisted_4 = {
   "class": "p-3 bg-secondary-bg backdrop-blur-sm"
 };
-var _hoisted_6 = {
+var _hoisted_5 = {
   "class": "flex flex-wrap overflow-hidden text-brand-clr text-lg justify-between"
 };
-var _hoisted_7 = {
+var _hoisted_6 = {
   "class": "flex w-7/12 justify-start"
 };
-var _hoisted_8 = {
+var _hoisted_7 = {
   "class": "text-primary-clr mx-4 flex items-center justify-center overflow-hidden"
 };
-var _hoisted_9 = {
+var _hoisted_8 = {
   "class": "truncate"
 };
-var _hoisted_10 = {
+var _hoisted_9 = {
   "class": "flex items-center w-5/12 justify-end pr-3"
 };
-var _hoisted_11 = {
+var _hoisted_10 = {
   "class": "text-secondary-clr rounded-full w-50 whitespace-nowrap"
 };
-var _hoisted_12 = ["showTriggers"];
-var _hoisted_13 = {
+var _hoisted_11 = ["showTriggers"];
+var _hoisted_12 = {
   "class": "ml-4 hover:text-primary-clr"
 };
 function render(_ctx, _cache, $props, $setup, $data, $options) {
@@ -33819,20 +33831,22 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
 
   var _directive_tooltip = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveDirective)("tooltip");
 
-  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_1, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_2, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Info "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", {
+  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", {
+    "class": (0,vue__WEBPACK_IMPORTED_MODULE_0__.normalizeClass)([$data.isAudioPlaying === true ? 'bg-secondary-bg-hover' : 'bg-secondary-bg', "rounded relative flex-col hover:bg-secondary-bg-hover transition duration-150 ease-in-out"])
+  }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_1, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Info "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", {
     "class": "bg-secondary-bg backdrop-blur-sm text-primary-clr font-semibold text-xs mr-2 p-1 px-3 rounded-full",
     ref: "duration"
   }, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($data.playedTime) + " / " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($props.item.duration_string), 513
   /* TEXT, NEED_PATCH */
-  ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)(((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("button", _hoisted_3, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_font_awesome_icon, {
+  ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)(((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("button", _hoisted_2, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_font_awesome_icon, {
     icon: "info"
-  })])), [[_directive_tooltip, 'Show Info']])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Waveform "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_4, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_wavesurfer, {
+  })])), [[_directive_tooltip, 'Show Info']])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Waveform "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_3, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_wavesurfer, {
     ref: "waveform",
     src: $props.item.file_url,
     options: $data.options
   }, null, 8
   /* PROPS */
-  , ["src", "options"])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" bottom section "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_5, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_6, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_7, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" play/pause buttons "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Play "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
+  , ["src", "options"])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" bottom section "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_4, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_5, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_6, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" play/pause buttons "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Play "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
     onClick: _cache[0] || (_cache[0] = function () {
       return $options.play && $options.play.apply($options, arguments);
     }),
@@ -33841,9 +33855,9 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     icon: $data.isAudioPlaying === true ? 'circle-pause' : 'circle-play'
   }, null, 8
   /* PROPS */
-  , ["icon"])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_8, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", _hoisted_9, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($props.item.name), 1
+  , ["icon"])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_7, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", _hoisted_8, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($props.item.name), 1
   /* TEXT */
-  )])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" right action button "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_10, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_11, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Like "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)(((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("button", {
+  )])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" right action button "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_9, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_10, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Like "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)(((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("button", {
     onClick: _cache[1] || (_cache[1] = function ($event) {
       return $options.toggleLike(2);
     }),
@@ -33862,9 +33876,11 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     icon: "link"
   })], 8
   /* PROPS */
-  , _hoisted_12)), [[_directive_tooltip, 'Copy Link']]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Download "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)(((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("button", _hoisted_13, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_font_awesome_icon, {
+  , _hoisted_11)), [[_directive_tooltip, 'Copy Link']]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Download "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)(((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("button", _hoisted_12, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_font_awesome_icon, {
     icon: "arrow-down"
-  })])), [[_directive_tooltip, 'Download']])])])])])]);
+  })])), [[_directive_tooltip, 'Download']])])])])])], 2
+  /* CLASS */
+  );
 }
 
 /***/ }),
@@ -33942,10 +33958,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm-bundler.js");
 
 var _hoisted_1 = {
-  "class": "min-h-screen bg-gray-100"
+  "class": "min-h-screen bg-primary-bg"
 };
 var _hoisted_2 = {
-  "class": "bg-white border-b border-gray-100"
+  "class": "bg-secondary-bg border-b border-gray-100"
 };
 var _hoisted_3 = {
   "class": "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"
@@ -34330,56 +34346,49 @@ var _hoisted_4 = {
 var _hoisted_5 = {
   "class": "shrink-0 flex items-center"
 };
+var _hoisted_6 = {
+  "class": "hidden space-x-5 sm:-my-px sm:ml-10 sm:flex"
+};
 
-var _hoisted_6 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
-  "class": "hidden space-x-8 sm:-my-px sm:ml-10 sm:flex"
-}, null, -1
-/* HOISTED */
-);
+var _hoisted_7 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" Home ");
 
-var _hoisted_7 = {
+var _hoisted_8 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" About ");
+
+var _hoisted_9 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" Contact ");
+
+var _hoisted_10 = {
   "class": "hidden md:flex md:items-center md:ml-6"
 };
 
-var _hoisted_8 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" Home ");
+var _hoisted_11 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" Login ");
 
-var _hoisted_9 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" About ");
-
-var _hoisted_10 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" Contact ");
-
-var _hoisted_11 = {
-  "class": "hidden md:flex md:items-center md:ml-6"
-};
-
-var _hoisted_12 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" Login ");
-
-var _hoisted_13 = ["href", "active"];
-var _hoisted_14 = {
+var _hoisted_12 = ["href", "active"];
+var _hoisted_13 = {
   "class": "-mr-2 flex items-center md:hidden"
 };
-var _hoisted_15 = {
+var _hoisted_14 = {
   "class": "h-6 w-6",
   stroke: "currentColor",
   fill: "none",
   viewBox: "0 0 24 24"
 };
-var _hoisted_16 = {
+var _hoisted_15 = {
   "class": "pt-2 pb-3 space-y-1"
 };
 
-var _hoisted_17 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" Dashboard ");
+var _hoisted_16 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" Dashboard ");
 
-var _hoisted_18 = {
+var _hoisted_17 = {
   "class": "pt-2 pb-3 space-y-1"
 };
 
-var _hoisted_19 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" Upload ");
+var _hoisted_18 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" Upload ");
 
-var _hoisted_20 = {
+var _hoisted_19 = {
   "class": "pt-4 pb-1 border-t border-gray-200"
 };
 
-var _hoisted_21 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+var _hoisted_20 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
   "class": "px-4"
 }, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
   "class": "font-medium text-base text-gray-800"
@@ -34389,11 +34398,11 @@ var _hoisted_21 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElement
 /* HOISTED */
 );
 
-var _hoisted_22 = {
+var _hoisted_21 = {
   "class": "mt-3 space-y-1"
 };
 
-var _hoisted_23 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" Log Out ");
+var _hoisted_22 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" Log Out ");
 
 function render(_ctx, _cache, $props, $setup, $data, $options) {
   var _component_BreezeApplicationLogo = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("BreezeApplicationLogo");
@@ -34417,10 +34426,21 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
 
   }, 8
   /* PROPS */
-  , ["href"])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Navigation Links "), _hoisted_6]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_7, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_BreezeNavLink, {
-    "class": "px-3",
-    href: _ctx.route('login'),
-    active: _ctx.route().current('login')
+  , ["href"])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Navigation Links "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_6, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_BreezeNavLink, {
+    href: _ctx.route('home'),
+    active: _ctx.route().current('home')
+  }, {
+    "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
+      return [_hoisted_7];
+    }),
+    _: 1
+    /* STABLE */
+
+  }, 8
+  /* PROPS */
+  , ["href", "active"]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_BreezeNavLink, {
+    href: _ctx.route('register'),
+    active: _ctx.route().current('register')
   }, {
     "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
       return [_hoisted_8];
@@ -34431,7 +34451,6 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
   }, 8
   /* PROPS */
   , ["href", "active"]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_BreezeNavLink, {
-    "class": "px-3",
     href: _ctx.route('register'),
     active: _ctx.route().current('register')
   }, {
@@ -34443,26 +34462,13 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
 
   }, 8
   /* PROPS */
-  , ["href", "active"]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_BreezeNavLink, {
-    "class": "px-3",
-    href: _ctx.route('register'),
-    active: _ctx.route().current('register')
-  }, {
-    "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
-      return [_hoisted_10];
-    }),
-    _: 1
-    /* STABLE */
-
-  }, 8
-  /* PROPS */
-  , ["href", "active"])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_11, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_BreezeNavLink, {
+  , ["href", "active"])])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_10, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_BreezeNavLink, {
     "class": "px-3",
     href: _ctx.route('login'),
     active: _ctx.route().current('login')
   }, {
     "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
-      return [_hoisted_12];
+      return [_hoisted_11];
     }),
     _: 1
     /* STABLE */
@@ -34477,17 +34483,17 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
         active: _ctx.route().current('register')
       }, " Register ", 8
       /* PROPS */
-      , _hoisted_13)];
+      , _hoisted_12)];
     }),
     _: 1
     /* STABLE */
 
-  })]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Hamburger "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_14, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
+  })]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Hamburger "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_13, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
     onClick: _cache[0] || (_cache[0] = function ($event) {
       return $data.showingNavigationDropdown = !$data.showingNavigationDropdown;
     }),
     "class": "inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 focus:text-gray-500 transition duration-150 ease-in-out"
-  }, [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("svg", _hoisted_15, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("path", {
+  }, [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("svg", _hoisted_14, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("path", {
     "class": (0,vue__WEBPACK_IMPORTED_MODULE_0__.normalizeClass)({
       hidden: $data.showingNavigationDropdown,
       'inline-flex': !$data.showingNavigationDropdown
@@ -34514,37 +34520,37 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
       block: $data.showingNavigationDropdown,
       hidden: !$data.showingNavigationDropdown
     }, "sm:hidden"])
-  }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_16, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_BreezeResponsiveNavLink, {
+  }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_15, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_BreezeResponsiveNavLink, {
     href: _ctx.route('dashboard'),
     active: _ctx.route().current('dashboard')
   }, {
     "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
-      return [_hoisted_17];
+      return [_hoisted_16];
     }),
     _: 1
     /* STABLE */
 
   }, 8
   /* PROPS */
-  , ["href", "active"])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_18, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_BreezeResponsiveNavLink, {
+  , ["href", "active"])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_17, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_BreezeResponsiveNavLink, {
     href: _ctx.route('upload'),
     active: _ctx.route().current('upload')
   }, {
     "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
-      return [_hoisted_19];
+      return [_hoisted_18];
     }),
     _: 1
     /* STABLE */
 
   }, 8
   /* PROPS */
-  , ["href", "active"])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Responsive Settings Options "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_20, [_hoisted_21, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_22, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_BreezeResponsiveNavLink, {
+  , ["href", "active"])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Responsive Settings Options "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_19, [_hoisted_20, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_21, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_BreezeResponsiveNavLink, {
     href: _ctx.route('logout'),
     method: "post",
     as: "button"
   }, {
     "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
-      return [_hoisted_23];
+      return [_hoisted_22];
     }),
     _: 1
     /* STABLE */
@@ -64894,6 +64900,435 @@ if (typeof window !== 'undefined' && window.Vue) {
   }
 });
 
+
+/***/ }),
+
+/***/ "./node_modules/wavesurfer.js/dist/plugin/wavesurfer.cursor.js":
+/*!*********************************************************************!*\
+  !*** ./node_modules/wavesurfer.js/dist/plugin/wavesurfer.cursor.js ***!
+  \*********************************************************************/
+/***/ ((module) => {
+
+/*!
+ * wavesurfer.js cursor plugin 5.2.0 (2021-08-16)
+ * https://wavesurfer-js.org
+ * @license BSD-3-Clause
+ */
+(function webpackUniversalModuleDefinition(root, factory) {
+	if(true)
+		module.exports = factory();
+	else {}
+})(self, function() {
+return /******/ (() => { // webpackBootstrap
+/******/ 	"use strict";
+/******/ 	var __webpack_modules__ = ({
+
+/***/ "./src/plugin/cursor/index.js":
+/*!************************************!*\
+  !*** ./src/plugin/cursor/index.js ***!
+  \************************************/
+/***/ ((module, exports) => {
+
+
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports.default = void 0;
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+/**
+ * @typedef {Object} CursorPluginParams
+ * @property {?boolean} deferInit Set to true to stop auto init in `addPlugin()`
+ * @property {boolean} hideOnBlur=true Hide the cursor when the mouse leaves the
+ * waveform
+ * @property {string} width='1px' The width of the cursor
+ * @property {string} color='black' The color of the cursor
+ * @property {string} opacity='0.25' The opacity of the cursor
+ * @property {string} style='solid' The border style of the cursor
+ * @property {number} zIndex=3 The z-index of the cursor element
+ * @property {object} customStyle An object with custom styles which are applied
+ * to the cursor element
+ * @property {boolean} showTime=false Show the time on the cursor.
+ * @property {object} customShowTimeStyle An object with custom styles which are
+ * applied to the cursor time element.
+ * @property {string} followCursorY=false Use `true` to make the time on
+ * the cursor follow the x and the y-position of the mouse. Use `false` to make the
+ * it only follow the x-position of the mouse.
+ * @property {function} formatTimeCallback Formats the timestamp on the cursor.
+ */
+
+/**
+ * Displays a thin line at the position of the cursor on the waveform.
+ *
+ * @implements {PluginClass}
+ * @extends {Observer}
+ * @example
+ * // es6
+ * import CursorPlugin from 'wavesurfer.cursor.js';
+ *
+ * // commonjs
+ * var CursorPlugin = require('wavesurfer.cursor.js');
+ *
+ * // if you are using <script> tags
+ * var CursorPlugin = window.WaveSurfer.cursor;
+ *
+ * // ... initialising wavesurfer with the plugin
+ * var wavesurfer = WaveSurfer.create({
+ *   // wavesurfer options ...
+ *   plugins: [
+ *     CursorPlugin.create({
+ *       // plugin options ...
+ *     })
+ *   ]
+ * });
+ */
+var CursorPlugin = /*#__PURE__*/function () {
+  /**
+   * Construct the plugin class. You probably want to use `CursorPlugin.create`
+   * instead.
+   *
+   * @param {CursorPluginParams} params Plugin parameters
+   * @param {object} ws Wavesurfer instance
+   */
+  function CursorPlugin(params, ws) {
+    var _this = this;
+
+    _classCallCheck(this, CursorPlugin);
+
+    this.defaultParams = {
+      hideOnBlur: true,
+      width: '1px',
+      color: 'black',
+      opacity: '0.25',
+      style: 'solid',
+      zIndex: 4,
+      customStyle: {},
+      customShowTimeStyle: {},
+      showTime: false,
+      followCursorY: false,
+      formatTimeCallback: null
+    };
+
+    this._onMousemove = function (e) {
+      var bbox = _this.wavesurfer.container.getBoundingClientRect();
+
+      var y = 0;
+      var x = e.clientX - bbox.left;
+
+      var flip = bbox.right < e.clientX + _this.outerWidth(_this.displayTime);
+
+      if (_this.params.showTime && _this.params.followCursorY) {
+        // follow y-position of the mouse
+        y = e.clientY - (bbox.top + bbox.height / 2);
+      }
+
+      _this.updateCursorPosition(x, y, flip);
+    };
+
+    this._onMouseenter = function () {
+      return _this.showCursor();
+    };
+
+    this._onMouseleave = function () {
+      return _this.hideCursor();
+    };
+
+    this.wavesurfer = ws;
+    this.style = ws.util.style;
+    /**
+     * The cursor HTML element
+     *
+     * @type {?HTMLElement}
+     */
+
+    this.cursor = null;
+    /**
+     * displays the time next to the cursor
+     *
+     * @type {?HTMLElement}
+     */
+
+    this.showTime = null;
+    /**
+     * The html container that will display the time
+     *
+     * @type {?HTMLElement}
+     */
+
+    this.displayTime = null;
+    this.params = Object.assign({}, this.defaultParams, params);
+  }
+  /**
+   * Initialise the plugin (used by the Plugin API)
+   */
+
+
+  _createClass(CursorPlugin, [{
+    key: "init",
+    value: function init() {
+      this.wrapper = this.wavesurfer.container;
+      this.cursor = this.wrapper.appendChild(this.style(document.createElement('cursor'), Object.assign({
+        position: 'absolute',
+        zIndex: this.params.zIndex,
+        left: 0,
+        top: 0,
+        bottom: 0,
+        width: '0',
+        display: 'flex',
+        borderRightStyle: this.params.style,
+        borderRightWidth: this.params.width,
+        borderRightColor: this.params.color,
+        opacity: this.params.opacity,
+        pointerEvents: 'none'
+      }, this.params.customStyle)));
+
+      if (this.params.showTime) {
+        this.showTime = this.wrapper.appendChild(this.style(document.createElement('showTitle'), Object.assign({
+          position: 'absolute',
+          zIndex: this.params.zIndex,
+          left: 0,
+          top: 0,
+          bottom: 0,
+          width: 'auto',
+          display: 'flex',
+          opacity: this.params.opacity,
+          pointerEvents: 'none',
+          height: '100%'
+        }, this.params.customStyle)));
+        this.displayTime = this.showTime.appendChild(this.style(document.createElement('div'), Object.assign({
+          display: 'inline',
+          pointerEvents: 'none',
+          margin: 'auto',
+          visibility: 'hidden' // initial value will be hidden just for measuring purpose
+
+        }, this.params.customShowTimeStyle))); // initial value to measure display width
+
+        this.displayTime.innerHTML = this.formatTime(0);
+      }
+
+      this.wrapper.addEventListener('mousemove', this._onMousemove);
+
+      if (this.params.hideOnBlur) {
+        // ensure elements are hidden initially
+        this.hideCursor();
+        this.wrapper.addEventListener('mouseenter', this._onMouseenter);
+        this.wrapper.addEventListener('mouseleave', this._onMouseleave);
+      }
+    }
+    /**
+     * Destroy the plugin (used by the Plugin API)
+     */
+
+  }, {
+    key: "destroy",
+    value: function destroy() {
+      if (this.params.showTime) {
+        this.cursor.parentNode.removeChild(this.showTime);
+      }
+
+      this.cursor.parentNode.removeChild(this.cursor);
+      this.wrapper.removeEventListener('mousemove', this._onMousemove);
+
+      if (this.params.hideOnBlur) {
+        this.wrapper.removeEventListener('mouseenter', this._onMouseenter);
+        this.wrapper.removeEventListener('mouseleave', this._onMouseleave);
+      }
+    }
+    /**
+     * Update the cursor position
+     *
+     * @param {number} xpos The x offset of the cursor in pixels
+     * @param {number} ypos The y offset of the cursor in pixels
+     * @param {boolean} flip Flag to flip duration text from right to left
+     */
+
+  }, {
+    key: "updateCursorPosition",
+    value: function updateCursorPosition(xpos, ypos) {
+      var flip = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+      this.style(this.cursor, {
+        left: "".concat(xpos, "px")
+      });
+
+      if (this.params.showTime) {
+        var duration = this.wavesurfer.getDuration();
+        var elementWidth = this.wavesurfer.drawer.width / this.wavesurfer.params.pixelRatio;
+        var scrollWidth = this.wavesurfer.drawer.getScrollX();
+        var scrollTime = duration / this.wavesurfer.drawer.width * scrollWidth;
+        var timeValue = Math.max(0, xpos / elementWidth * duration) + scrollTime;
+        var formatValue = this.formatTime(timeValue);
+
+        if (flip) {
+          var textOffset = this.outerWidth(this.displayTime);
+          xpos -= textOffset;
+        }
+
+        this.style(this.showTime, {
+          left: "".concat(xpos, "px"),
+          top: "".concat(ypos, "px")
+        });
+        this.style(this.displayTime, {
+          visibility: 'visible'
+        });
+        this.displayTime.innerHTML = "".concat(formatValue);
+      }
+    }
+    /**
+     * Show the cursor
+     */
+
+  }, {
+    key: "showCursor",
+    value: function showCursor() {
+      this.style(this.cursor, {
+        display: 'flex'
+      });
+
+      if (this.params.showTime) {
+        this.style(this.showTime, {
+          display: 'flex'
+        });
+      }
+    }
+    /**
+     * Hide the cursor
+     */
+
+  }, {
+    key: "hideCursor",
+    value: function hideCursor() {
+      this.style(this.cursor, {
+        display: 'none'
+      });
+
+      if (this.params.showTime) {
+        this.style(this.showTime, {
+          display: 'none'
+        });
+      }
+    }
+    /**
+     * Format the timestamp for `cursorTime`.
+     *
+     * @param {number} cursorTime Time in seconds
+     * @returns {string} Formatted timestamp
+     */
+
+  }, {
+    key: "formatTime",
+    value: function formatTime(cursorTime) {
+      cursorTime = isNaN(cursorTime) ? 0 : cursorTime;
+
+      if (this.params.formatTimeCallback) {
+        return this.params.formatTimeCallback(cursorTime);
+      }
+
+      return [cursorTime].map(function (time) {
+        return [Math.floor(time % 3600 / 60), // minutes
+        ('00' + Math.floor(time % 60)).slice(-2), // seconds
+        ('000' + Math.floor(time % 1 * 1000)).slice(-3) // milliseconds
+        ].join(':');
+      });
+    }
+    /**
+     * Get outer width of given element.
+     *
+     * @param {DOM} element DOM Element
+     * @returns {number} outer width
+     */
+
+  }, {
+    key: "outerWidth",
+    value: function outerWidth(element) {
+      if (!element) {
+        return 0;
+      }
+
+      var width = element.offsetWidth;
+      var style = getComputedStyle(element);
+      width += parseInt(style.marginLeft + style.marginRight);
+      return width;
+    }
+  }], [{
+    key: "create",
+    value:
+    /**
+     * Cursor plugin definition factory
+     *
+     * This function must be used to create a plugin definition which can be
+     * used by wavesurfer to correctly instantiate the plugin.
+     *
+     * @param  {CursorPluginParams} params parameters use to initialise the
+     * plugin
+     * @return {PluginDefinition} an object representing the plugin
+     */
+    function create(params) {
+      return {
+        name: 'cursor',
+        deferInit: params && params.deferInit ? params.deferInit : false,
+        params: params,
+        staticProps: {},
+        instance: CursorPlugin
+      };
+    }
+    /**
+     * @type {CursorPluginParams}
+     */
+
+  }]);
+
+  return CursorPlugin;
+}();
+
+exports.default = CursorPlugin;
+module.exports = exports.default;
+
+/***/ })
+
+/******/ 	});
+/************************************************************************/
+/******/ 	// The module cache
+/******/ 	var __webpack_module_cache__ = {};
+/******/ 	
+/******/ 	// The require function
+/******/ 	function __nested_webpack_require_11767__(moduleId) {
+/******/ 		// Check if module is in cache
+/******/ 		var cachedModule = __webpack_module_cache__[moduleId];
+/******/ 		if (cachedModule !== undefined) {
+/******/ 			return cachedModule.exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = __webpack_module_cache__[moduleId] = {
+/******/ 			// no module.id needed
+/******/ 			// no module.loaded needed
+/******/ 			exports: {}
+/******/ 		};
+/******/ 	
+/******/ 		// Execute the module function
+/******/ 		__webpack_modules__[moduleId](module, module.exports, __nested_webpack_require_11767__);
+/******/ 	
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/ 	
+/************************************************************************/
+/******/ 	
+/******/ 	// startup
+/******/ 	// Load entry module and return exports
+/******/ 	// This entry module is referenced by other modules so it can't be inlined
+/******/ 	var __webpack_exports__ = __nested_webpack_require_11767__("./src/plugin/cursor/index.js");
+/******/ 	
+/******/ 	return __webpack_exports__;
+/******/ })()
+;
+});
+//# sourceMappingURL=wavesurfer.cursor.js.map
 
 /***/ }),
 

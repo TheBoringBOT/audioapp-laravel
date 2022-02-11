@@ -1,46 +1,51 @@
 <template>
     <div
-            class="bg-secondary-bg rounded relative flex-col hover:bg-secondary-bg-hover transition duration-150 ease-in-out"
+        :class="
+            isAudioPlaying === true
+                ? 'bg-secondary-bg-hover'
+                : 'bg-secondary-bg'
+        "
+        class="rounded relative flex-col hover:bg-secondary-bg-hover transition duration-150 ease-in-out"
     >
         <div class="z-10 absolute top-0 right-0 p-3 flex">
             <!-- Info -->
             <span
-                    class="bg-secondary-bg backdrop-blur-sm text-primary-clr font-semibold text-xs mr-2 p-1 px-3 rounded-full"
-                    ref="duration"
-            >{{ playedTime }}&nbsp;/&nbsp;{{ item.duration_string }}</span
+                class="bg-secondary-bg backdrop-blur-sm text-primary-clr font-semibold text-xs mr-2 p-1 px-3 rounded-full"
+                ref="duration"
+                >{{ playedTime }}&nbsp;/&nbsp;{{ item.duration_string }}</span
             >
             <button
-                    v-tooltip="'Show Info'"
-                    class="bg-secondary-bg backdrop-blur-sm text-primary-clr w-6 h-6 text-white font-semibold text-xs flex justify-center items-center rounded-full hover:bg-secondary-bg-hover"
+                v-tooltip="'Show Info'"
+                class="bg-secondary-bg backdrop-blur-sm text-primary-clr w-6 h-6 text-white font-semibold text-xs flex justify-center items-center rounded-full hover:bg-secondary-bg-hover"
             >
-                <font-awesome-icon icon="info"/>
+                <font-awesome-icon icon="info" />
             </button>
         </div>
         <!-- Waveform -->
 
-        <div class="relative h-32">
+        <div class="relative h-32 hover:cursor-pointer">
             <wavesurfer
-                    ref="waveform"
-                    :src="item.file_url"
-                    :options="options"
+                ref="waveform"
+                :src="item.file_url"
+                :options="options"
             />
         </div>
 
         <!-- bottom section -->
         <div class="p-3 bg-secondary-bg backdrop-blur-sm">
             <div
-                    class="flex flex-wrap overflow-hidden text-brand-clr text-lg justify-between"
+                class="flex flex-wrap overflow-hidden text-brand-clr text-lg justify-between"
             >
                 <div class="flex w-7/12 justify-start">
                     <!-- play/pause buttons -->
 
                     <!-- Play -->
                     <button
-                            @click="play"
-                            class="text-5xl flex justify-center items-center rounded-full hover:text-brand-clr-hover"
+                        @click="play"
+                        class="text-5xl flex justify-center items-center rounded-full hover:text-brand-clr-hover"
                     >
                         <font-awesome-icon
-                                :icon="
+                            :icon="
                                 isAudioPlaying === true
                                     ? 'circle-pause'
                                     : 'circle-play'
@@ -49,7 +54,7 @@
                     </button>
 
                     <div
-                            class="text-primary-clr mx-4 flex items-center justify-center overflow-hidden"
+                        class="text-primary-clr mx-4 flex items-center justify-center overflow-hidden"
                     >
                         <span class="truncate">{{ item.name }} </span>
                     </div>
@@ -58,31 +63,31 @@
                 <!-- right action button -->
                 <div class="flex items-center w-5/12 justify-end pr-3">
                     <div
-                            class="text-secondary-clr rounded-full w-50 whitespace-nowrap"
+                        class="text-secondary-clr rounded-full w-50 whitespace-nowrap"
                     >
                         <!-- Like -->
                         <button
-                                @click="toggleLike(2)"
-                                v-tooltip="'Like'"
-                                class="hover:text-primary-clr"
+                            @click="toggleLike(2)"
+                            v-tooltip="'Like'"
+                            class="hover:text-primary-clr"
                         >
-                            <font-awesome-icon icon="thumbs-up"/>
+                            <font-awesome-icon icon="thumbs-up" />
                         </button>
                         <!-- Share -->
                         <button
-                                @click="doCopy('s/' + item.slug)"
-                                class="ml-4 hover:text-primary-clr"
-                                v-tooltip="'Copy Link'"
-                                :showTriggers="(triggers) => [...triggers, 'click']"
+                            @click="doCopy('s/' + item.slug)"
+                            class="ml-4 hover:text-primary-clr"
+                            v-tooltip="'Copy Link'"
+                            :showTriggers="(triggers) => [...triggers, 'click']"
                         >
-                            <font-awesome-icon icon="link"/>
+                            <font-awesome-icon icon="link" />
                         </button>
                         <!-- Download -->
                         <button
-                                v-tooltip="'Download'"
-                                class="ml-4 hover:text-primary-clr"
+                            v-tooltip="'Download'"
+                            class="ml-4 hover:text-primary-clr"
                         >
-                            <font-awesome-icon icon="arrow-down"/>
+                            <font-awesome-icon icon="arrow-down" />
                         </button>
                     </div>
                 </div>
@@ -92,10 +97,11 @@
 </template>
 
 <script>
-import {copyText} from "vue3-clipboard";
-import {useToast} from "vue-toastification";
+import { copyText } from "vue3-clipboard";
+import { useToast } from "vue-toastification";
+import Cursor from "wavesurfer.js/dist/plugin/wavesurfer.cursor";
 
-import {formatTime} from "@/Helpers";
+import { formatTime } from "@/Helpers";
 
 export default {
     props: ["item"],
@@ -103,6 +109,20 @@ export default {
     data() {
         return {
             options: {
+                plugins: [
+                    Cursor.create({
+                        showTime: true,
+                        opacity: 1,
+                        color: "#ffca00",
+
+                        customShowTimeStyle: {
+                            "background-color": "#ffca00",
+                            color: "#121212",
+                            padding: "2px",
+                            "font-size": "10px",
+                        },
+                    }),
+                ],
                 // barWidth: 2,
                 // barHeight: 2,
                 // barGap: 2,
@@ -140,6 +160,7 @@ export default {
         wavesurferRef.on("finish", function () {
             wavesurferRef.stop();
             t.isAudioPlaying = false;
+            t.playedTime = "0:00";
         });
     },
     setup() {
@@ -158,7 +179,7 @@ export default {
             });
         };
 
-        return {doCopy, toast};
+        return { doCopy, toast };
     },
 
     methods: {

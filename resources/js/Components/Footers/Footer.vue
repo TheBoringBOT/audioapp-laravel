@@ -3,13 +3,13 @@
         <div
             class="justify-center w-full max-w-7xl flex flex-wrap sm:justify-between"
         >
-            <div class="text-gray-400 text-center p-4">
+            <div class="text-secondary-clr text-center p-4">
                 © {{ currentYear }} Copyright: Audio App
             </div>
-            <div class="text-gray-400 text-center p-4">
+            <div class="text-center p-4">
                 <a href="https://github.com/TheBoringBOT/audioapp-laravel">
                     <svg
-                        class="fill-gray-400 hover:fill-gray-600"
+                        class="fill-secondary-clr hover:fill-primary-clr transition duration-150 ease-in-out"
                         height="28"
                         aria-hidden="true"
                         viewBox="0 0 16 16"

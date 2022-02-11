@@ -14,7 +14,7 @@ module.exports = {
                 sans: ["Nunito", ...defaultTheme.fontFamily.sans],
             },
             colors: {
-                "primary-bg": "#16161a",
+                "primary-bg": "#101010",
                 "primary-bg-hover": "#18181c",
                 "secondary-bg": "rgba(255,255,255,0.05)",
                 "secondary-bg-hover": "rgba(255,255,255,0.08)",
