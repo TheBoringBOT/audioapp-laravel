@@ -15,9 +15,8 @@
         <!--<p><strong>check data returned</strong></p>-->
         <!--<p v-for="a in audio" :key="a.id">{{ a.name }}</p>-->
 
-        <!--<SearchBar/>-->
+        <SearchBar />
         <AudioGrid v-bind:audio="audio" />
-        <p>wave</p>
     </LoggedOutLayout>
 </template>
 

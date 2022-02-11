@@ -1,17 +1,17 @@
 <template>
     <div>
-        <div class="min-h-screen flex-col flex bg-slate-100">
+        <div class="min-h-screen flex-col flex bg-primary-bg">
             <!-- Navbar -->
-            <LoggedOutNav/>
+            <LoggedOutNav />
 
             <!-- Page Content -->
             <main
-                    class="mx-auto flex-grow px-4 sm:px-6 lg:px-8 py-12 w-full max-w-7xl"
+                class="mx-auto flex-grow px-4 sm:px-6 lg:px-8 py-12 w-full max-w-7xl"
             >
-                <slot/>
+                <slot />
             </main>
             <!-- Footer -->
-            <Footer/>
+            <Footer />
         </div>
     </div>
 </template>
