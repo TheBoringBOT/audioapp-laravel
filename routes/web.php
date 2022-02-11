@@ -25,17 +25,24 @@ Route::get( '/dashboard', [
 ] )->middleware( [ 'auth', 'verified' ] )->name( 'dashboard' );
 
 
-//Upload Song
+//Upload Sound page
 Route::get( '/dashboard/upload', [ \App\Http\Controllers\SoundController::class, 'create' ] )->middleware( [
 	'auth',
 	'verified'
 ] )->name( 'upload' );
 
-//Upload Song
+//Upload post Sound
 Route::post( '/dashboard/upload', [ \App\Http\Controllers\SoundController::class, 'store' ] )->middleware( [
 	'auth',
 	'verified'
 ] )->name( 'upload.store' );
+
+
+// toggle sound like
+Route::post( 'like/{id}', [ \App\Http\Controllers\SoundController::class, 'likeSound' ] )->middleware( [
+	'auth',
+	'verified'
+] )->name( 'like' );
 
 
 require __DIR__ . '/auth.php';

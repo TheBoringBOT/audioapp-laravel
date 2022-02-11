@@ -12,8 +12,12 @@
         <!--&gt;</av-waveform>-->
         <!--</div>-->
 
-        <SearchBar />
-        <AudioGrid />
+        <!--<p><strong>check data returned</strong></p>-->
+        <!--<p v-for="a in audio" :key="a.id">{{ a.name }}</p>-->
+
+        <!--<SearchBar/>-->
+        <AudioGrid v-bind:audio="audio" />
+        <p>wave</p>
     </LoggedOutLayout>
 </template>
 
@@ -32,11 +36,6 @@ export default {
         AudioGrid,
         SearchBar,
     },
-    props: {
-        canLogin: Boolean,
-        canRegister: Boolean,
-        laravelVersion: String,
-        phpVersion: String,
-    },
+    props: ["audio"],
 };
 </script>

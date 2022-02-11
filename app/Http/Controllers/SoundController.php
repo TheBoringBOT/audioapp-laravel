@@ -3,15 +3,19 @@
 namespace App\Http\Controllers;
 
 use App\Models\Sound;
+use  Illuminate\Support\Facades\Auth;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Storage;
 use \Cviebrock\EloquentSluggable\Services\SlugService;
+
 use getID3;
 
 
 class SoundController extends Controller {
+
 
 	//	/**
 	//	 * Display a listing of the resource.
@@ -19,11 +23,15 @@ class SoundController extends Controller {
 	//	 * @return \Illuminate\Http\Response
 	//	 */
 	public function index() {
+
+		$audio = Sound::all();
+
 		return Inertia::render( 'Frontend/Home', [
 			'canLogin'    => Route::has( 'login' ),
 			'canRegister' => Route::has( 'register' ),
 			//			'laravelVersion' => Application::VERSION,
 			'phpVersion'  => PHP_VERSION,
+			'audio'       => $audio
 
 		] );
 	}
@@ -36,8 +44,11 @@ class SoundController extends Controller {
 
 	public function dashboard() {
 
-		// Get all audio data
+		//TODO add liked sounds to audio array
+
+
 		$audio = Sound::all();
+
 
 		//		dd( $audio );
 
@@ -175,11 +186,11 @@ class SoundController extends Controller {
 	 * Update the specified resource in storage.
 	 *
 	 * @param  \Illuminate\Http\Request $request
-	 * @param  \App\Models\Sound $song
+	 * @param  \App\Models\Sound $sound
 	 *
 	 * @return \Illuminate\Http\Response
 	 */
-	public function update( Request $request, Sound $song ) {
+	public function update( Request $request, Sound $sound ) {
 		//
 	}
 
@@ -193,4 +204,24 @@ class SoundController extends Controller {
 	public function destroy( Sound $song ) {
 		//
 	}
+
+
+	/**
+	 * record likes of sounds
+	 *
+	 * @param  \App\Models\Sound $sound
+	 *
+	 * //     * @return \Illuminate\Http\Response
+	 */
+	public function likeSound( $sound ) {
+
+
+		$thisSound = Sound::find( '8' );
+		$response  = auth()->user()->toggleLike( $thisSound );
+
+		return response()->json( [ 'success' => $response ] );
+
+	}
+
+
 }

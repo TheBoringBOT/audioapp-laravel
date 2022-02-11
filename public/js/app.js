@@ -32581,6 +32581,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _AudioGridItem__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./AudioGridItem */ "./resources/js/Components/Grids/AudioGridItem.vue");
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  props: ["audio"],
   components: {
     AudioGridItem: _AudioGridItem__WEBPACK_IMPORTED_MODULE_0__["default"]
   }
@@ -32601,20 +32602,66 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var vue3_clipboard__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue3-clipboard */ "./node_modules/vue3-clipboard/dist/vue3-clipboard-es.js");
 /* harmony import */ var vue_toastification__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vue-toastification */ "./node_modules/vue-toastification/dist/index.mjs");
+/* harmony import */ var _Components_Wavesurfer_Wavesurfer__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @/Components/Wavesurfer/Wavesurfer */ "./resources/js/Components/Wavesurfer/Wavesurfer.vue");
+/* harmony import */ var _Helpers__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @/Helpers */ "./resources/js/Helpers.js");
+
+
 
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  components: {
+    WaveSurfer: _Components_Wavesurfer_Wavesurfer__WEBPACK_IMPORTED_MODULE_2__["default"]
+  },
+  props: ["item"],
+  data: function data() {
+    return {
+      options: {
+        barWidth: 2,
+        barHeight: 2,
+        barGap: 2,
+        barRadius: 3,
+        cursorColor: "#7E22CE",
+        hideScrollbar: true,
+        normalize: true,
+        height: 128,
+        progressColor: "#7E22CE",
+        waveColor: "#b1b7be",
+        backgroundColor: "#cfd5dc"
+      },
+      isAudioPlaying: false,
+      playedTime: "0:00"
+    };
+  },
+  mounted: function mounted() {
+    var wavesurferRef = this.$refs.waveform.waveSurfer; //binding this
+
+    var t = this;
+    wavesurferRef.on("ready", function () {
+      var duration = (0,_Helpers__WEBPACK_IMPORTED_MODULE_3__.formatTime)(wavesurferRef.backend.getDuration());
+      console.log(duration);
+    });
+    wavesurferRef.on("audioprocess", function () {
+      t.playedTime = (0,_Helpers__WEBPACK_IMPORTED_MODULE_3__.formatTime)(wavesurferRef.backend.getCurrentTime());
+    });
+    wavesurferRef.on("finish", function () {
+      //toggle play/pause buttons
+      t.togglePlayPause(false); // reset waveform to start
+
+      wavesurferRef.seekAndCenter(0);
+      t.playedTime = "0:00";
+    });
+  },
   setup: function setup() {
-    // Get toast interface
-    var toast = (0,vue_toastification__WEBPACK_IMPORTED_MODULE_1__.useToast)();
+    // create toast notifications function
+    var toast = (0,vue_toastification__WEBPACK_IMPORTED_MODULE_1__.useToast)(); // Copy url function
 
     var doCopy = function doCopy(Url) {
       (0,vue3_clipboard__WEBPACK_IMPORTED_MODULE_0__.copyText)(Url, undefined, function (error, event) {
         if (error) {
-          toast("error -  ".concat(error));
+          toast("error -  ".concat(error + " " + event));
         } else {
           // Show toast
-          toast("Copied Url");
+          toast("Copied Sound Url");
         }
       });
     };
@@ -32623,6 +32670,28 @@ __webpack_require__.r(__webpack_exports__);
       doCopy: doCopy,
       toast: toast
     };
+  },
+  methods: {
+    //toggle like for sound
+    toggleLike: function toggleLike(id) {
+      alert(id);
+      this.$inertia.post("/like/".concat(id));
+    },
+    // Wavesurfer controls : Start
+    togglePlayPause: function togglePlayPause(value) {
+      this.isAudioPlaying = !this.isAudioPlaying;
+
+      if (value) {
+        this.showPlay = false;
+      } else if (!value) {
+        this.showPlay = false;
+      }
+    },
+    play: function play() {
+      this.$refs.waveform.waveSurfer.playPause();
+      this.isAudioPlaying = this.$refs.waveform.waveSurfer.isPlaying();
+    } // Wavesurfer controls : End
+
   }
 });
 
@@ -32933,6 +33002,44 @@ __webpack_require__.r(__webpack_exports__);
     },
     hasErrors: function hasErrors() {
       return Object.keys(this.errors).length > 0;
+    }
+  }
+});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/Components/Wavesurfer/Wavesurfer.vue?vue&type=script&lang=js":
+/*!***************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/Components/Wavesurfer/Wavesurfer.vue?vue&type=script&lang=js ***!
+  \***************************************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  props: ["item"],
+  emits: ["audio-is-playing", "audio-duration"],
+  data: function data() {
+    return {
+      options: {
+        barWidth: 3,
+        barHeight: 1,
+        barGap: null,
+        progressColor: "green",
+        waveColor: "pink"
+      }
+    };
+  },
+  methods: {
+    play: function play() {
+      this.$refs.waveform.waveSurfer.playPause();
+      var audioIsPlaying = this.$refs.waveform.waveSurfer.isPlaying(); // send if audio is playing to parent
+
+      this.$emit("audio-is-playing", audioIsPlaying);
+      this.$emit("audio-duration", this.$refs.waveform.waveSurfer.getDuration());
     }
   }
 });
@@ -33387,12 +33494,7 @@ __webpack_require__.r(__webpack_exports__);
     AudioGrid: _Components_Grids_AudioGrid__WEBPACK_IMPORTED_MODULE_3__["default"],
     SearchBar: _Components_SearchBar__WEBPACK_IMPORTED_MODULE_2__["default"]
   },
-  props: {
-    canLogin: Boolean,
-    canRegister: Boolean,
-    laravelVersion: String,
-    phpVersion: String
-  }
+  props: ["audio"]
 });
 
 /***/ }),
@@ -33669,7 +33771,16 @@ var _hoisted_1 = {
 function render(_ctx, _cache, $props, $setup, $data, $options) {
   var _component_AudioGridItem = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("AudioGridItem");
 
-  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_1, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_AudioGridItem), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_AudioGridItem), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_AudioGridItem), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_AudioGridItem), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_AudioGridItem), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_AudioGridItem)]);
+  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_1, [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($props.audio, function (item) {
+    return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(_component_AudioGridItem, {
+      item: item,
+      key: item.id
+    }, null, 8
+    /* PROPS */
+    , ["item"]);
+  }), 128
+  /* KEYED_FRAGMENT */
+  ))]);
 }
 
 /***/ }),
@@ -33702,59 +33813,81 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
 var _hoisted_1 = {
   "class": "bg-slate-200 rounded relative flex-col"
 };
-
-var _hoisted_2 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
-  "class": "relative h-32"
-}, null, -1
-/* HOISTED */
-);
-
+var _hoisted_2 = {
+  "class": "z-10 absolute top-0 right-0 p-3 flex"
+};
 var _hoisted_3 = {
-  "class": "w-full p-4 bg-white"
+  "class": "bg-purple-600 hover:bg-purple-700 w-6 h-6 text-white font-semibold text-xs flex justify-center items-center rounded-full"
 };
 var _hoisted_4 = {
-  "class": "absolute top-0 right-0 p-3"
+  "class": "relative h-32"
 };
 var _hoisted_5 = {
-  "class": "bg-purple-600 hover:bg-purple-700 p-1 px-3 text-white font-semibold text-xs flex justify-center items-center rounded-full"
+  "class": "p-4 bg-white"
 };
-
-var _hoisted_6 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" Info ");
-
-var _hoisted_7 = [_hoisted_6];
+var _hoisted_6 = {
+  "class": "flex flex-wrap overflow-hidden text-purple-600 text-lg justify-between"
+};
+var _hoisted_7 = {
+  "class": "flex w-7/12 justify-start"
+};
 var _hoisted_8 = {
-  "class": "flex align-middle text-purple-600 text-lg justify-between"
+  "class": "mx-4 flex items-center justify-center overflow-hidden"
 };
 var _hoisted_9 = {
-  "class": "text-5xl flex justify-center items-center rounded-full hover:text-purple-700"
+  "class": "truncate"
 };
 var _hoisted_10 = {
-  "class": "text-5xl hidden hover:text-purple-700"
+  "class": "flex w-5/12 justify-end"
 };
 var _hoisted_11 = {
-  "class": "bg-purple-50 py-2 px-6 rounded-full w-50"
+  "class": "bg-purple-50 py-2 px-6 rounded-full w-50 whitespace-nowrap"
 };
-var _hoisted_12 = {
-  "class": "hover:text-purple-700"
-};
-var _hoisted_13 = ["showTriggers"];
-var _hoisted_14 = {
+var _hoisted_12 = ["showTriggers"];
+var _hoisted_13 = {
   "class": "ml-4 hover:text-purple-700"
 };
 function render(_ctx, _cache, $props, $setup, $data, $options) {
   var _component_font_awesome_icon = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("font-awesome-icon");
 
+  var _component_wavesurfer = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("wavesurfer");
+
   var _directive_tooltip = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveDirective)("tooltip");
 
-  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_1, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Waveform "), _hoisted_2, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" buttons "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_3, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_4, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Info "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)(((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("button", _hoisted_5, _hoisted_7)), [[_directive_tooltip, 'Show Info']])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_8, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Play "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", _hoisted_9, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_font_awesome_icon, {
-    icon: "circle-play"
-  })]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Pause "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", _hoisted_10, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_font_awesome_icon, {
-    icon: "circle-pause"
-  })]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_11, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Like "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)(((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("button", _hoisted_12, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_font_awesome_icon, {
+  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_1, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_2, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Info "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", {
+    "class": "bg-purple-600 text-white font-semibold text-xs mr-2 p-1 px-3 rounded-full text-gray-500",
+    ref: "duration"
+  }, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($data.playedTime) + " / " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($props.item.duration_string), 513
+  /* TEXT, NEED_PATCH */
+  ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)(((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("button", _hoisted_3, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_font_awesome_icon, {
+    icon: "info"
+  })])), [[_directive_tooltip, 'Show Info']])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Waveform "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_4, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_wavesurfer, {
+    ref: "waveform",
+    src: $props.item.file_url,
+    options: $data.options
+  }, null, 8
+  /* PROPS */
+  , ["src", "options"])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" bottom section "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_5, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_6, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_7, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" play/pause buttons "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Play "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
+    onClick: _cache[0] || (_cache[0] = function () {
+      return $options.play && $options.play.apply($options, arguments);
+    }),
+    "class": "text-5xl flex justify-center items-center rounded-full hover:text-purple-700"
+  }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_font_awesome_icon, {
+    icon: $data.isAudioPlaying === true ? 'circle-pause' : 'circle-play'
+  }, null, 8
+  /* PROPS */
+  , ["icon"])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_8, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", _hoisted_9, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($props.item.name), 1
+  /* TEXT */
+  )])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" right action button "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_10, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_11, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Like "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)(((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("button", {
+    onClick: _cache[1] || (_cache[1] = function ($event) {
+      return $options.toggleLike(2);
+    }),
+    "class": "hover:text-purple-700"
+  }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_font_awesome_icon, {
     icon: "thumbs-up"
   })])), [[_directive_tooltip, 'Like']]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Share "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)(((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("button", {
-    onClick: _cache[0] || (_cache[0] = function ($event) {
-      return $setup.doCopy('ADD SOUND URL HERE TO BE COPIED');
+    onClick: _cache[2] || (_cache[2] = function ($event) {
+      return $setup.doCopy('s/' + $props.item.slug);
     }),
     "class": "ml-4 hover:text-purple-700",
     showTriggers: function showTriggers(triggers) {
@@ -33764,9 +33897,9 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     icon: "link"
   })], 8
   /* PROPS */
-  , _hoisted_13)), [[_directive_tooltip, 'Copy Link']]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Download "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)(((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("button", _hoisted_14, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_font_awesome_icon, {
+  , _hoisted_12)), [[_directive_tooltip, 'Copy Link']]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Download "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)(((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("button", _hoisted_13, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_font_awesome_icon, {
     icon: "arrow-down"
-  })])), [[_directive_tooltip, 'Download']])])])])]);
+  })])), [[_directive_tooltip, 'Download']])])])])])]);
 }
 
 /***/ }),
@@ -34745,6 +34878,33 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
 
 /***/ }),
 
+/***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/Components/Wavesurfer/Wavesurfer.vue?vue&type=template&id=738c7b54":
+/*!*******************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/Components/Wavesurfer/Wavesurfer.vue?vue&type=template&id=738c7b54 ***!
+  \*******************************************************************************************************************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "render": () => (/* binding */ render)
+/* harmony export */ });
+/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm-bundler.js");
+
+function render(_ctx, _cache, $props, $setup, $data, $options) {
+  var _component_wavesurfer = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("wavesurfer", true);
+
+  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(_component_wavesurfer, {
+    ref: "waveform",
+    src: $props.item.file_url,
+    options: $data.options
+  }, null, 8
+  /* PROPS */
+  , ["src", "options"]);
+}
+
+/***/ }),
+
 /***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/Pages/Auth/ConfirmPassword.vue?vue&type=template&id=475ae21d":
 /*!*************************************************************************************************************************************************************************************************************************************************************************************!*\
   !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/Pages/Auth/ConfirmPassword.vue?vue&type=template&id=475ae21d ***!
@@ -35711,10 +35871,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm-bundler.js");
 
+
+var _hoisted_1 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", null, "wave", -1
+/* HOISTED */
+);
+
 function render(_ctx, _cache, $props, $setup, $data, $options) {
   var _component_Head = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("Head");
-
-  var _component_SearchBar = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("SearchBar");
 
   var _component_AudioGrid = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("AudioGrid");
 
@@ -35724,7 +35887,11 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     title: "Home"
   }), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_LoggedOutLayout, null, {
     "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
-      return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("<h1>Home {{ $inertia.page.props.appName }}</h1>"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("<div>"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("<h4><code>av-waveform</code> component</h4>"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("<av-waveform"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(":playtime-line-width=\"2.8\""), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("audio-src=\"/uploads/1/sounds/1.wav\""), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("&gt;</av-waveform>"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("</div>"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_SearchBar), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_AudioGrid)];
+      return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("<h1>Home {{ $inertia.page.props.appName }}</h1>"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("<div>"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("<h4><code>av-waveform</code> component</h4>"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("<av-waveform"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(":playtime-line-width=\"2.8\""), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("audio-src=\"/uploads/1/sounds/1.wav\""), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("&gt;</av-waveform>"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("</div>"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("<p><strong>check data returned</strong></p>"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("<p v-for=\"a in audio\" :key=\"a.id\">{{ a.name }}</p>"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("<SearchBar/>"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_AudioGrid, {
+        audio: $props.audio
+      }, null, 8
+      /* PROPS */
+      , ["audio"]), _hoisted_1];
     }),
     _: 1
     /* STABLE */
@@ -35841,6 +36008,26 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
 
 /***/ }),
 
+/***/ "./resources/js/Helpers.js":
+/*!*********************************!*\
+  !*** ./resources/js/Helpers.js ***!
+  \*********************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "formatTime": () => (/* binding */ formatTime)
+/* harmony export */ });
+// format time
+var formatTime = function formatTime(time) {
+  return [Math.floor(time % 3600 / 60), // minutes
+  ("00" + Math.floor(time % 60)).slice(-2) // seconds
+  ].join(":");
+};
+
+/***/ }),
+
 /***/ "./resources/js/app.js":
 /*!*****************************!*\
   !*** ./resources/js/app.js ***!
@@ -35853,10 +36040,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _inertiajs_inertia_vue3__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @inertiajs/inertia-vue3 */ "./node_modules/@inertiajs/inertia-vue3/dist/index.js");
 /* harmony import */ var _inertiajs_progress__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @inertiajs/progress */ "./node_modules/@inertiajs/progress/dist/index.js");
 /* harmony import */ var floating_vue__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! floating-vue */ "./node_modules/floating-vue/dist/floating-vue.es.js");
-/* harmony import */ var vue_audio_visual__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! vue-audio-visual */ "./node_modules/vue-audio-visual/src/plugin.js");
-/* harmony import */ var _fortawesome_fontawesome_svg_core__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @fortawesome/fontawesome-svg-core */ "./node_modules/@fortawesome/fontawesome-svg-core/index.es.js");
-/* harmony import */ var floating_vue_dist_style_css__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! floating-vue/dist/style.css */ "./node_modules/floating-vue/dist/style.css");
-/* harmony import */ var vue3_clipboard__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! vue3-clipboard */ "./node_modules/vue3-clipboard/dist/vue3-clipboard-es.js");
+/* harmony import */ var _fortawesome_fontawesome_svg_core__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @fortawesome/fontawesome-svg-core */ "./node_modules/@fortawesome/fontawesome-svg-core/index.es.js");
+/* harmony import */ var floating_vue_dist_style_css__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! floating-vue/dist/style.css */ "./node_modules/floating-vue/dist/style.css");
+/* harmony import */ var vue3_clipboard__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! vue3-clipboard */ "./node_modules/vue3-clipboard/dist/vue3-clipboard-es.js");
+/* harmony import */ var wavesurfer_js_vue__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! wavesurfer.js-vue */ "./node_modules/wavesurfer.js-vue/src/index.js");
 /* harmony import */ var vue_toastification__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! vue-toastification */ "./node_modules/vue-toastification/dist/index.mjs");
 /* harmony import */ var vue_toastification_dist_index_css__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! vue-toastification/dist/index.css */ "./node_modules/vue-toastification/dist/index.css");
 /* harmony import */ var _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! @fortawesome/free-solid-svg-icons */ "./node_modules/@fortawesome/free-solid-svg-icons/index.es.js");
@@ -35896,7 +36083,7 @@ var toastOptions = {
   icon: true,
   rtl: false
 };
-_fortawesome_fontawesome_svg_core__WEBPACK_IMPORTED_MODULE_5__.library.add(_fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_11__.faUserSecret, _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_11__.faCirclePlay, _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_11__.faCirclePause, _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_11__.faArrowDown, _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_11__.faLink, _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_11__.faThumbsUp, _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_11__.faInfo);
+_fortawesome_fontawesome_svg_core__WEBPACK_IMPORTED_MODULE_4__.library.add(_fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_11__.faUserSecret, _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_11__.faCirclePlay, _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_11__.faCirclePause, _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_11__.faArrowDown, _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_11__.faLink, _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_11__.faThumbsUp, _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_11__.faInfo);
 var appName = ((_window$document$getE = window.document.getElementsByTagName("title")[0]) === null || _window$document$getE === void 0 ? void 0 : _window$document$getE.innerText) || "Laravel";
 (0,_inertiajs_inertia_vue3__WEBPACK_IMPORTED_MODULE_1__.createInertiaApp)({
   title: function title(_title) {
@@ -35918,7 +36105,7 @@ var appName = ((_window$document$getE = window.document.getElementsByTagName("ti
       methods: {
         route: route
       }
-    }).use(vue_audio_visual__WEBPACK_IMPORTED_MODULE_4__["default"]).component("font-awesome-icon", _fortawesome_vue_fontawesome__WEBPACK_IMPORTED_MODULE_10__.FontAwesomeIcon).use(floating_vue__WEBPACK_IMPORTED_MODULE_3__["default"]).use(vue3_clipboard__WEBPACK_IMPORTED_MODULE_7__["default"], {
+    }).component("font-awesome-icon", _fortawesome_vue_fontawesome__WEBPACK_IMPORTED_MODULE_10__.FontAwesomeIcon).use(wavesurfer_js_vue__WEBPACK_IMPORTED_MODULE_7__["default"]).use(floating_vue__WEBPACK_IMPORTED_MODULE_3__["default"]).use(vue3_clipboard__WEBPACK_IMPORTED_MODULE_6__["default"], {
       autoSetContainer: true,
       appendToBody: true
     }).use(vue_toastification__WEBPACK_IMPORTED_MODULE_8__["default"], toastOptions).mount(el);
@@ -36111,6 +36298,30 @@ __webpack_require__.r(__webpack_exports__);
 var ___CSS_LOADER_EXPORT___ = _css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
 ___CSS_LOADER_EXPORT___.push([module.id, ".multiselect{position:relative;margin:0 auto;width:100%;display:flex;align-items:center;justify-content:flex-end;box-sizing:border-box;cursor:pointer;outline:none;border:var(--ms-border-width,1px) solid var(--ms-border-color,#d1d5db);border-radius:var(--ms-radius,4px);background:var(--ms-bg,#fff);font-size:var(--ms-font-size,1rem);min-height:calc(var(--ms-border-width, 1px)*2 + var(--ms-font-size, 1rem)*var(--ms-line-height, 1.375) + var(--ms-py, .5rem)*2)}.multiselect.is-open{border-radius:var(--ms-radius,4px) var(--ms-radius,4px) 0 0}.multiselect.is-open-top{border-radius:0 0 var(--ms-radius,4px) var(--ms-radius,4px)}.multiselect.is-disabled{cursor:default;background:var(--ms-bg-disabled,#f3f4f6)}.multiselect.is-active{box-shadow:0 0 0 var(--ms-ring-width,3px) var(--ms-ring-color,rgba(16,185,129,.18823529411764706))}.multiselect-multiple-label,.multiselect-placeholder,.multiselect-single-label{display:flex;align-items:center;height:100%;position:absolute;left:0;top:0;pointer-events:none;background:transparent;line-height:var(--ms-line-height,1.375);padding-left:var(--ms-px,.875rem);padding-right:calc(1.25rem + var(--ms-px, .875rem)*3);box-sizing:border-box;max-width:100%}.multiselect-placeholder{color:var(--ms-placeholder-color,#9ca3af)}.multiselect-single-label-text{overflow:hidden;display:block;white-space:nowrap;text-overflow:ellipsis;max-width:100%}.multiselect-search{width:100%;position:absolute;top:0;bottom:0;left:0;right:0;outline:none;box-sizing:border-box;border:0;-webkit-appearance:none;-moz-appearance:none;appearance:none;font-size:inherit;font-family:inherit;background:var(--ms-bg,#fff);border-radius:var(--ms-radius,4px);padding-left:var(--ms-px,.875rem)}.multiselect-search::-webkit-search-cancel-button,.multiselect-search::-webkit-search-decoration,.multiselect-search::-webkit-search-results-button,.multiselect-search::-webkit-search-results-decoration{-webkit-appearance:none}.multiselect-tags{flex-grow:1;flex-shrink:1;display:flex;flex-wrap:wrap;margin:var(--ms-tag-my,.25rem) 0 0;padding-left:var(--ms-py,.5rem);align-items:center}.multiselect-tag{background:var(--ms-tag-bg,#10b981);color:var(--ms-tag-color,#fff);font-size:var(--ms-tag-font-size,.875rem);line-height:var(--ms-tag-line-height,1.25rem);font-weight:var(--ms-tag-font-weight,600);padding:var(--ms-tag-py,.125rem) 0 var(--ms-tag-py,.125rem) var(--ms-tag-px,.5rem);border-radius:var(--ms-tag-radius,4px);margin-right:var(--ms-tag-mx,.25rem);margin-bottom:var(--ms-tag-my,.25rem);display:flex;align-items:center;white-space:nowrap}.multiselect-tag.is-disabled{padding-right:var(--ms-tag-px,.5rem);background:var(--ms-tag-bg-disabled,#9ca3af);color:var(--ms-tag-color-disabled,#fff)}.multiselect-tag-remove{display:flex;align-items:center;justify-content:center;padding:var(--ms-tag-remove-py,.25rem) var(--ms-tag-remove-px,.25rem);margin:var(--ms-tag-remove-my,0) var(--ms-tag-remove-mx,.125rem);border-radius:var(--ms-tag-remove-radius,4px)}.multiselect-tag-remove:hover{background:rgba(0,0,0,.06274509803921569)}.multiselect-tag-remove-icon{-webkit-mask-image:url(\"data:image/svg+xml;charset=utf-8,%3Csvg viewBox='0 0 320 512' fill='currentColor' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M207.6 256l107.72-107.72c6.23-6.23 6.23-16.34 0-22.58l-25.03-25.03c-6.23-6.23-16.34-6.23-22.58 0L160 208.4 52.28 100.68c-6.23-6.23-16.34-6.23-22.58 0L4.68 125.7c-6.23 6.23-6.23 16.34 0 22.58L112.4 256 4.68 363.72c-6.23 6.23-6.23 16.34 0 22.58l25.03 25.03c6.23 6.23 16.34 6.23 22.58 0L160 303.6l107.72 107.72c6.23 6.23 16.34 6.23 22.58 0l25.03-25.03c6.23-6.23 6.23-16.34 0-22.58L207.6 256z'/%3E%3C/svg%3E\");mask-image:url(\"data:image/svg+xml;charset=utf-8,%3Csvg viewBox='0 0 320 512' fill='currentColor' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M207.6 256l107.72-107.72c6.23-6.23 6.23-16.34 0-22.58l-25.03-25.03c-6.23-6.23-16.34-6.23-22.58 0L160 208.4 52.28 100.68c-6.23-6.23-16.34-6.23-22.58 0L4.68 125.7c-6.23 6.23-6.23 16.34 0 22.58L112.4 256 4.68 363.72c-6.23 6.23-6.23 16.34 0 22.58l25.03 25.03c6.23 6.23 16.34 6.23 22.58 0L160 303.6l107.72 107.72c6.23 6.23 16.34 6.23 22.58 0l25.03-25.03c6.23-6.23 6.23-16.34 0-22.58L207.6 256z'/%3E%3C/svg%3E\");-webkit-mask-position:center;mask-position:center;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;-webkit-mask-size:contain;mask-size:contain;background-color:currentColor;opacity:.8;display:inline-block;width:.75rem;height:.75rem}.multiselect-tags-search-wrapper{display:inline-block;position:relative;margin:0 var(--ms-tag-mx,4px) var(--ms-tag-my,4px);flex-grow:1;flex-shrink:1;height:100%}.multiselect-tags-search-copy{visibility:hidden;white-space:pre-wrap;display:inline-block;height:1px;width:100%}.multiselect-tags-search{position:absolute;left:0;right:0;top:0;bottom:0;border:0;-webkit-appearance:none;-moz-appearance:none;outline:none;padding:0;font-size:inherit;font-family:inherit;box-sizing:border-box;width:100%;appearance:none}.multiselect-tags-search::-webkit-search-cancel-button,.multiselect-tags-search::-webkit-search-decoration,.multiselect-tags-search::-webkit-search-results-button,.multiselect-tags-search::-webkit-search-results-decoration{-webkit-appearance:none}.multiselect-spinner{-webkit-mask-image:url(\"data:image/svg+xml;charset=utf-8,%3Csvg viewBox='0 0 512 512' fill='currentColor' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M456.433 371.72l-27.79-16.045c-7.192-4.152-10.052-13.136-6.487-20.636 25.82-54.328 23.566-118.602-6.768-171.03-30.265-52.529-84.802-86.621-144.76-91.424C262.35 71.922 256 64.953 256 56.649V24.56c0-9.31 7.916-16.609 17.204-15.96 81.795 5.717 156.412 51.902 197.611 123.408 41.301 71.385 43.99 159.096 8.042 232.792-4.082 8.369-14.361 11.575-22.424 6.92z'/%3E%3C/svg%3E\");mask-image:url(\"data:image/svg+xml;charset=utf-8,%3Csvg viewBox='0 0 512 512' fill='currentColor' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M456.433 371.72l-27.79-16.045c-7.192-4.152-10.052-13.136-6.487-20.636 25.82-54.328 23.566-118.602-6.768-171.03-30.265-52.529-84.802-86.621-144.76-91.424C262.35 71.922 256 64.953 256 56.649V24.56c0-9.31 7.916-16.609 17.204-15.96 81.795 5.717 156.412 51.902 197.611 123.408 41.301 71.385 43.99 159.096 8.042 232.792-4.082 8.369-14.361 11.575-22.424 6.92z'/%3E%3C/svg%3E\");-webkit-mask-position:center;mask-position:center;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;-webkit-mask-size:contain;mask-size:contain;background-color:var(--ms-spinner-color,#10b981);width:1rem;height:1rem;z-index:10;margin:0 var(--ms-px,.875rem) 0 0;-webkit-animation:multiselect-spin 1s linear infinite;animation:multiselect-spin 1s linear infinite;flex-shrink:0;flex-grow:0}.multiselect-clear{padding:0 var(--ms-px,.875rem) 0 0;position:relative;z-index:10;opacity:1;transition:.3s;flex-shrink:0;flex-grow:0;display:flex}.multiselect-clear:hover .multiselect-clear-icon{background-color:var(--ms-clear-color-hover,#000)}.multiselect-clear-icon{-webkit-mask-image:url(\"data:image/svg+xml;charset=utf-8,%3Csvg viewBox='0 0 320 512' fill='currentColor' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M207.6 256l107.72-107.72c6.23-6.23 6.23-16.34 0-22.58l-25.03-25.03c-6.23-6.23-16.34-6.23-22.58 0L160 208.4 52.28 100.68c-6.23-6.23-16.34-6.23-22.58 0L4.68 125.7c-6.23 6.23-6.23 16.34 0 22.58L112.4 256 4.68 363.72c-6.23 6.23-6.23 16.34 0 22.58l25.03 25.03c6.23 6.23 16.34 6.23 22.58 0L160 303.6l107.72 107.72c6.23 6.23 16.34 6.23 22.58 0l25.03-25.03c6.23-6.23 6.23-16.34 0-22.58L207.6 256z'/%3E%3C/svg%3E\");mask-image:url(\"data:image/svg+xml;charset=utf-8,%3Csvg viewBox='0 0 320 512' fill='currentColor' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M207.6 256l107.72-107.72c6.23-6.23 6.23-16.34 0-22.58l-25.03-25.03c-6.23-6.23-16.34-6.23-22.58 0L160 208.4 52.28 100.68c-6.23-6.23-16.34-6.23-22.58 0L4.68 125.7c-6.23 6.23-6.23 16.34 0 22.58L112.4 256 4.68 363.72c-6.23 6.23-6.23 16.34 0 22.58l25.03 25.03c6.23 6.23 16.34 6.23 22.58 0L160 303.6l107.72 107.72c6.23 6.23 16.34 6.23 22.58 0l25.03-25.03c6.23-6.23 6.23-16.34 0-22.58L207.6 256z'/%3E%3C/svg%3E\");background-color:var(--ms-clear-color,#999);display:inline-block;transition:.3s}.multiselect-caret,.multiselect-clear-icon{-webkit-mask-position:center;mask-position:center;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;-webkit-mask-size:contain;mask-size:contain;width:.625rem;height:1.125rem}.multiselect-caret{transform:rotate(0deg);transition:transform .3s;-webkit-mask-image:url(\"data:image/svg+xml;charset=utf-8,%3Csvg viewBox='0 0 320 512' fill='currentColor' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M31.3 192h257.3c17.8 0 26.7 21.5 14.1 34.1L174.1 354.8c-7.8 7.8-20.5 7.8-28.3 0L17.2 226.1C4.6 213.5 13.5 192 31.3 192z'/%3E%3C/svg%3E\");mask-image:url(\"data:image/svg+xml;charset=utf-8,%3Csvg viewBox='0 0 320 512' fill='currentColor' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M31.3 192h257.3c17.8 0 26.7 21.5 14.1 34.1L174.1 354.8c-7.8 7.8-20.5 7.8-28.3 0L17.2 226.1C4.6 213.5 13.5 192 31.3 192z'/%3E%3C/svg%3E\");background-color:var(--ms-caret-color,#999);margin:0 var(--ms-px,.875rem) 0 0;position:relative;z-index:10;flex-shrink:0;flex-grow:0;pointer-events:none}.multiselect-caret.is-open{transform:rotate(180deg);pointer-events:auto}.multiselect-dropdown{position:absolute;left:calc(var(--ms-border-width, 1px)*-1);right:calc(var(--ms-border-width, 1px)*-1);bottom:0;transform:translateY(100%);border:var(--ms-dropdown-border-width,1px) solid var(--ms-dropdown-border-color,#d1d5db);margin-top:calc(var(--ms-border-width, 1px)*-1);max-height:15rem;overflow-y:scroll;-webkit-overflow-scrolling:touch;z-index:100;background:var(--ms-dropdown-bg,#fff);display:flex;flex-direction:column;border-radius:0 0 var(--ms-dropdown-radius,4px) var(--ms-dropdown-radius,4px);outline:none}.multiselect-dropdown.is-top{transform:translateY(-100%);top:var(--ms-border-width,1px);bottom:auto;flex-direction:column-reverse;border-radius:var(--ms-dropdown-radius,4px) var(--ms-dropdown-radius,4px) 0 0}.multiselect-dropdown.is-hidden{display:none}.multiselect-options{padding:0;margin:0;list-style:none;display:flex;flex-direction:column;max-height:var(--ms-max-height,10rem)}.multiselect-options.is-top{flex-direction:column-reverse}.multiselect-group{padding:0;margin:0;@apply p-0 m-0}.multiselect-group-label{padding:var(--ms-group-label-py,.3rem) var(--ms-group-label-px,.75rem);font-size:.875rem;font-weight:600;background:var(--ms-group-label-bg,#e5e7eb);color:var(--ms-group-label-color,#374151);cursor:default;line-height:var(--ms-group-label-line-height,1.375);display:flex;box-sizing:border-box;text-decoration:none;align-items:center;justify-content:flex-start;text-align:left}.multiselect-group-label.is-pointable{cursor:pointer}.multiselect-group-label.is-pointed{background:var(--ms-group-label-bg-pointed,#d1d5db);color:var(--ms-group-label-color-pointed,#374151)}.multiselect-group-label.is-selected{background:var(--ms-group-label-bg-selected,#059669);color:var(--ms-group-label-color-selected,#fff)}.multiselect-group-label.is-disabled{background:var(--ms-group-label-bg-disabled,#f3f4f6);color:var(--ms-group-label-color-disabled,#d1d5db);cursor:not-allowed}.multiselect-group-label.is-selected.is-pointed{background:var(--ms-group-label-bg-selected-pointed,#0c9e70);color:var(--ms-group-label-color-selected-pointed,#fff)}.multiselect-group-label.is-selected.is-disabled{background:var(--ms-group-label-bg-selected-disabled,#75cfb1);color:var(--ms-group-label-color-selected-disabled,#d1fae5)}.multiselect-group-options{padding:0;margin:0}.multiselect-option{padding:var(--ms-option-py,.5rem) var(--ms-option-px,.75rem);font-size:var(--ms-option-font-size,1rem);line-height:var(--ms-option-line-height,1.375);cursor:pointer;display:flex;box-sizing:border-box;text-decoration:none;align-items:center;justify-content:flex-start;text-align:left}.multiselect-option.is-pointed{background:var(--ms-option-bg-pointed,#f3f4f6);color:var(--ms-option-color-pointed,#1f2937)}.multiselect-option.is-selected{background:var(--ms-option-bg-selected,#10b981);color:var(--ms-option-color-selected,#fff)}.multiselect-option.is-disabled{background:var(--ms-option-bg-disabled,#fff);color:var(--ms-option-color-disabled,#d1d5db);cursor:not-allowed}.multiselect-option.is-selected.is-pointed{background:var(--ms-option-bg-selected-pointed,#26c08e);color:var(--ms-option-color-selected-pointed,#fff)}.multiselect-option.is-selected.is-disabled{background:var(--ms-option-bg-selected-disabled,#87dcc0);color:var(--ms-option-color-selected-disabled,#d1fae5)}.multiselect-no-options,.multiselect-no-results{padding:var(--ms-option-py,.5rem) var(--ms-option-px,.75rem);color:var(--ms-empty-color,#4b5563)}.multiselect-fake-input{background:transparent;position:absolute;left:0;right:0;bottom:-1px;width:100%;height:1px;border:0;padding:0;font-size:0;outline:none}.multiselect-fake-input:active,.multiselect-fake-input:focus{outline:none}.multiselect-spacer{display:none}@-webkit-keyframes multiselect-spin{0%{transform:rotate(0)}to{transform:rotate(1turn)}}@keyframes multiselect-spin{0%{transform:rotate(0)}to{transform:rotate(1turn)}}", ""]);
+// Exports
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
+
+
+/***/ }),
+
+/***/ "./node_modules/css-loader/dist/cjs.js??clonedRuleSet-9.use[1]!./node_modules/vue-loader/dist/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-9.use[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./node_modules/wavesurfer.js-vue/src/WaveSurferVue.vue?vue&type=style&index=0&id=729be26d&lang=css&scoped=true":
+/*!*******************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/css-loader/dist/cjs.js??clonedRuleSet-9.use[1]!./node_modules/vue-loader/dist/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-9.use[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./node_modules/wavesurfer.js-vue/src/WaveSurferVue.vue?vue&type=style&index=0&id=729be26d&lang=css&scoped=true ***!
+  \*******************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+/***/ ((module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js");
+/* harmony import */ var _css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0__);
+// Imports
+
+var ___CSS_LOADER_EXPORT___ = _css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
+// Module
+___CSS_LOADER_EXPORT___.push([module.id, "\ndiv[data-v-729be26d] {\n  position: relative;\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -61719,6 +61930,36 @@ var update = _style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMP
 
 /***/ }),
 
+/***/ "./node_modules/style-loader/dist/cjs.js!./node_modules/css-loader/dist/cjs.js??clonedRuleSet-9.use[1]!./node_modules/vue-loader/dist/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-9.use[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./node_modules/wavesurfer.js-vue/src/WaveSurferVue.vue?vue&type=style&index=0&id=729be26d&lang=css&scoped=true":
+/*!***********************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/style-loader/dist/cjs.js!./node_modules/css-loader/dist/cjs.js??clonedRuleSet-9.use[1]!./node_modules/vue-loader/dist/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-9.use[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./node_modules/wavesurfer.js-vue/src/WaveSurferVue.vue?vue&type=style&index=0&id=729be26d&lang=css&scoped=true ***!
+  \***********************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! !../../style-loader/dist/runtime/injectStylesIntoStyleTag.js */ "./node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js");
+/* harmony import */ var _style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _css_loader_dist_cjs_js_clonedRuleSet_9_use_1_vue_loader_dist_stylePostLoader_js_postcss_loader_dist_cjs_js_clonedRuleSet_9_use_2_vue_loader_dist_index_js_ruleSet_0_use_0_WaveSurferVue_vue_vue_type_style_index_0_id_729be26d_lang_css_scoped_true__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! !!../../css-loader/dist/cjs.js??clonedRuleSet-9.use[1]!../../vue-loader/dist/stylePostLoader.js!../../postcss-loader/dist/cjs.js??clonedRuleSet-9.use[2]!../../vue-loader/dist/index.js??ruleSet[0].use[0]!./WaveSurferVue.vue?vue&type=style&index=0&id=729be26d&lang=css&scoped=true */ "./node_modules/css-loader/dist/cjs.js??clonedRuleSet-9.use[1]!./node_modules/vue-loader/dist/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-9.use[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./node_modules/wavesurfer.js-vue/src/WaveSurferVue.vue?vue&type=style&index=0&id=729be26d&lang=css&scoped=true");
+
+            
+
+var options = {};
+
+options.insert = "head";
+options.singleton = false;
+
+var update = _style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default()(_css_loader_dist_cjs_js_clonedRuleSet_9_use_1_vue_loader_dist_stylePostLoader_js_postcss_loader_dist_cjs_js_clonedRuleSet_9_use_2_vue_loader_dist_index_js_ruleSet_0_use_0_WaveSurferVue_vue_vue_type_style_index_0_id_729be26d_lang_css_scoped_true__WEBPACK_IMPORTED_MODULE_1__["default"], options);
+
+
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_css_loader_dist_cjs_js_clonedRuleSet_9_use_1_vue_loader_dist_stylePostLoader_js_postcss_loader_dist_cjs_js_clonedRuleSet_9_use_2_vue_loader_dist_index_js_ruleSet_0_use_0_WaveSurferVue_vue_vue_type_style_index_0_id_729be26d_lang_css_scoped_true__WEBPACK_IMPORTED_MODULE_1__["default"].locals || {});
+
+/***/ }),
+
 /***/ "./node_modules/style-loader/dist/cjs.js!./node_modules/css-loader/dist/cjs.js??clonedRuleSet-9.use[1]!./node_modules/vue-loader/dist/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-9.use[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/Pages/Welcome.vue?vue&type=style&index=0&id=317d1a6e&scoped=true&lang=css":
 /*!*************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
   !*** ./node_modules/style-loader/dist/cjs.js!./node_modules/css-loader/dist/cjs.js??clonedRuleSet-9.use[1]!./node_modules/vue-loader/dist/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-9.use[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/Pages/Welcome.vue?vue&type=style&index=0&id=317d1a6e&scoped=true&lang=css ***!
@@ -62028,3930 +62269,6 @@ module.exports = function (list, options) {
 
 /***/ }),
 
-/***/ "./node_modules/vue-audio-visual/node_modules/axios/index.js":
-/*!*******************************************************************!*\
-  !*** ./node_modules/vue-audio-visual/node_modules/axios/index.js ***!
-  \*******************************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-module.exports = __webpack_require__(/*! ./lib/axios */ "./node_modules/vue-audio-visual/node_modules/axios/lib/axios.js");
-
-/***/ }),
-
-/***/ "./node_modules/vue-audio-visual/node_modules/axios/lib/adapters/xhr.js":
-/*!******************************************************************************!*\
-  !*** ./node_modules/vue-audio-visual/node_modules/axios/lib/adapters/xhr.js ***!
-  \******************************************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-
-
-var utils = __webpack_require__(/*! ./../utils */ "./node_modules/vue-audio-visual/node_modules/axios/lib/utils.js");
-var settle = __webpack_require__(/*! ./../core/settle */ "./node_modules/vue-audio-visual/node_modules/axios/lib/core/settle.js");
-var cookies = __webpack_require__(/*! ./../helpers/cookies */ "./node_modules/vue-audio-visual/node_modules/axios/lib/helpers/cookies.js");
-var buildURL = __webpack_require__(/*! ./../helpers/buildURL */ "./node_modules/vue-audio-visual/node_modules/axios/lib/helpers/buildURL.js");
-var buildFullPath = __webpack_require__(/*! ../core/buildFullPath */ "./node_modules/vue-audio-visual/node_modules/axios/lib/core/buildFullPath.js");
-var parseHeaders = __webpack_require__(/*! ./../helpers/parseHeaders */ "./node_modules/vue-audio-visual/node_modules/axios/lib/helpers/parseHeaders.js");
-var isURLSameOrigin = __webpack_require__(/*! ./../helpers/isURLSameOrigin */ "./node_modules/vue-audio-visual/node_modules/axios/lib/helpers/isURLSameOrigin.js");
-var createError = __webpack_require__(/*! ../core/createError */ "./node_modules/vue-audio-visual/node_modules/axios/lib/core/createError.js");
-var defaults = __webpack_require__(/*! ../defaults */ "./node_modules/vue-audio-visual/node_modules/axios/lib/defaults.js");
-var Cancel = __webpack_require__(/*! ../cancel/Cancel */ "./node_modules/vue-audio-visual/node_modules/axios/lib/cancel/Cancel.js");
-
-module.exports = function xhrAdapter(config) {
-  return new Promise(function dispatchXhrRequest(resolve, reject) {
-    var requestData = config.data;
-    var requestHeaders = config.headers;
-    var responseType = config.responseType;
-    var onCanceled;
-    function done() {
-      if (config.cancelToken) {
-        config.cancelToken.unsubscribe(onCanceled);
-      }
-
-      if (config.signal) {
-        config.signal.removeEventListener('abort', onCanceled);
-      }
-    }
-
-    if (utils.isFormData(requestData)) {
-      delete requestHeaders['Content-Type']; // Let the browser set it
-    }
-
-    var request = new XMLHttpRequest();
-
-    // HTTP basic authentication
-    if (config.auth) {
-      var username = config.auth.username || '';
-      var password = config.auth.password ? unescape(encodeURIComponent(config.auth.password)) : '';
-      requestHeaders.Authorization = 'Basic ' + btoa(username + ':' + password);
-    }
-
-    var fullPath = buildFullPath(config.baseURL, config.url);
-    request.open(config.method.toUpperCase(), buildURL(fullPath, config.params, config.paramsSerializer), true);
-
-    // Set the request timeout in MS
-    request.timeout = config.timeout;
-
-    function onloadend() {
-      if (!request) {
-        return;
-      }
-      // Prepare the response
-      var responseHeaders = 'getAllResponseHeaders' in request ? parseHeaders(request.getAllResponseHeaders()) : null;
-      var responseData = !responseType || responseType === 'text' ||  responseType === 'json' ?
-        request.responseText : request.response;
-      var response = {
-        data: responseData,
-        status: request.status,
-        statusText: request.statusText,
-        headers: responseHeaders,
-        config: config,
-        request: request
-      };
-
-      settle(function _resolve(value) {
-        resolve(value);
-        done();
-      }, function _reject(err) {
-        reject(err);
-        done();
-      }, response);
-
-      // Clean up request
-      request = null;
-    }
-
-    if ('onloadend' in request) {
-      // Use onloadend if available
-      request.onloadend = onloadend;
-    } else {
-      // Listen for ready state to emulate onloadend
-      request.onreadystatechange = function handleLoad() {
-        if (!request || request.readyState !== 4) {
-          return;
-        }
-
-        // The request errored out and we didn't get a response, this will be
-        // handled by onerror instead
-        // With one exception: request that using file: protocol, most browsers
-        // will return status as 0 even though it's a successful request
-        if (request.status === 0 && !(request.responseURL && request.responseURL.indexOf('file:') === 0)) {
-          return;
-        }
-        // readystate handler is calling before onerror or ontimeout handlers,
-        // so we should call onloadend on the next 'tick'
-        setTimeout(onloadend);
-      };
-    }
-
-    // Handle browser request cancellation (as opposed to a manual cancellation)
-    request.onabort = function handleAbort() {
-      if (!request) {
-        return;
-      }
-
-      reject(createError('Request aborted', config, 'ECONNABORTED', request));
-
-      // Clean up request
-      request = null;
-    };
-
-    // Handle low level network errors
-    request.onerror = function handleError() {
-      // Real errors are hidden from us by the browser
-      // onerror should only fire if it's a network error
-      reject(createError('Network Error', config, null, request));
-
-      // Clean up request
-      request = null;
-    };
-
-    // Handle timeout
-    request.ontimeout = function handleTimeout() {
-      var timeoutErrorMessage = config.timeout ? 'timeout of ' + config.timeout + 'ms exceeded' : 'timeout exceeded';
-      var transitional = config.transitional || defaults.transitional;
-      if (config.timeoutErrorMessage) {
-        timeoutErrorMessage = config.timeoutErrorMessage;
-      }
-      reject(createError(
-        timeoutErrorMessage,
-        config,
-        transitional.clarifyTimeoutError ? 'ETIMEDOUT' : 'ECONNABORTED',
-        request));
-
-      // Clean up request
-      request = null;
-    };
-
-    // Add xsrf header
-    // This is only done if running in a standard browser environment.
-    // Specifically not if we're in a web worker, or react-native.
-    if (utils.isStandardBrowserEnv()) {
-      // Add xsrf header
-      var xsrfValue = (config.withCredentials || isURLSameOrigin(fullPath)) && config.xsrfCookieName ?
-        cookies.read(config.xsrfCookieName) :
-        undefined;
-
-      if (xsrfValue) {
-        requestHeaders[config.xsrfHeaderName] = xsrfValue;
-      }
-    }
-
-    // Add headers to the request
-    if ('setRequestHeader' in request) {
-      utils.forEach(requestHeaders, function setRequestHeader(val, key) {
-        if (typeof requestData === 'undefined' && key.toLowerCase() === 'content-type') {
-          // Remove Content-Type if data is undefined
-          delete requestHeaders[key];
-        } else {
-          // Otherwise add header to the request
-          request.setRequestHeader(key, val);
-        }
-      });
-    }
-
-    // Add withCredentials to request if needed
-    if (!utils.isUndefined(config.withCredentials)) {
-      request.withCredentials = !!config.withCredentials;
-    }
-
-    // Add responseType to request if needed
-    if (responseType && responseType !== 'json') {
-      request.responseType = config.responseType;
-    }
-
-    // Handle progress if needed
-    if (typeof config.onDownloadProgress === 'function') {
-      request.addEventListener('progress', config.onDownloadProgress);
-    }
-
-    // Not all browsers support upload events
-    if (typeof config.onUploadProgress === 'function' && request.upload) {
-      request.upload.addEventListener('progress', config.onUploadProgress);
-    }
-
-    if (config.cancelToken || config.signal) {
-      // Handle cancellation
-      // eslint-disable-next-line func-names
-      onCanceled = function(cancel) {
-        if (!request) {
-          return;
-        }
-        reject(!cancel || (cancel && cancel.type) ? new Cancel('canceled') : cancel);
-        request.abort();
-        request = null;
-      };
-
-      config.cancelToken && config.cancelToken.subscribe(onCanceled);
-      if (config.signal) {
-        config.signal.aborted ? onCanceled() : config.signal.addEventListener('abort', onCanceled);
-      }
-    }
-
-    if (!requestData) {
-      requestData = null;
-    }
-
-    // Send the request
-    request.send(requestData);
-  });
-};
-
-
-/***/ }),
-
-/***/ "./node_modules/vue-audio-visual/node_modules/axios/lib/axios.js":
-/*!***********************************************************************!*\
-  !*** ./node_modules/vue-audio-visual/node_modules/axios/lib/axios.js ***!
-  \***********************************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-
-
-var utils = __webpack_require__(/*! ./utils */ "./node_modules/vue-audio-visual/node_modules/axios/lib/utils.js");
-var bind = __webpack_require__(/*! ./helpers/bind */ "./node_modules/vue-audio-visual/node_modules/axios/lib/helpers/bind.js");
-var Axios = __webpack_require__(/*! ./core/Axios */ "./node_modules/vue-audio-visual/node_modules/axios/lib/core/Axios.js");
-var mergeConfig = __webpack_require__(/*! ./core/mergeConfig */ "./node_modules/vue-audio-visual/node_modules/axios/lib/core/mergeConfig.js");
-var defaults = __webpack_require__(/*! ./defaults */ "./node_modules/vue-audio-visual/node_modules/axios/lib/defaults.js");
-
-/**
- * Create an instance of Axios
- *
- * @param {Object} defaultConfig The default config for the instance
- * @return {Axios} A new instance of Axios
- */
-function createInstance(defaultConfig) {
-  var context = new Axios(defaultConfig);
-  var instance = bind(Axios.prototype.request, context);
-
-  // Copy axios.prototype to instance
-  utils.extend(instance, Axios.prototype, context);
-
-  // Copy context to instance
-  utils.extend(instance, context);
-
-  // Factory for creating new instances
-  instance.create = function create(instanceConfig) {
-    return createInstance(mergeConfig(defaultConfig, instanceConfig));
-  };
-
-  return instance;
-}
-
-// Create the default instance to be exported
-var axios = createInstance(defaults);
-
-// Expose Axios class to allow class inheritance
-axios.Axios = Axios;
-
-// Expose Cancel & CancelToken
-axios.Cancel = __webpack_require__(/*! ./cancel/Cancel */ "./node_modules/vue-audio-visual/node_modules/axios/lib/cancel/Cancel.js");
-axios.CancelToken = __webpack_require__(/*! ./cancel/CancelToken */ "./node_modules/vue-audio-visual/node_modules/axios/lib/cancel/CancelToken.js");
-axios.isCancel = __webpack_require__(/*! ./cancel/isCancel */ "./node_modules/vue-audio-visual/node_modules/axios/lib/cancel/isCancel.js");
-axios.VERSION = (__webpack_require__(/*! ./env/data */ "./node_modules/vue-audio-visual/node_modules/axios/lib/env/data.js").version);
-
-// Expose all/spread
-axios.all = function all(promises) {
-  return Promise.all(promises);
-};
-axios.spread = __webpack_require__(/*! ./helpers/spread */ "./node_modules/vue-audio-visual/node_modules/axios/lib/helpers/spread.js");
-
-// Expose isAxiosError
-axios.isAxiosError = __webpack_require__(/*! ./helpers/isAxiosError */ "./node_modules/vue-audio-visual/node_modules/axios/lib/helpers/isAxiosError.js");
-
-module.exports = axios;
-
-// Allow use of default import syntax in TypeScript
-module.exports["default"] = axios;
-
-
-/***/ }),
-
-/***/ "./node_modules/vue-audio-visual/node_modules/axios/lib/cancel/Cancel.js":
-/*!*******************************************************************************!*\
-  !*** ./node_modules/vue-audio-visual/node_modules/axios/lib/cancel/Cancel.js ***!
-  \*******************************************************************************/
-/***/ ((module) => {
-
-"use strict";
-
-
-/**
- * A `Cancel` is an object that is thrown when an operation is canceled.
- *
- * @class
- * @param {string=} message The message.
- */
-function Cancel(message) {
-  this.message = message;
-}
-
-Cancel.prototype.toString = function toString() {
-  return 'Cancel' + (this.message ? ': ' + this.message : '');
-};
-
-Cancel.prototype.__CANCEL__ = true;
-
-module.exports = Cancel;
-
-
-/***/ }),
-
-/***/ "./node_modules/vue-audio-visual/node_modules/axios/lib/cancel/CancelToken.js":
-/*!************************************************************************************!*\
-  !*** ./node_modules/vue-audio-visual/node_modules/axios/lib/cancel/CancelToken.js ***!
-  \************************************************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-
-
-var Cancel = __webpack_require__(/*! ./Cancel */ "./node_modules/vue-audio-visual/node_modules/axios/lib/cancel/Cancel.js");
-
-/**
- * A `CancelToken` is an object that can be used to request cancellation of an operation.
- *
- * @class
- * @param {Function} executor The executor function.
- */
-function CancelToken(executor) {
-  if (typeof executor !== 'function') {
-    throw new TypeError('executor must be a function.');
-  }
-
-  var resolvePromise;
-
-  this.promise = new Promise(function promiseExecutor(resolve) {
-    resolvePromise = resolve;
-  });
-
-  var token = this;
-
-  // eslint-disable-next-line func-names
-  this.promise.then(function(cancel) {
-    if (!token._listeners) return;
-
-    var i;
-    var l = token._listeners.length;
-
-    for (i = 0; i < l; i++) {
-      token._listeners[i](cancel);
-    }
-    token._listeners = null;
-  });
-
-  // eslint-disable-next-line func-names
-  this.promise.then = function(onfulfilled) {
-    var _resolve;
-    // eslint-disable-next-line func-names
-    var promise = new Promise(function(resolve) {
-      token.subscribe(resolve);
-      _resolve = resolve;
-    }).then(onfulfilled);
-
-    promise.cancel = function reject() {
-      token.unsubscribe(_resolve);
-    };
-
-    return promise;
-  };
-
-  executor(function cancel(message) {
-    if (token.reason) {
-      // Cancellation has already been requested
-      return;
-    }
-
-    token.reason = new Cancel(message);
-    resolvePromise(token.reason);
-  });
-}
-
-/**
- * Throws a `Cancel` if cancellation has been requested.
- */
-CancelToken.prototype.throwIfRequested = function throwIfRequested() {
-  if (this.reason) {
-    throw this.reason;
-  }
-};
-
-/**
- * Subscribe to the cancel signal
- */
-
-CancelToken.prototype.subscribe = function subscribe(listener) {
-  if (this.reason) {
-    listener(this.reason);
-    return;
-  }
-
-  if (this._listeners) {
-    this._listeners.push(listener);
-  } else {
-    this._listeners = [listener];
-  }
-};
-
-/**
- * Unsubscribe from the cancel signal
- */
-
-CancelToken.prototype.unsubscribe = function unsubscribe(listener) {
-  if (!this._listeners) {
-    return;
-  }
-  var index = this._listeners.indexOf(listener);
-  if (index !== -1) {
-    this._listeners.splice(index, 1);
-  }
-};
-
-/**
- * Returns an object that contains a new `CancelToken` and a function that, when called,
- * cancels the `CancelToken`.
- */
-CancelToken.source = function source() {
-  var cancel;
-  var token = new CancelToken(function executor(c) {
-    cancel = c;
-  });
-  return {
-    token: token,
-    cancel: cancel
-  };
-};
-
-module.exports = CancelToken;
-
-
-/***/ }),
-
-/***/ "./node_modules/vue-audio-visual/node_modules/axios/lib/cancel/isCancel.js":
-/*!*********************************************************************************!*\
-  !*** ./node_modules/vue-audio-visual/node_modules/axios/lib/cancel/isCancel.js ***!
-  \*********************************************************************************/
-/***/ ((module) => {
-
-"use strict";
-
-
-module.exports = function isCancel(value) {
-  return !!(value && value.__CANCEL__);
-};
-
-
-/***/ }),
-
-/***/ "./node_modules/vue-audio-visual/node_modules/axios/lib/core/Axios.js":
-/*!****************************************************************************!*\
-  !*** ./node_modules/vue-audio-visual/node_modules/axios/lib/core/Axios.js ***!
-  \****************************************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-
-
-var utils = __webpack_require__(/*! ./../utils */ "./node_modules/vue-audio-visual/node_modules/axios/lib/utils.js");
-var buildURL = __webpack_require__(/*! ../helpers/buildURL */ "./node_modules/vue-audio-visual/node_modules/axios/lib/helpers/buildURL.js");
-var InterceptorManager = __webpack_require__(/*! ./InterceptorManager */ "./node_modules/vue-audio-visual/node_modules/axios/lib/core/InterceptorManager.js");
-var dispatchRequest = __webpack_require__(/*! ./dispatchRequest */ "./node_modules/vue-audio-visual/node_modules/axios/lib/core/dispatchRequest.js");
-var mergeConfig = __webpack_require__(/*! ./mergeConfig */ "./node_modules/vue-audio-visual/node_modules/axios/lib/core/mergeConfig.js");
-var validator = __webpack_require__(/*! ../helpers/validator */ "./node_modules/vue-audio-visual/node_modules/axios/lib/helpers/validator.js");
-
-var validators = validator.validators;
-/**
- * Create a new instance of Axios
- *
- * @param {Object} instanceConfig The default config for the instance
- */
-function Axios(instanceConfig) {
-  this.defaults = instanceConfig;
-  this.interceptors = {
-    request: new InterceptorManager(),
-    response: new InterceptorManager()
-  };
-}
-
-/**
- * Dispatch a request
- *
- * @param {Object} config The config specific for this request (merged with this.defaults)
- */
-Axios.prototype.request = function request(config) {
-  /*eslint no-param-reassign:0*/
-  // Allow for axios('example/url'[, config]) a la fetch API
-  if (typeof config === 'string') {
-    config = arguments[1] || {};
-    config.url = arguments[0];
-  } else {
-    config = config || {};
-  }
-
-  config = mergeConfig(this.defaults, config);
-
-  // Set config.method
-  if (config.method) {
-    config.method = config.method.toLowerCase();
-  } else if (this.defaults.method) {
-    config.method = this.defaults.method.toLowerCase();
-  } else {
-    config.method = 'get';
-  }
-
-  var transitional = config.transitional;
-
-  if (transitional !== undefined) {
-    validator.assertOptions(transitional, {
-      silentJSONParsing: validators.transitional(validators.boolean),
-      forcedJSONParsing: validators.transitional(validators.boolean),
-      clarifyTimeoutError: validators.transitional(validators.boolean)
-    }, false);
-  }
-
-  // filter out skipped interceptors
-  var requestInterceptorChain = [];
-  var synchronousRequestInterceptors = true;
-  this.interceptors.request.forEach(function unshiftRequestInterceptors(interceptor) {
-    if (typeof interceptor.runWhen === 'function' && interceptor.runWhen(config) === false) {
-      return;
-    }
-
-    synchronousRequestInterceptors = synchronousRequestInterceptors && interceptor.synchronous;
-
-    requestInterceptorChain.unshift(interceptor.fulfilled, interceptor.rejected);
-  });
-
-  var responseInterceptorChain = [];
-  this.interceptors.response.forEach(function pushResponseInterceptors(interceptor) {
-    responseInterceptorChain.push(interceptor.fulfilled, interceptor.rejected);
-  });
-
-  var promise;
-
-  if (!synchronousRequestInterceptors) {
-    var chain = [dispatchRequest, undefined];
-
-    Array.prototype.unshift.apply(chain, requestInterceptorChain);
-    chain = chain.concat(responseInterceptorChain);
-
-    promise = Promise.resolve(config);
-    while (chain.length) {
-      promise = promise.then(chain.shift(), chain.shift());
-    }
-
-    return promise;
-  }
-
-
-  var newConfig = config;
-  while (requestInterceptorChain.length) {
-    var onFulfilled = requestInterceptorChain.shift();
-    var onRejected = requestInterceptorChain.shift();
-    try {
-      newConfig = onFulfilled(newConfig);
-    } catch (error) {
-      onRejected(error);
-      break;
-    }
-  }
-
-  try {
-    promise = dispatchRequest(newConfig);
-  } catch (error) {
-    return Promise.reject(error);
-  }
-
-  while (responseInterceptorChain.length) {
-    promise = promise.then(responseInterceptorChain.shift(), responseInterceptorChain.shift());
-  }
-
-  return promise;
-};
-
-Axios.prototype.getUri = function getUri(config) {
-  config = mergeConfig(this.defaults, config);
-  return buildURL(config.url, config.params, config.paramsSerializer).replace(/^\?/, '');
-};
-
-// Provide aliases for supported request methods
-utils.forEach(['delete', 'get', 'head', 'options'], function forEachMethodNoData(method) {
-  /*eslint func-names:0*/
-  Axios.prototype[method] = function(url, config) {
-    return this.request(mergeConfig(config || {}, {
-      method: method,
-      url: url,
-      data: (config || {}).data
-    }));
-  };
-});
-
-utils.forEach(['post', 'put', 'patch'], function forEachMethodWithData(method) {
-  /*eslint func-names:0*/
-  Axios.prototype[method] = function(url, data, config) {
-    return this.request(mergeConfig(config || {}, {
-      method: method,
-      url: url,
-      data: data
-    }));
-  };
-});
-
-module.exports = Axios;
-
-
-/***/ }),
-
-/***/ "./node_modules/vue-audio-visual/node_modules/axios/lib/core/InterceptorManager.js":
-/*!*****************************************************************************************!*\
-  !*** ./node_modules/vue-audio-visual/node_modules/axios/lib/core/InterceptorManager.js ***!
-  \*****************************************************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-
-
-var utils = __webpack_require__(/*! ./../utils */ "./node_modules/vue-audio-visual/node_modules/axios/lib/utils.js");
-
-function InterceptorManager() {
-  this.handlers = [];
-}
-
-/**
- * Add a new interceptor to the stack
- *
- * @param {Function} fulfilled The function to handle `then` for a `Promise`
- * @param {Function} rejected The function to handle `reject` for a `Promise`
- *
- * @return {Number} An ID used to remove interceptor later
- */
-InterceptorManager.prototype.use = function use(fulfilled, rejected, options) {
-  this.handlers.push({
-    fulfilled: fulfilled,
-    rejected: rejected,
-    synchronous: options ? options.synchronous : false,
-    runWhen: options ? options.runWhen : null
-  });
-  return this.handlers.length - 1;
-};
-
-/**
- * Remove an interceptor from the stack
- *
- * @param {Number} id The ID that was returned by `use`
- */
-InterceptorManager.prototype.eject = function eject(id) {
-  if (this.handlers[id]) {
-    this.handlers[id] = null;
-  }
-};
-
-/**
- * Iterate over all the registered interceptors
- *
- * This method is particularly useful for skipping over any
- * interceptors that may have become `null` calling `eject`.
- *
- * @param {Function} fn The function to call for each interceptor
- */
-InterceptorManager.prototype.forEach = function forEach(fn) {
-  utils.forEach(this.handlers, function forEachHandler(h) {
-    if (h !== null) {
-      fn(h);
-    }
-  });
-};
-
-module.exports = InterceptorManager;
-
-
-/***/ }),
-
-/***/ "./node_modules/vue-audio-visual/node_modules/axios/lib/core/buildFullPath.js":
-/*!************************************************************************************!*\
-  !*** ./node_modules/vue-audio-visual/node_modules/axios/lib/core/buildFullPath.js ***!
-  \************************************************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-
-
-var isAbsoluteURL = __webpack_require__(/*! ../helpers/isAbsoluteURL */ "./node_modules/vue-audio-visual/node_modules/axios/lib/helpers/isAbsoluteURL.js");
-var combineURLs = __webpack_require__(/*! ../helpers/combineURLs */ "./node_modules/vue-audio-visual/node_modules/axios/lib/helpers/combineURLs.js");
-
-/**
- * Creates a new URL by combining the baseURL with the requestedURL,
- * only when the requestedURL is not already an absolute URL.
- * If the requestURL is absolute, this function returns the requestedURL untouched.
- *
- * @param {string} baseURL The base URL
- * @param {string} requestedURL Absolute or relative URL to combine
- * @returns {string} The combined full path
- */
-module.exports = function buildFullPath(baseURL, requestedURL) {
-  if (baseURL && !isAbsoluteURL(requestedURL)) {
-    return combineURLs(baseURL, requestedURL);
-  }
-  return requestedURL;
-};
-
-
-/***/ }),
-
-/***/ "./node_modules/vue-audio-visual/node_modules/axios/lib/core/createError.js":
-/*!**********************************************************************************!*\
-  !*** ./node_modules/vue-audio-visual/node_modules/axios/lib/core/createError.js ***!
-  \**********************************************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-
-
-var enhanceError = __webpack_require__(/*! ./enhanceError */ "./node_modules/vue-audio-visual/node_modules/axios/lib/core/enhanceError.js");
-
-/**
- * Create an Error with the specified message, config, error code, request and response.
- *
- * @param {string} message The error message.
- * @param {Object} config The config.
- * @param {string} [code] The error code (for example, 'ECONNABORTED').
- * @param {Object} [request] The request.
- * @param {Object} [response] The response.
- * @returns {Error} The created error.
- */
-module.exports = function createError(message, config, code, request, response) {
-  var error = new Error(message);
-  return enhanceError(error, config, code, request, response);
-};
-
-
-/***/ }),
-
-/***/ "./node_modules/vue-audio-visual/node_modules/axios/lib/core/dispatchRequest.js":
-/*!**************************************************************************************!*\
-  !*** ./node_modules/vue-audio-visual/node_modules/axios/lib/core/dispatchRequest.js ***!
-  \**************************************************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-
-
-var utils = __webpack_require__(/*! ./../utils */ "./node_modules/vue-audio-visual/node_modules/axios/lib/utils.js");
-var transformData = __webpack_require__(/*! ./transformData */ "./node_modules/vue-audio-visual/node_modules/axios/lib/core/transformData.js");
-var isCancel = __webpack_require__(/*! ../cancel/isCancel */ "./node_modules/vue-audio-visual/node_modules/axios/lib/cancel/isCancel.js");
-var defaults = __webpack_require__(/*! ../defaults */ "./node_modules/vue-audio-visual/node_modules/axios/lib/defaults.js");
-var Cancel = __webpack_require__(/*! ../cancel/Cancel */ "./node_modules/vue-audio-visual/node_modules/axios/lib/cancel/Cancel.js");
-
-/**
- * Throws a `Cancel` if cancellation has been requested.
- */
-function throwIfCancellationRequested(config) {
-  if (config.cancelToken) {
-    config.cancelToken.throwIfRequested();
-  }
-
-  if (config.signal && config.signal.aborted) {
-    throw new Cancel('canceled');
-  }
-}
-
-/**
- * Dispatch a request to the server using the configured adapter.
- *
- * @param {object} config The config that is to be used for the request
- * @returns {Promise} The Promise to be fulfilled
- */
-module.exports = function dispatchRequest(config) {
-  throwIfCancellationRequested(config);
-
-  // Ensure headers exist
-  config.headers = config.headers || {};
-
-  // Transform request data
-  config.data = transformData.call(
-    config,
-    config.data,
-    config.headers,
-    config.transformRequest
-  );
-
-  // Flatten headers
-  config.headers = utils.merge(
-    config.headers.common || {},
-    config.headers[config.method] || {},
-    config.headers
-  );
-
-  utils.forEach(
-    ['delete', 'get', 'head', 'post', 'put', 'patch', 'common'],
-    function cleanHeaderConfig(method) {
-      delete config.headers[method];
-    }
-  );
-
-  var adapter = config.adapter || defaults.adapter;
-
-  return adapter(config).then(function onAdapterResolution(response) {
-    throwIfCancellationRequested(config);
-
-    // Transform response data
-    response.data = transformData.call(
-      config,
-      response.data,
-      response.headers,
-      config.transformResponse
-    );
-
-    return response;
-  }, function onAdapterRejection(reason) {
-    if (!isCancel(reason)) {
-      throwIfCancellationRequested(config);
-
-      // Transform response data
-      if (reason && reason.response) {
-        reason.response.data = transformData.call(
-          config,
-          reason.response.data,
-          reason.response.headers,
-          config.transformResponse
-        );
-      }
-    }
-
-    return Promise.reject(reason);
-  });
-};
-
-
-/***/ }),
-
-/***/ "./node_modules/vue-audio-visual/node_modules/axios/lib/core/enhanceError.js":
-/*!***********************************************************************************!*\
-  !*** ./node_modules/vue-audio-visual/node_modules/axios/lib/core/enhanceError.js ***!
-  \***********************************************************************************/
-/***/ ((module) => {
-
-"use strict";
-
-
-/**
- * Update an Error with the specified config, error code, and response.
- *
- * @param {Error} error The error to update.
- * @param {Object} config The config.
- * @param {string} [code] The error code (for example, 'ECONNABORTED').
- * @param {Object} [request] The request.
- * @param {Object} [response] The response.
- * @returns {Error} The error.
- */
-module.exports = function enhanceError(error, config, code, request, response) {
-  error.config = config;
-  if (code) {
-    error.code = code;
-  }
-
-  error.request = request;
-  error.response = response;
-  error.isAxiosError = true;
-
-  error.toJSON = function toJSON() {
-    return {
-      // Standard
-      message: this.message,
-      name: this.name,
-      // Microsoft
-      description: this.description,
-      number: this.number,
-      // Mozilla
-      fileName: this.fileName,
-      lineNumber: this.lineNumber,
-      columnNumber: this.columnNumber,
-      stack: this.stack,
-      // Axios
-      config: this.config,
-      code: this.code,
-      status: this.response && this.response.status ? this.response.status : null
-    };
-  };
-  return error;
-};
-
-
-/***/ }),
-
-/***/ "./node_modules/vue-audio-visual/node_modules/axios/lib/core/mergeConfig.js":
-/*!**********************************************************************************!*\
-  !*** ./node_modules/vue-audio-visual/node_modules/axios/lib/core/mergeConfig.js ***!
-  \**********************************************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-
-
-var utils = __webpack_require__(/*! ../utils */ "./node_modules/vue-audio-visual/node_modules/axios/lib/utils.js");
-
-/**
- * Config-specific merge-function which creates a new config-object
- * by merging two configuration objects together.
- *
- * @param {Object} config1
- * @param {Object} config2
- * @returns {Object} New object resulting from merging config2 to config1
- */
-module.exports = function mergeConfig(config1, config2) {
-  // eslint-disable-next-line no-param-reassign
-  config2 = config2 || {};
-  var config = {};
-
-  function getMergedValue(target, source) {
-    if (utils.isPlainObject(target) && utils.isPlainObject(source)) {
-      return utils.merge(target, source);
-    } else if (utils.isPlainObject(source)) {
-      return utils.merge({}, source);
-    } else if (utils.isArray(source)) {
-      return source.slice();
-    }
-    return source;
-  }
-
-  // eslint-disable-next-line consistent-return
-  function mergeDeepProperties(prop) {
-    if (!utils.isUndefined(config2[prop])) {
-      return getMergedValue(config1[prop], config2[prop]);
-    } else if (!utils.isUndefined(config1[prop])) {
-      return getMergedValue(undefined, config1[prop]);
-    }
-  }
-
-  // eslint-disable-next-line consistent-return
-  function valueFromConfig2(prop) {
-    if (!utils.isUndefined(config2[prop])) {
-      return getMergedValue(undefined, config2[prop]);
-    }
-  }
-
-  // eslint-disable-next-line consistent-return
-  function defaultToConfig2(prop) {
-    if (!utils.isUndefined(config2[prop])) {
-      return getMergedValue(undefined, config2[prop]);
-    } else if (!utils.isUndefined(config1[prop])) {
-      return getMergedValue(undefined, config1[prop]);
-    }
-  }
-
-  // eslint-disable-next-line consistent-return
-  function mergeDirectKeys(prop) {
-    if (prop in config2) {
-      return getMergedValue(config1[prop], config2[prop]);
-    } else if (prop in config1) {
-      return getMergedValue(undefined, config1[prop]);
-    }
-  }
-
-  var mergeMap = {
-    'url': valueFromConfig2,
-    'method': valueFromConfig2,
-    'data': valueFromConfig2,
-    'baseURL': defaultToConfig2,
-    'transformRequest': defaultToConfig2,
-    'transformResponse': defaultToConfig2,
-    'paramsSerializer': defaultToConfig2,
-    'timeout': defaultToConfig2,
-    'timeoutMessage': defaultToConfig2,
-    'withCredentials': defaultToConfig2,
-    'adapter': defaultToConfig2,
-    'responseType': defaultToConfig2,
-    'xsrfCookieName': defaultToConfig2,
-    'xsrfHeaderName': defaultToConfig2,
-    'onUploadProgress': defaultToConfig2,
-    'onDownloadProgress': defaultToConfig2,
-    'decompress': defaultToConfig2,
-    'maxContentLength': defaultToConfig2,
-    'maxBodyLength': defaultToConfig2,
-    'transport': defaultToConfig2,
-    'httpAgent': defaultToConfig2,
-    'httpsAgent': defaultToConfig2,
-    'cancelToken': defaultToConfig2,
-    'socketPath': defaultToConfig2,
-    'responseEncoding': defaultToConfig2,
-    'validateStatus': mergeDirectKeys
-  };
-
-  utils.forEach(Object.keys(config1).concat(Object.keys(config2)), function computeConfigValue(prop) {
-    var merge = mergeMap[prop] || mergeDeepProperties;
-    var configValue = merge(prop);
-    (utils.isUndefined(configValue) && merge !== mergeDirectKeys) || (config[prop] = configValue);
-  });
-
-  return config;
-};
-
-
-/***/ }),
-
-/***/ "./node_modules/vue-audio-visual/node_modules/axios/lib/core/settle.js":
-/*!*****************************************************************************!*\
-  !*** ./node_modules/vue-audio-visual/node_modules/axios/lib/core/settle.js ***!
-  \*****************************************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-
-
-var createError = __webpack_require__(/*! ./createError */ "./node_modules/vue-audio-visual/node_modules/axios/lib/core/createError.js");
-
-/**
- * Resolve or reject a Promise based on response status.
- *
- * @param {Function} resolve A function that resolves the promise.
- * @param {Function} reject A function that rejects the promise.
- * @param {object} response The response.
- */
-module.exports = function settle(resolve, reject, response) {
-  var validateStatus = response.config.validateStatus;
-  if (!response.status || !validateStatus || validateStatus(response.status)) {
-    resolve(response);
-  } else {
-    reject(createError(
-      'Request failed with status code ' + response.status,
-      response.config,
-      null,
-      response.request,
-      response
-    ));
-  }
-};
-
-
-/***/ }),
-
-/***/ "./node_modules/vue-audio-visual/node_modules/axios/lib/core/transformData.js":
-/*!************************************************************************************!*\
-  !*** ./node_modules/vue-audio-visual/node_modules/axios/lib/core/transformData.js ***!
-  \************************************************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-
-
-var utils = __webpack_require__(/*! ./../utils */ "./node_modules/vue-audio-visual/node_modules/axios/lib/utils.js");
-var defaults = __webpack_require__(/*! ./../defaults */ "./node_modules/vue-audio-visual/node_modules/axios/lib/defaults.js");
-
-/**
- * Transform the data for a request or a response
- *
- * @param {Object|String} data The data to be transformed
- * @param {Array} headers The headers for the request or response
- * @param {Array|Function} fns A single function or Array of functions
- * @returns {*} The resulting transformed data
- */
-module.exports = function transformData(data, headers, fns) {
-  var context = this || defaults;
-  /*eslint no-param-reassign:0*/
-  utils.forEach(fns, function transform(fn) {
-    data = fn.call(context, data, headers);
-  });
-
-  return data;
-};
-
-
-/***/ }),
-
-/***/ "./node_modules/vue-audio-visual/node_modules/axios/lib/defaults.js":
-/*!**************************************************************************!*\
-  !*** ./node_modules/vue-audio-visual/node_modules/axios/lib/defaults.js ***!
-  \**************************************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-/* provided dependency */ var process = __webpack_require__(/*! process/browser.js */ "./node_modules/process/browser.js");
-
-
-var utils = __webpack_require__(/*! ./utils */ "./node_modules/vue-audio-visual/node_modules/axios/lib/utils.js");
-var normalizeHeaderName = __webpack_require__(/*! ./helpers/normalizeHeaderName */ "./node_modules/vue-audio-visual/node_modules/axios/lib/helpers/normalizeHeaderName.js");
-var enhanceError = __webpack_require__(/*! ./core/enhanceError */ "./node_modules/vue-audio-visual/node_modules/axios/lib/core/enhanceError.js");
-
-var DEFAULT_CONTENT_TYPE = {
-  'Content-Type': 'application/x-www-form-urlencoded'
-};
-
-function setContentTypeIfUnset(headers, value) {
-  if (!utils.isUndefined(headers) && utils.isUndefined(headers['Content-Type'])) {
-    headers['Content-Type'] = value;
-  }
-}
-
-function getDefaultAdapter() {
-  var adapter;
-  if (typeof XMLHttpRequest !== 'undefined') {
-    // For browsers use XHR adapter
-    adapter = __webpack_require__(/*! ./adapters/xhr */ "./node_modules/vue-audio-visual/node_modules/axios/lib/adapters/xhr.js");
-  } else if (typeof process !== 'undefined' && Object.prototype.toString.call(process) === '[object process]') {
-    // For node use HTTP adapter
-    adapter = __webpack_require__(/*! ./adapters/http */ "./node_modules/vue-audio-visual/node_modules/axios/lib/adapters/xhr.js");
-  }
-  return adapter;
-}
-
-function stringifySafely(rawValue, parser, encoder) {
-  if (utils.isString(rawValue)) {
-    try {
-      (parser || JSON.parse)(rawValue);
-      return utils.trim(rawValue);
-    } catch (e) {
-      if (e.name !== 'SyntaxError') {
-        throw e;
-      }
-    }
-  }
-
-  return (encoder || JSON.stringify)(rawValue);
-}
-
-var defaults = {
-
-  transitional: {
-    silentJSONParsing: true,
-    forcedJSONParsing: true,
-    clarifyTimeoutError: false
-  },
-
-  adapter: getDefaultAdapter(),
-
-  transformRequest: [function transformRequest(data, headers) {
-    normalizeHeaderName(headers, 'Accept');
-    normalizeHeaderName(headers, 'Content-Type');
-
-    if (utils.isFormData(data) ||
-      utils.isArrayBuffer(data) ||
-      utils.isBuffer(data) ||
-      utils.isStream(data) ||
-      utils.isFile(data) ||
-      utils.isBlob(data)
-    ) {
-      return data;
-    }
-    if (utils.isArrayBufferView(data)) {
-      return data.buffer;
-    }
-    if (utils.isURLSearchParams(data)) {
-      setContentTypeIfUnset(headers, 'application/x-www-form-urlencoded;charset=utf-8');
-      return data.toString();
-    }
-    if (utils.isObject(data) || (headers && headers['Content-Type'] === 'application/json')) {
-      setContentTypeIfUnset(headers, 'application/json');
-      return stringifySafely(data);
-    }
-    return data;
-  }],
-
-  transformResponse: [function transformResponse(data) {
-    var transitional = this.transitional || defaults.transitional;
-    var silentJSONParsing = transitional && transitional.silentJSONParsing;
-    var forcedJSONParsing = transitional && transitional.forcedJSONParsing;
-    var strictJSONParsing = !silentJSONParsing && this.responseType === 'json';
-
-    if (strictJSONParsing || (forcedJSONParsing && utils.isString(data) && data.length)) {
-      try {
-        return JSON.parse(data);
-      } catch (e) {
-        if (strictJSONParsing) {
-          if (e.name === 'SyntaxError') {
-            throw enhanceError(e, this, 'E_JSON_PARSE');
-          }
-          throw e;
-        }
-      }
-    }
-
-    return data;
-  }],
-
-  /**
-   * A timeout in milliseconds to abort a request. If set to 0 (default) a
-   * timeout is not created.
-   */
-  timeout: 0,
-
-  xsrfCookieName: 'XSRF-TOKEN',
-  xsrfHeaderName: 'X-XSRF-TOKEN',
-
-  maxContentLength: -1,
-  maxBodyLength: -1,
-
-  validateStatus: function validateStatus(status) {
-    return status >= 200 && status < 300;
-  },
-
-  headers: {
-    common: {
-      'Accept': 'application/json, text/plain, */*'
-    }
-  }
-};
-
-utils.forEach(['delete', 'get', 'head'], function forEachMethodNoData(method) {
-  defaults.headers[method] = {};
-});
-
-utils.forEach(['post', 'put', 'patch'], function forEachMethodWithData(method) {
-  defaults.headers[method] = utils.merge(DEFAULT_CONTENT_TYPE);
-});
-
-module.exports = defaults;
-
-
-/***/ }),
-
-/***/ "./node_modules/vue-audio-visual/node_modules/axios/lib/env/data.js":
-/*!**************************************************************************!*\
-  !*** ./node_modules/vue-audio-visual/node_modules/axios/lib/env/data.js ***!
-  \**************************************************************************/
-/***/ ((module) => {
-
-module.exports = {
-  "version": "0.24.0"
-};
-
-/***/ }),
-
-/***/ "./node_modules/vue-audio-visual/node_modules/axios/lib/helpers/bind.js":
-/*!******************************************************************************!*\
-  !*** ./node_modules/vue-audio-visual/node_modules/axios/lib/helpers/bind.js ***!
-  \******************************************************************************/
-/***/ ((module) => {
-
-"use strict";
-
-
-module.exports = function bind(fn, thisArg) {
-  return function wrap() {
-    var args = new Array(arguments.length);
-    for (var i = 0; i < args.length; i++) {
-      args[i] = arguments[i];
-    }
-    return fn.apply(thisArg, args);
-  };
-};
-
-
-/***/ }),
-
-/***/ "./node_modules/vue-audio-visual/node_modules/axios/lib/helpers/buildURL.js":
-/*!**********************************************************************************!*\
-  !*** ./node_modules/vue-audio-visual/node_modules/axios/lib/helpers/buildURL.js ***!
-  \**********************************************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-
-
-var utils = __webpack_require__(/*! ./../utils */ "./node_modules/vue-audio-visual/node_modules/axios/lib/utils.js");
-
-function encode(val) {
-  return encodeURIComponent(val).
-    replace(/%3A/gi, ':').
-    replace(/%24/g, '$').
-    replace(/%2C/gi, ',').
-    replace(/%20/g, '+').
-    replace(/%5B/gi, '[').
-    replace(/%5D/gi, ']');
-}
-
-/**
- * Build a URL by appending params to the end
- *
- * @param {string} url The base of the url (e.g., http://www.google.com)
- * @param {object} [params] The params to be appended
- * @returns {string} The formatted url
- */
-module.exports = function buildURL(url, params, paramsSerializer) {
-  /*eslint no-param-reassign:0*/
-  if (!params) {
-    return url;
-  }
-
-  var serializedParams;
-  if (paramsSerializer) {
-    serializedParams = paramsSerializer(params);
-  } else if (utils.isURLSearchParams(params)) {
-    serializedParams = params.toString();
-  } else {
-    var parts = [];
-
-    utils.forEach(params, function serialize(val, key) {
-      if (val === null || typeof val === 'undefined') {
-        return;
-      }
-
-      if (utils.isArray(val)) {
-        key = key + '[]';
-      } else {
-        val = [val];
-      }
-
-      utils.forEach(val, function parseValue(v) {
-        if (utils.isDate(v)) {
-          v = v.toISOString();
-        } else if (utils.isObject(v)) {
-          v = JSON.stringify(v);
-        }
-        parts.push(encode(key) + '=' + encode(v));
-      });
-    });
-
-    serializedParams = parts.join('&');
-  }
-
-  if (serializedParams) {
-    var hashmarkIndex = url.indexOf('#');
-    if (hashmarkIndex !== -1) {
-      url = url.slice(0, hashmarkIndex);
-    }
-
-    url += (url.indexOf('?') === -1 ? '?' : '&') + serializedParams;
-  }
-
-  return url;
-};
-
-
-/***/ }),
-
-/***/ "./node_modules/vue-audio-visual/node_modules/axios/lib/helpers/combineURLs.js":
-/*!*************************************************************************************!*\
-  !*** ./node_modules/vue-audio-visual/node_modules/axios/lib/helpers/combineURLs.js ***!
-  \*************************************************************************************/
-/***/ ((module) => {
-
-"use strict";
-
-
-/**
- * Creates a new URL by combining the specified URLs
- *
- * @param {string} baseURL The base URL
- * @param {string} relativeURL The relative URL
- * @returns {string} The combined URL
- */
-module.exports = function combineURLs(baseURL, relativeURL) {
-  return relativeURL
-    ? baseURL.replace(/\/+$/, '') + '/' + relativeURL.replace(/^\/+/, '')
-    : baseURL;
-};
-
-
-/***/ }),
-
-/***/ "./node_modules/vue-audio-visual/node_modules/axios/lib/helpers/cookies.js":
-/*!*********************************************************************************!*\
-  !*** ./node_modules/vue-audio-visual/node_modules/axios/lib/helpers/cookies.js ***!
-  \*********************************************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-
-
-var utils = __webpack_require__(/*! ./../utils */ "./node_modules/vue-audio-visual/node_modules/axios/lib/utils.js");
-
-module.exports = (
-  utils.isStandardBrowserEnv() ?
-
-  // Standard browser envs support document.cookie
-    (function standardBrowserEnv() {
-      return {
-        write: function write(name, value, expires, path, domain, secure) {
-          var cookie = [];
-          cookie.push(name + '=' + encodeURIComponent(value));
-
-          if (utils.isNumber(expires)) {
-            cookie.push('expires=' + new Date(expires).toGMTString());
-          }
-
-          if (utils.isString(path)) {
-            cookie.push('path=' + path);
-          }
-
-          if (utils.isString(domain)) {
-            cookie.push('domain=' + domain);
-          }
-
-          if (secure === true) {
-            cookie.push('secure');
-          }
-
-          document.cookie = cookie.join('; ');
-        },
-
-        read: function read(name) {
-          var match = document.cookie.match(new RegExp('(^|;\\s*)(' + name + ')=([^;]*)'));
-          return (match ? decodeURIComponent(match[3]) : null);
-        },
-
-        remove: function remove(name) {
-          this.write(name, '', Date.now() - 86400000);
-        }
-      };
-    })() :
-
-  // Non standard browser env (web workers, react-native) lack needed support.
-    (function nonStandardBrowserEnv() {
-      return {
-        write: function write() {},
-        read: function read() { return null; },
-        remove: function remove() {}
-      };
-    })()
-);
-
-
-/***/ }),
-
-/***/ "./node_modules/vue-audio-visual/node_modules/axios/lib/helpers/isAbsoluteURL.js":
-/*!***************************************************************************************!*\
-  !*** ./node_modules/vue-audio-visual/node_modules/axios/lib/helpers/isAbsoluteURL.js ***!
-  \***************************************************************************************/
-/***/ ((module) => {
-
-"use strict";
-
-
-/**
- * Determines whether the specified URL is absolute
- *
- * @param {string} url The URL to test
- * @returns {boolean} True if the specified URL is absolute, otherwise false
- */
-module.exports = function isAbsoluteURL(url) {
-  // A URL is considered absolute if it begins with "<scheme>://" or "//" (protocol-relative URL).
-  // RFC 3986 defines scheme name as a sequence of characters beginning with a letter and followed
-  // by any combination of letters, digits, plus, period, or hyphen.
-  return /^([a-z][a-z\d\+\-\.]*:)?\/\//i.test(url);
-};
-
-
-/***/ }),
-
-/***/ "./node_modules/vue-audio-visual/node_modules/axios/lib/helpers/isAxiosError.js":
-/*!**************************************************************************************!*\
-  !*** ./node_modules/vue-audio-visual/node_modules/axios/lib/helpers/isAxiosError.js ***!
-  \**************************************************************************************/
-/***/ ((module) => {
-
-"use strict";
-
-
-/**
- * Determines whether the payload is an error thrown by Axios
- *
- * @param {*} payload The value to test
- * @returns {boolean} True if the payload is an error thrown by Axios, otherwise false
- */
-module.exports = function isAxiosError(payload) {
-  return (typeof payload === 'object') && (payload.isAxiosError === true);
-};
-
-
-/***/ }),
-
-/***/ "./node_modules/vue-audio-visual/node_modules/axios/lib/helpers/isURLSameOrigin.js":
-/*!*****************************************************************************************!*\
-  !*** ./node_modules/vue-audio-visual/node_modules/axios/lib/helpers/isURLSameOrigin.js ***!
-  \*****************************************************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-
-
-var utils = __webpack_require__(/*! ./../utils */ "./node_modules/vue-audio-visual/node_modules/axios/lib/utils.js");
-
-module.exports = (
-  utils.isStandardBrowserEnv() ?
-
-  // Standard browser envs have full support of the APIs needed to test
-  // whether the request URL is of the same origin as current location.
-    (function standardBrowserEnv() {
-      var msie = /(msie|trident)/i.test(navigator.userAgent);
-      var urlParsingNode = document.createElement('a');
-      var originURL;
-
-      /**
-    * Parse a URL to discover it's components
-    *
-    * @param {String} url The URL to be parsed
-    * @returns {Object}
-    */
-      function resolveURL(url) {
-        var href = url;
-
-        if (msie) {
-        // IE needs attribute set twice to normalize properties
-          urlParsingNode.setAttribute('href', href);
-          href = urlParsingNode.href;
-        }
-
-        urlParsingNode.setAttribute('href', href);
-
-        // urlParsingNode provides the UrlUtils interface - http://url.spec.whatwg.org/#urlutils
-        return {
-          href: urlParsingNode.href,
-          protocol: urlParsingNode.protocol ? urlParsingNode.protocol.replace(/:$/, '') : '',
-          host: urlParsingNode.host,
-          search: urlParsingNode.search ? urlParsingNode.search.replace(/^\?/, '') : '',
-          hash: urlParsingNode.hash ? urlParsingNode.hash.replace(/^#/, '') : '',
-          hostname: urlParsingNode.hostname,
-          port: urlParsingNode.port,
-          pathname: (urlParsingNode.pathname.charAt(0) === '/') ?
-            urlParsingNode.pathname :
-            '/' + urlParsingNode.pathname
-        };
-      }
-
-      originURL = resolveURL(window.location.href);
-
-      /**
-    * Determine if a URL shares the same origin as the current location
-    *
-    * @param {String} requestURL The URL to test
-    * @returns {boolean} True if URL shares the same origin, otherwise false
-    */
-      return function isURLSameOrigin(requestURL) {
-        var parsed = (utils.isString(requestURL)) ? resolveURL(requestURL) : requestURL;
-        return (parsed.protocol === originURL.protocol &&
-            parsed.host === originURL.host);
-      };
-    })() :
-
-  // Non standard browser envs (web workers, react-native) lack needed support.
-    (function nonStandardBrowserEnv() {
-      return function isURLSameOrigin() {
-        return true;
-      };
-    })()
-);
-
-
-/***/ }),
-
-/***/ "./node_modules/vue-audio-visual/node_modules/axios/lib/helpers/normalizeHeaderName.js":
-/*!*********************************************************************************************!*\
-  !*** ./node_modules/vue-audio-visual/node_modules/axios/lib/helpers/normalizeHeaderName.js ***!
-  \*********************************************************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-
-
-var utils = __webpack_require__(/*! ../utils */ "./node_modules/vue-audio-visual/node_modules/axios/lib/utils.js");
-
-module.exports = function normalizeHeaderName(headers, normalizedName) {
-  utils.forEach(headers, function processHeader(value, name) {
-    if (name !== normalizedName && name.toUpperCase() === normalizedName.toUpperCase()) {
-      headers[normalizedName] = value;
-      delete headers[name];
-    }
-  });
-};
-
-
-/***/ }),
-
-/***/ "./node_modules/vue-audio-visual/node_modules/axios/lib/helpers/parseHeaders.js":
-/*!**************************************************************************************!*\
-  !*** ./node_modules/vue-audio-visual/node_modules/axios/lib/helpers/parseHeaders.js ***!
-  \**************************************************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-
-
-var utils = __webpack_require__(/*! ./../utils */ "./node_modules/vue-audio-visual/node_modules/axios/lib/utils.js");
-
-// Headers whose duplicates are ignored by node
-// c.f. https://nodejs.org/api/http.html#http_message_headers
-var ignoreDuplicateOf = [
-  'age', 'authorization', 'content-length', 'content-type', 'etag',
-  'expires', 'from', 'host', 'if-modified-since', 'if-unmodified-since',
-  'last-modified', 'location', 'max-forwards', 'proxy-authorization',
-  'referer', 'retry-after', 'user-agent'
-];
-
-/**
- * Parse headers into an object
- *
- * ```
- * Date: Wed, 27 Aug 2014 08:58:49 GMT
- * Content-Type: application/json
- * Connection: keep-alive
- * Transfer-Encoding: chunked
- * ```
- *
- * @param {String} headers Headers needing to be parsed
- * @returns {Object} Headers parsed into an object
- */
-module.exports = function parseHeaders(headers) {
-  var parsed = {};
-  var key;
-  var val;
-  var i;
-
-  if (!headers) { return parsed; }
-
-  utils.forEach(headers.split('\n'), function parser(line) {
-    i = line.indexOf(':');
-    key = utils.trim(line.substr(0, i)).toLowerCase();
-    val = utils.trim(line.substr(i + 1));
-
-    if (key) {
-      if (parsed[key] && ignoreDuplicateOf.indexOf(key) >= 0) {
-        return;
-      }
-      if (key === 'set-cookie') {
-        parsed[key] = (parsed[key] ? parsed[key] : []).concat([val]);
-      } else {
-        parsed[key] = parsed[key] ? parsed[key] + ', ' + val : val;
-      }
-    }
-  });
-
-  return parsed;
-};
-
-
-/***/ }),
-
-/***/ "./node_modules/vue-audio-visual/node_modules/axios/lib/helpers/spread.js":
-/*!********************************************************************************!*\
-  !*** ./node_modules/vue-audio-visual/node_modules/axios/lib/helpers/spread.js ***!
-  \********************************************************************************/
-/***/ ((module) => {
-
-"use strict";
-
-
-/**
- * Syntactic sugar for invoking a function and expanding an array for arguments.
- *
- * Common use case would be to use `Function.prototype.apply`.
- *
- *  ```js
- *  function f(x, y, z) {}
- *  var args = [1, 2, 3];
- *  f.apply(null, args);
- *  ```
- *
- * With `spread` this example can be re-written.
- *
- *  ```js
- *  spread(function(x, y, z) {})([1, 2, 3]);
- *  ```
- *
- * @param {Function} callback
- * @returns {Function}
- */
-module.exports = function spread(callback) {
-  return function wrap(arr) {
-    return callback.apply(null, arr);
-  };
-};
-
-
-/***/ }),
-
-/***/ "./node_modules/vue-audio-visual/node_modules/axios/lib/helpers/validator.js":
-/*!***********************************************************************************!*\
-  !*** ./node_modules/vue-audio-visual/node_modules/axios/lib/helpers/validator.js ***!
-  \***********************************************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-
-
-var VERSION = (__webpack_require__(/*! ../env/data */ "./node_modules/vue-audio-visual/node_modules/axios/lib/env/data.js").version);
-
-var validators = {};
-
-// eslint-disable-next-line func-names
-['object', 'boolean', 'number', 'function', 'string', 'symbol'].forEach(function(type, i) {
-  validators[type] = function validator(thing) {
-    return typeof thing === type || 'a' + (i < 1 ? 'n ' : ' ') + type;
-  };
-});
-
-var deprecatedWarnings = {};
-
-/**
- * Transitional option validator
- * @param {function|boolean?} validator - set to false if the transitional option has been removed
- * @param {string?} version - deprecated version / removed since version
- * @param {string?} message - some message with additional info
- * @returns {function}
- */
-validators.transitional = function transitional(validator, version, message) {
-  function formatMessage(opt, desc) {
-    return '[Axios v' + VERSION + '] Transitional option \'' + opt + '\'' + desc + (message ? '. ' + message : '');
-  }
-
-  // eslint-disable-next-line func-names
-  return function(value, opt, opts) {
-    if (validator === false) {
-      throw new Error(formatMessage(opt, ' has been removed' + (version ? ' in ' + version : '')));
-    }
-
-    if (version && !deprecatedWarnings[opt]) {
-      deprecatedWarnings[opt] = true;
-      // eslint-disable-next-line no-console
-      console.warn(
-        formatMessage(
-          opt,
-          ' has been deprecated since v' + version + ' and will be removed in the near future'
-        )
-      );
-    }
-
-    return validator ? validator(value, opt, opts) : true;
-  };
-};
-
-/**
- * Assert object's properties type
- * @param {object} options
- * @param {object} schema
- * @param {boolean?} allowUnknown
- */
-
-function assertOptions(options, schema, allowUnknown) {
-  if (typeof options !== 'object') {
-    throw new TypeError('options must be an object');
-  }
-  var keys = Object.keys(options);
-  var i = keys.length;
-  while (i-- > 0) {
-    var opt = keys[i];
-    var validator = schema[opt];
-    if (validator) {
-      var value = options[opt];
-      var result = value === undefined || validator(value, opt, options);
-      if (result !== true) {
-        throw new TypeError('option ' + opt + ' must be ' + result);
-      }
-      continue;
-    }
-    if (allowUnknown !== true) {
-      throw Error('Unknown option ' + opt);
-    }
-  }
-}
-
-module.exports = {
-  assertOptions: assertOptions,
-  validators: validators
-};
-
-
-/***/ }),
-
-/***/ "./node_modules/vue-audio-visual/node_modules/axios/lib/utils.js":
-/*!***********************************************************************!*\
-  !*** ./node_modules/vue-audio-visual/node_modules/axios/lib/utils.js ***!
-  \***********************************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-
-
-var bind = __webpack_require__(/*! ./helpers/bind */ "./node_modules/vue-audio-visual/node_modules/axios/lib/helpers/bind.js");
-
-// utils is a library of generic helper functions non-specific to axios
-
-var toString = Object.prototype.toString;
-
-/**
- * Determine if a value is an Array
- *
- * @param {Object} val The value to test
- * @returns {boolean} True if value is an Array, otherwise false
- */
-function isArray(val) {
-  return toString.call(val) === '[object Array]';
-}
-
-/**
- * Determine if a value is undefined
- *
- * @param {Object} val The value to test
- * @returns {boolean} True if the value is undefined, otherwise false
- */
-function isUndefined(val) {
-  return typeof val === 'undefined';
-}
-
-/**
- * Determine if a value is a Buffer
- *
- * @param {Object} val The value to test
- * @returns {boolean} True if value is a Buffer, otherwise false
- */
-function isBuffer(val) {
-  return val !== null && !isUndefined(val) && val.constructor !== null && !isUndefined(val.constructor)
-    && typeof val.constructor.isBuffer === 'function' && val.constructor.isBuffer(val);
-}
-
-/**
- * Determine if a value is an ArrayBuffer
- *
- * @param {Object} val The value to test
- * @returns {boolean} True if value is an ArrayBuffer, otherwise false
- */
-function isArrayBuffer(val) {
-  return toString.call(val) === '[object ArrayBuffer]';
-}
-
-/**
- * Determine if a value is a FormData
- *
- * @param {Object} val The value to test
- * @returns {boolean} True if value is an FormData, otherwise false
- */
-function isFormData(val) {
-  return (typeof FormData !== 'undefined') && (val instanceof FormData);
-}
-
-/**
- * Determine if a value is a view on an ArrayBuffer
- *
- * @param {Object} val The value to test
- * @returns {boolean} True if value is a view on an ArrayBuffer, otherwise false
- */
-function isArrayBufferView(val) {
-  var result;
-  if ((typeof ArrayBuffer !== 'undefined') && (ArrayBuffer.isView)) {
-    result = ArrayBuffer.isView(val);
-  } else {
-    result = (val) && (val.buffer) && (val.buffer instanceof ArrayBuffer);
-  }
-  return result;
-}
-
-/**
- * Determine if a value is a String
- *
- * @param {Object} val The value to test
- * @returns {boolean} True if value is a String, otherwise false
- */
-function isString(val) {
-  return typeof val === 'string';
-}
-
-/**
- * Determine if a value is a Number
- *
- * @param {Object} val The value to test
- * @returns {boolean} True if value is a Number, otherwise false
- */
-function isNumber(val) {
-  return typeof val === 'number';
-}
-
-/**
- * Determine if a value is an Object
- *
- * @param {Object} val The value to test
- * @returns {boolean} True if value is an Object, otherwise false
- */
-function isObject(val) {
-  return val !== null && typeof val === 'object';
-}
-
-/**
- * Determine if a value is a plain Object
- *
- * @param {Object} val The value to test
- * @return {boolean} True if value is a plain Object, otherwise false
- */
-function isPlainObject(val) {
-  if (toString.call(val) !== '[object Object]') {
-    return false;
-  }
-
-  var prototype = Object.getPrototypeOf(val);
-  return prototype === null || prototype === Object.prototype;
-}
-
-/**
- * Determine if a value is a Date
- *
- * @param {Object} val The value to test
- * @returns {boolean} True if value is a Date, otherwise false
- */
-function isDate(val) {
-  return toString.call(val) === '[object Date]';
-}
-
-/**
- * Determine if a value is a File
- *
- * @param {Object} val The value to test
- * @returns {boolean} True if value is a File, otherwise false
- */
-function isFile(val) {
-  return toString.call(val) === '[object File]';
-}
-
-/**
- * Determine if a value is a Blob
- *
- * @param {Object} val The value to test
- * @returns {boolean} True if value is a Blob, otherwise false
- */
-function isBlob(val) {
-  return toString.call(val) === '[object Blob]';
-}
-
-/**
- * Determine if a value is a Function
- *
- * @param {Object} val The value to test
- * @returns {boolean} True if value is a Function, otherwise false
- */
-function isFunction(val) {
-  return toString.call(val) === '[object Function]';
-}
-
-/**
- * Determine if a value is a Stream
- *
- * @param {Object} val The value to test
- * @returns {boolean} True if value is a Stream, otherwise false
- */
-function isStream(val) {
-  return isObject(val) && isFunction(val.pipe);
-}
-
-/**
- * Determine if a value is a URLSearchParams object
- *
- * @param {Object} val The value to test
- * @returns {boolean} True if value is a URLSearchParams object, otherwise false
- */
-function isURLSearchParams(val) {
-  return typeof URLSearchParams !== 'undefined' && val instanceof URLSearchParams;
-}
-
-/**
- * Trim excess whitespace off the beginning and end of a string
- *
- * @param {String} str The String to trim
- * @returns {String} The String freed of excess whitespace
- */
-function trim(str) {
-  return str.trim ? str.trim() : str.replace(/^\s+|\s+$/g, '');
-}
-
-/**
- * Determine if we're running in a standard browser environment
- *
- * This allows axios to run in a web worker, and react-native.
- * Both environments support XMLHttpRequest, but not fully standard globals.
- *
- * web workers:
- *  typeof window -> undefined
- *  typeof document -> undefined
- *
- * react-native:
- *  navigator.product -> 'ReactNative'
- * nativescript
- *  navigator.product -> 'NativeScript' or 'NS'
- */
-function isStandardBrowserEnv() {
-  if (typeof navigator !== 'undefined' && (navigator.product === 'ReactNative' ||
-                                           navigator.product === 'NativeScript' ||
-                                           navigator.product === 'NS')) {
-    return false;
-  }
-  return (
-    typeof window !== 'undefined' &&
-    typeof document !== 'undefined'
-  );
-}
-
-/**
- * Iterate over an Array or an Object invoking a function for each item.
- *
- * If `obj` is an Array callback will be called passing
- * the value, index, and complete array for each item.
- *
- * If 'obj' is an Object callback will be called passing
- * the value, key, and complete object for each property.
- *
- * @param {Object|Array} obj The object to iterate
- * @param {Function} fn The callback to invoke for each item
- */
-function forEach(obj, fn) {
-  // Don't bother if no value provided
-  if (obj === null || typeof obj === 'undefined') {
-    return;
-  }
-
-  // Force an array if not already something iterable
-  if (typeof obj !== 'object') {
-    /*eslint no-param-reassign:0*/
-    obj = [obj];
-  }
-
-  if (isArray(obj)) {
-    // Iterate over array values
-    for (var i = 0, l = obj.length; i < l; i++) {
-      fn.call(null, obj[i], i, obj);
-    }
-  } else {
-    // Iterate over object keys
-    for (var key in obj) {
-      if (Object.prototype.hasOwnProperty.call(obj, key)) {
-        fn.call(null, obj[key], key, obj);
-      }
-    }
-  }
-}
-
-/**
- * Accepts varargs expecting each argument to be an object, then
- * immutably merges the properties of each object and returns result.
- *
- * When multiple objects contain the same key the later object in
- * the arguments list will take precedence.
- *
- * Example:
- *
- * ```js
- * var result = merge({foo: 123}, {foo: 456});
- * console.log(result.foo); // outputs 456
- * ```
- *
- * @param {Object} obj1 Object to merge
- * @returns {Object} Result of all merge properties
- */
-function merge(/* obj1, obj2, obj3, ... */) {
-  var result = {};
-  function assignValue(val, key) {
-    if (isPlainObject(result[key]) && isPlainObject(val)) {
-      result[key] = merge(result[key], val);
-    } else if (isPlainObject(val)) {
-      result[key] = merge({}, val);
-    } else if (isArray(val)) {
-      result[key] = val.slice();
-    } else {
-      result[key] = val;
-    }
-  }
-
-  for (var i = 0, l = arguments.length; i < l; i++) {
-    forEach(arguments[i], assignValue);
-  }
-  return result;
-}
-
-/**
- * Extends object a by mutably adding to it the properties of object b.
- *
- * @param {Object} a The object to be extended
- * @param {Object} b The object to copy properties from
- * @param {Object} thisArg The object to bind function to
- * @return {Object} The resulting value of object a
- */
-function extend(a, b, thisArg) {
-  forEach(b, function assignValue(val, key) {
-    if (thisArg && typeof val === 'function') {
-      a[key] = bind(val, thisArg);
-    } else {
-      a[key] = val;
-    }
-  });
-  return a;
-}
-
-/**
- * Remove byte order marker. This catches EF BB BF (the UTF-8 BOM)
- *
- * @param {string} content with BOM
- * @return {string} content value without BOM
- */
-function stripBOM(content) {
-  if (content.charCodeAt(0) === 0xFEFF) {
-    content = content.slice(1);
-  }
-  return content;
-}
-
-module.exports = {
-  isArray: isArray,
-  isArrayBuffer: isArrayBuffer,
-  isBuffer: isBuffer,
-  isFormData: isFormData,
-  isArrayBufferView: isArrayBufferView,
-  isString: isString,
-  isNumber: isNumber,
-  isObject: isObject,
-  isPlainObject: isPlainObject,
-  isUndefined: isUndefined,
-  isDate: isDate,
-  isFile: isFile,
-  isBlob: isBlob,
-  isFunction: isFunction,
-  isStream: isStream,
-  isURLSearchParams: isURLSearchParams,
-  isStandardBrowserEnv: isStandardBrowserEnv,
-  forEach: forEach,
-  merge: merge,
-  extend: extend,
-  trim: trim,
-  stripBOM: stripBOM
-};
-
-
-/***/ }),
-
-/***/ "./node_modules/vue-audio-visual/src/components/AvBars.js":
-/*!****************************************************************!*\
-  !*** ./node_modules/vue-audio-visual/src/components/AvBars.js ***!
-  \****************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony import */ var _AvBase__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./AvBase */ "./node_modules/vue-audio-visual/src/components/AvBase.js");
-
-/**
- * Component props Object
- */
-const props = {
-  /**
-   * prop: 'bar-width'
-   * Width of the bar in pixels.
-   * Default: 5
-   */
-  barWidth: {
-    type: Number,
-    default: 5
-  },
-  /**
-   * prop: 'bar-space'
-   * Space between bars.
-   * Default: 1
-   */
-  barSpace: {
-    type: Number,
-    default: 1
-  },
-  /**
-   * prop: 'bar-color'
-   * Bar fill color. Can be string RGB color or canvas gradients array.
-   */
-  barColor: {
-    type: [String, Array],
-    default: '#0A0AFF'
-  },
-  /**
-   * prop: 'caps-height'
-   * Create caps on bars with given height in pixels.
-   * If zero caps then skip creating bars.
-   * Default: 0
-   */
-  capsHeight: {
-    type: Number,
-    default: 0
-  },
-  /**
-   * prop: 'caps-drop-speed'
-   * Caps drop down animation speed.
-   * Default: 0.9
-   */
-  capsDropSpeed: {
-    type: Number,
-    default: 0.9
-  },
-  /**
-   * prop: 'caps-color'
-   * Caps rectangles RGB color.
-   */
-  capsColor: {
-    type: String,
-    default: '#A0A0FF'
-  },
-  /**
-   * prop: 'brick-height'
-   * Draw bar as bricks with set height.
-   */
-  brickHeight: {
-    type: Number,
-    default: 0
-  },
-  /**
-   * prop: 'brick-space'
-   * Space between bricks.
-   */
-  brickSpace: {
-    type: Number,
-    default: 1
-  },
-  /**
-   * prop: 'symmetric'
-   * Draw bars symmetric to canvas vertical center
-   * Default: false
-   */
-  symmetric: {
-    type: Boolean,
-    default: false
-  },
-  /**
-   * prop: 'fft-size'
-   * Represents the window size in samples that is used when performing
-   * a Fast Fourier Transform (FFT) to get frequency domain data.
-   * Must be power of 2 between 2^5 and 2^15
-   * Default: 1024
-   */
-  fftSize: {
-    type: Number,
-    default: 1024
-  }
-}
-
-/**
- * Component AvBars
- */
-const AvBars = {
-  name: 'av-bars',
-  mixins: [ _AvBase__WEBPACK_IMPORTED_MODULE_0__["default"] ],
-  props,
-  data () {
-    return {
-      animId: null,
-      audio: null,
-      analyser: null,
-      ctx: null,
-      audioCtx: null,
-      caps: Array.apply(null, Array(this.fftSize / 2)).map(() => 0)
-    }
-  },
-  methods: {
-    /**
-     * Main loop. Draws visualization.
-     */
-    mainLoop: function () {
-      const frqBits = this.analyser.frequencyBinCount
-      const data = new Uint8Array(frqBits)
-      const barWidth = this.barWidth >= this.canvWidth ? this.canvWidth : this.barWidth
-      const step = Math.round((barWidth + this.barSpace) / frqBits * this.canvWidth)
-      const barFill = Array.isArray(this.barColor)
-        ? this.fillGradient(this.barColor)
-        : this.barColor
-      let x = 0
-
-      this.analyser.getByteFrequencyData(data)
-      this._fillCanvasBG()
-
-      data.forEach((_, index) => {
-        if (index % step) return
-        const bits = Math.round(data.slice(index, index + step)
-          .reduce((v, t) => t + v, 0) / step)
-        const barHeight = bits / 255 * this.canvHeight
-        if (this.capsHeight) {
-          this._drawCap(index, barWidth, x, bits)
-        }
-        this.ctx.fillStyle = barFill
-        this._drawBar(barWidth, barHeight, x)
-        x += barWidth + this.barSpace
-      })
-      this.animId = requestAnimationFrame(this.mainLoop)
-    },
-    /**
-     * Canvas background fill
-     * @private
-     */
-    _fillCanvasBG: function () {
-      const w = this.canvWidth
-      const h = this.canvHeight
-      this.ctx.clearRect(0, 0, w, h)
-      if (this.canvFillColor) {
-        this.ctx.fillStyle = Array.isArray(this.canvFillColor)
-          ? this.fillGradient(this.canvFillColor)
-          : this.canvFillColor
-        this.ctx.fillRect(0, 0, w, h)
-      }
-    },
-    /**
-     * Draw bar. Solid bar or brick bar.
-     * @private
-     */
-    _drawBar: function (barWidth, barHeight, barX) {
-      if (this.brickHeight) {
-        this._drawBrickBar(barWidth, barHeight, barX)
-      } else {
-        this.ctx.fillRect(
-          barX, this.canvHeight - barHeight - this._symAlign(barHeight),
-          barWidth, barHeight
-        )
-      }
-    },
-    /**
-     * Draw bricks bar.
-     * @private
-     */
-    _drawBrickBar: function (barWidth, barHeight, barX) {
-      for (let b = 0; b < barHeight; b += this.brickHeight + this.brickSpace) {
-        this.ctx.fillRect(
-          barX, this.canvHeight - barHeight + b - this._symAlign(barHeight),
-          barWidth, this.brickHeight
-        )
-      }
-    },
-    /**
-     * Draw cap for each bar and animate caps falling down.
-     * @private
-     */
-    _drawCap: function (index, barwidth, barX, barY) {
-      const cap = this.caps[index] <= barY
-        ? barY
-        : this.caps[index] - this.capsDropSpeed
-      const y = (cap / 255.0 * this.canvHeight)
-      const capY = this.canvHeight - y - this.capsHeight - this._symAlign(y)
-      this.ctx.fillStyle = this.capsColor
-      this.ctx.fillRect(barX, capY, barwidth, this.capsHeight)
-      if (this.symmetric) {
-        this.ctx.fillRect(
-          barX, this.canvHeight - capY - this.capsHeight,
-          barwidth, this.capsHeight)
-      }
-      this.caps[index] = cap
-    },
-    /**
-     * Shift for symmetric alignment
-     * @private
-     */
-    _symAlign: function (barHeight) {
-      return this.symmetric ? ((this.canvHeight - barHeight) / 2) : 0
-    }
-  }
-}
-
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (AvBars);
-
-
-/***/ }),
-
-/***/ "./node_modules/vue-audio-visual/src/components/AvBase.js":
-/*!****************************************************************!*\
-  !*** ./node_modules/vue-audio-visual/src/components/AvBase.js ***!
-  \****************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm-bundler.js");
-
-/**
- * Mixin component with base and common properties and functions.
- */
-
-/**
- * Base properties common for the audio-visual components
- */
-const props = {
-  /**
-   * prop: 'audio-src'
-   * Audio element src attribute. When provided creates audio element
-   */
-  audioSrc: {
-    type: String,
-    default: null
-  },
-  /**
-   * prop: 'ref-link'
-   * Refrence to Audio element. When provided, then local audio element
-   * is not created and use refrence to the element. Component will
-   * search only for its parent refs.
-   */
-  refLink: {
-    type: String,
-    default: null
-  },
-  /**
-   * prop: 'audio-controls'
-   * Audio element controls attribute. When provided should
-   * display audio element with controls
-   */
-  audioControls: {
-    type: Boolean,
-    default: true
-  },
-  /**
-   * prop: 'cors-anonym'
-   * CORS requests for this element will not have the credentials flag set.
-   * Set crossOrigin property of audio element to 'anonymous'.
-   * Default: null
-   */
-  corsAnonym: {
-    type: Boolean,
-    default: false
-  },
-  /**
-   * prop: 'audio-class'
-   * Audio element css class name.
-   */
-  audioClass: {
-    type: String,
-    default: null
-  },
-  /**
-   * prop: 'canv-width'
-   * Canvas element width. Default 300
-   */
-  canvWidth: {
-    type: Number,
-    default: 300
-  },
-  /**
-   * prop: 'canv-height'
-   * Canvas element height. Default 80
-   */
-  canvHeight: {
-    type: Number,
-    default: 80
-  },
-  /**
-   * prop: 'canv-class'
-   * Canvas element css class name.
-   */
-  canvClass: {
-    type: String,
-    default: null
-  },
-  /**
-   * prop: 'canv-top'
-   * Canvas element position on top relatively to audio element.
-   * Default: false
-   */
-  canvTop: {
-    type: Boolean,
-    default: false
-  },
-  /**
-   * prop: 'canv-fill-color'
-   * Canvas fill background color. Can be string RGB color or canvas gradients array.
-   * Default is transperent.
-   */
-  canvFillColor: {
-    type: [String, Array],
-    default: null
-  }
-}
-
-const methods = {
-  /**
-   * Create audio and canvas elements and insert in the HTML template.
-   * Using document.createElement to avoid Vue virtual DOM re-rendering
-   * which can lead to infinit loops.
-   */
-  createHTMLElements: function () {
-    const canv = document.createElement('canvas')
-    const canvDiv = document.createElement('div')
-    let audioDiv = null
-    let audio = null
-
-    if (this.refLink) {
-      audio = this.$parent.$refs[this.refLink]
-    } else {
-      audio = document.createElement('audio')
-      audioDiv = document.createElement('div')
-      audio.setAttribute('src', this.audioSrc)
-      if (this.audioControls) audio.setAttribute('controls', true)
-      if (this.audioClass) audio.setAttribute('class', this.audioClass)
-      if (this.corsAnonym) audio.crossOrigin = 'anonymous'
-      audioDiv.appendChild(audio)
-      this.$el.appendChild(audioDiv)
-    }
-
-    if (this.canvClass) canv.setAttribute('class', this.canvClass)
-    if (this.canvWidth) canv.setAttribute('width', this.canvWidth)
-    if (this.canvHeight) canv.setAttribute('height', this.canvHeight)
-    canvDiv.appendChild(canv)
-
-    if (this.canvTop) {
-      this.$el.insertBefore(canvDiv, audioDiv)
-    } else {
-      this.$el.appendChild(canvDiv)
-    }
-    this.ctxWrapper = canv
-    this.ctx = canv.getContext('2d')
-
-    this.audio = audio
-    this.audio.load()
-  },
-
-  /**
-   * Set audio context analyser.
-   */
-  setAnalyser: function () {
-    this.audioCtx = this.audioCtx || new AudioContext()
-    this.analyser = this.analyser || this.audioCtx.createAnalyser()
-    const src = this.audioCtx.createMediaElementSource(this.audio)
-
-    src.connect(this.analyser)
-    this.analyser.fftSize = this.fftSize
-    this.analyser.connect(this.audioCtx.destination)
-  },
-
-  /**
-   * Canvas gradient. Vertical, from top down
-   */
-  fillGradient: function (colorsArray) {
-    const w = this.canvWidth
-    const h = this.canvHeight
-    const gradient = this.ctx.createLinearGradient(w / 2, 0, w / 2, h)
-    let offset = 0
-    colorsArray.forEach(color => {
-      gradient.addColorStop(offset, color)
-      offset += (1 / colorsArray.length)
-    })
-    return gradient
-  }
-}
-
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
-  props,
-  render (hv2) {
-    if (vue__WEBPACK_IMPORTED_MODULE_0__.h) {
-      // Vue3 render
-      return (0,vue__WEBPACK_IMPORTED_MODULE_0__.h)('div')
-    }
-    // Vue2 render
-    return hv2('div')
-  },
-  mounted () {
-    this.createHTMLElements()
-
-    this.audio.onclick = () => {
-      if (!this.audioCtx) this.setAnalyser()
-    }
-
-    this.audio.onplay = () => {
-      if (!this.audioCtx) this.setAnalyser()
-      this.mainLoop()
-      if (this.audioCtx) { // not defined for waveform
-        this.audioCtx.resume()
-      }
-    }
-
-    this.audio.onpause = () => {
-      if (this.audioCtx) {
-        this.audioCtx.suspend()
-        cancelAnimationFrame(this.animId)
-      }
-    }
-  },
-
-  beforeDestroy () {
-    if (this.audioCtx) {
-      this.audioCtx.suspend()
-    }
-    cancelAnimationFrame(this.animId)
-  },
-  methods
-});
-
-
-/***/ }),
-
-/***/ "./node_modules/vue-audio-visual/src/components/AvCircle.js":
-/*!******************************************************************!*\
-  !*** ./node_modules/vue-audio-visual/src/components/AvCircle.js ***!
-  \******************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony import */ var _AvBase__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./AvBase */ "./node_modules/vue-audio-visual/src/components/AvBase.js");
-
-
-/**
- * Component props
- */
-const props = {
-  /**
-   * prop: 'fft-size'
-   * Represents the window size in samples that is used when performing
-   * a Fast Fourier Transform (FFT) to get frequency domain data.
-   * Must be power of 2 between 2^5 and 2^15
-   * Default: 1024
-   */
-  fftSize: {
-    type: Number,
-    default: 1024
-  },
-  /**
-   * prop: 'canv-width'
-   * Canvas element width. Default 100
-   */
-  canvWidth: {
-    type: Number,
-    default: 100
-  },
-  /**
-   * prop: 'canv-height'
-   * Canvas element height. Default 100
-   */
-  canvHeight: {
-    type: Number,
-    default: 100
-  },
-  /**
-   * prop: 'radius'
-   * Set cercle radius. If zero will be calculated from canvas
-   * width: (canv-width / 2) * 0.7
-   * Default: 0
-   */
-  radius: {
-    type: Number,
-    default: 0
-  },
-  /**
-   * prop: 'line-width'
-   * Frequency bit line width to draw.
-   */
-  lineWidth: {
-    type: Number,
-    default: 1
-  },
-  /**
-   * prop: 'line-space'
-   * Space between lines to draw.
-   */
-  lineSpace: {
-    type: Number,
-    default: 1
-  },
-  /**
-   * prop: 'outline-color'
-   * Outline (contour) style RGB color.
-   * Default: #00f
-   */
-  outlineColor: {
-    type: String,
-    default: '#0000FF'
-  },
-  /**
-   * prop: 'outline-width'
-   * Outline (contour) line width. Float value.
-   * Default: 0.3
-   */
-  outlineWidth: {
-    type: Number,
-    default: 0.3
-  },
-  /**
-   * prop: 'bar-width'
-   * Frequency graph bar width.
-   */
-  barWidth: {
-    type: Number,
-    default: 1
-  },
-  /**
-   * prop: 'bar-length'
-   * Frequency graph bar length.
-   * Default is a difference between radius and canvas width.
-   */
-  barLength: {
-    type: Number,
-    default: 0
-  },
-  /**
-   * prop: 'bar-color'
-   * Bar style RGB color or radient gradient when array.
-   * Default: [ #FFFFFF, #0000FF ]
-   */
-  barColor: {
-    type: [String, Array],
-    default: () => [ '#FFFFFF', '#0000FF' ]
-  },
-  /**
-   * prop: 'progress'
-   * Draw play progress meter.
-   * Default: false
-   */
-  progress: {
-    type: Boolean,
-    default: true
-  },
-  /**
-   * prop: 'progress-width'
-   * Progress meter width.
-   * Default: 1
-   */
-  progressWidth: {
-    type: Number,
-    default: 1
-  },
-  /**
-   * prop: 'progress-color'
-   * Progress meter color.
-   * Default: 1
-   */
-  progressColor: {
-    type: String,
-    default: '#0000FF'
-  },
-  /**
-   * prop: 'progress-clockwise'
-   * Progress meter arc draw direction. Default clockwise
-   * Default: true
-   */
-  progressClockwise: {
-    type: Boolean,
-    default: false
-  },
-  /**
-   * prop: 'outline-meter-space'
-   * Space between outline and progress meter.
-   * Default: 2
-   */
-  outlineMeterSpace: {
-    type: Number,
-    default: 3
-  },
-  /**
-   * prop: 'playtime'
-   * Draw playtime text in the center of the circle.
-   * Default: false
-   */
-  playtime: {
-    type: Boolean,
-    default: false
-  },
-  /**
-   * prop: 'playtime-font'
-   * Played time print font.
-   * Default: '14px Monaco'
-   */
-  playtimeFont: {
-    type: String,
-    default: '14px Monaco'
-  },
-  /**
-  * prop: 'playtime-color'
-  * Played time font color.
-  * Default: '#00f'
-  */
-  playtimeColor: {
-    type: String,
-    default: '#00f'
-  },
-  /**
-   * prop: 'rotate-graph'
-   * Rotate graph clockwise enable.
-   * Default: false
-   */
-  rotateGraph: {
-    type: Boolean,
-    default: false
-  },
-  /**
-   * prop: 'rotate-speed'
-   * Rotate graph speed.
-   * Default: 0.001
-   */
-  rotateSpeed: {
-    type: Number,
-    default: 0.001
-  }
-}
-
-/**
- * Component AvCircle
- */
-const AvCircle = {
-  name: 'av-circle',
-  mixins: [ _AvBase__WEBPACK_IMPORTED_MODULE_0__["default"] ],
-  props,
-  data () {
-    return {
-      animId: null,
-      rotate: 1.5,
-      audio: null,
-      analyser: null,
-      ctx: null,
-      audioCtx: null
-    }
-  },
-  methods: {
-    /**
-     * Main loop. Draws visualization.
-     */
-    mainLoop: function () {
-      const cx = this.canvWidth / 2 // center X
-      const cy = this.canvHeight / 2 // center Y
-      const r = this.radius ? this.radius : Math.round(this.canvWidth / 2 * 0.7)
-      const lineWidth = this.lineWidth
-      const lineSpace = this.lineSpace
-      const arcStep = Math.ceil(lineWidth + lineSpace)
-      const frqBits = this.analyser.frequencyBinCount
-      const data = new Uint8Array(frqBits)
-      const step = ((lineWidth + lineSpace) / data.length) * (2 * Math.PI)
-      const barLen = this.barLength > 0
-        ? this.barLength
-        : (this.canvWidth / 2) - r
-      let angle = Math.PI * this._rotate() // start from top
-
-      this._setCanvas()
-      this.analyser.getByteFrequencyData(data)
-
-      // contour outline
-      if (this.outlineWidth > 0) {
-        this._drawOutline(r, cx, cy)
-      }
-
-      // draw play progress meter
-      if (this.progress) {
-        this._drawProgress(r, cx, cy)
-      }
-
-      // draw played time
-      if (this.playtime) {
-        this._drawPlaytime(cx, cy)
-      }
-
-      // circle bar lines
-      this.ctx.lineWidth = this.barWidth
-      this.ctx.strokeStyle = this._setBarColor(cx, cy)
-
-      data.forEach((_, index) => {
-        angle += step
-        if (index % arcStep) {
-          return
-        }
-        const bits = Math.round(data.slice(index, index + arcStep)
-          .reduce((v, t) => t + v, 0) / arcStep)
-
-        const blen = r + (bits / 255.0 * barLen)
-        this.ctx.beginPath()
-        this.ctx.moveTo(r * Math.cos(angle) + cx, r * Math.sin(angle) + cy)
-        this.ctx.lineTo(blen * Math.cos(angle) + cx, blen * Math.sin(angle) + cy)
-        this.ctx.stroke()
-      })
-
-      this.animId = requestAnimationFrame(this.mainLoop)
-    },
-    /**
-     * Canvas clear background fill
-     * @private
-     */
-    _setCanvas: function () {
-      this.ctx.clearRect(0, 0, this.canvWidth, this.canvHeight)
-
-      if (!this.canvFillColor) return
-
-      this.ctx.fillStyle = Array.isArray(this.canvFillColor)
-        ? this.fillGradient(this.canvFillColor)
-        : this.canvFillColor
-      this.ctx.fillRect(0, 0, this.canvWidth, this.canvHeight)
-    },
-    /**
-     * Draw play progress meter
-     */
-    _drawProgress: function (r, cx, cy) {
-      const elapsed = this.audio.currentTime / this.audio.duration * 2 * Math.PI
-      const angleEnd = Math.PI * 1.5 + elapsed
-
-      if (!elapsed) return
-
-      this.ctx.lineWidth = this.progressWidth
-      this.ctx.strokeStyle = this.progressColor
-
-      this.ctx.beginPath()
-      this.ctx.arc(cx, cy, r - this.outlineWidth - this.outlineMeterSpace,
-        1.5 * Math.PI, angleEnd, this.progressClockwise)
-      this.ctx.stroke()
-    },
-    /**
-     * Draw outline circle
-     */
-    _drawOutline: function (r, cx, cy) {
-      this.ctx.beginPath()
-      this.ctx.strokeStyle = this.outlineColor
-      this.ctx.lineWidth = this.outlineWidth
-      this.ctx.arc(cx, cy, r, 0, 2 * Math.PI)
-      this.ctx.stroke()
-    },
-    /**
-     * Draw played time
-     */
-    _drawPlaytime: function (cx, cy) {
-      const m = Math.floor(this.audio.currentTime / 60)
-      const sec = Math.floor(this.audio.currentTime) % 60
-      const s = sec < 10 ? `0${sec}` : `${sec}`
-      const text = `${m}:${s}`
-      const tsizew = Math.ceil(this.ctx.measureText(text).width)
-
-      this.ctx.font = this.playtimeFont
-      this.ctx.fillStyle = this.playtimeColor
-      this.ctx.fillText(text, cx - Math.round(tsizew / 2), cy + 0.25 * parseInt(this.playtimeFont))
-    },
-    /**
-     * If rotate is enabled will return rotated angle
-     */
-    _rotate: function () {
-      if (this.rotateGraph) {
-        this.rotate = this.rotate === 3.5 ? 1.5 : this.rotate + this.rotateSpeed
-      } else {
-        this.rotate = 1.5
-      }
-      return this.rotate
-    },
-    /**
-     * Set bars color.
-     */
-    _setBarColor: function (cx, cy) {
-      if (!Array.isArray(this.barColor)) {
-        return this.barColor
-      }
-      const gradient = this.ctx.createRadialGradient(cx, cy, this.canvWidth / 2, cx, cy, 0)
-      let offset = 0
-
-      this.barColor.forEach(color => {
-        gradient.addColorStop(offset, color)
-        offset += (1 / this.barColor.length)
-      })
-      return gradient
-    }
-  }
-}
-
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (AvCircle);
-
-
-/***/ }),
-
-/***/ "./node_modules/vue-audio-visual/src/components/AvLine.js":
-/*!****************************************************************!*\
-  !*** ./node_modules/vue-audio-visual/src/components/AvLine.js ***!
-  \****************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony import */ var _AvBase__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./AvBase */ "./node_modules/vue-audio-visual/src/components/AvBase.js");
-
-
-/**
- * Component props
- */
-const props = {
-  /**
-   * prop: 'line-width'
-   * Draw line width in px
-   */
-  lineWidth: {
-    type: Number,
-    default: 2
-  },
-  /**
-   * prop: 'line-color'
-   * Draw line color or gradient array
-   */
-  lineColor: {
-    type: [String, Array],
-    default: '#9F9'
-  },
-  /**
-   * prop: 'fft-size'
-   * Represents the window size in samples that is used when performing
-   * a Fast Fourier Transform (FFT) to get frequency domain data.
-   * Must be power of 2 between 2^5 and 2^15
-   * Default: 128
-   */
-  fftSize: {
-    type: Number,
-    default: 128
-  }
-}
-
-/**
- * Component AvLine
- */
-const AvLine = {
-  name: 'av-line',
-  mixins: [ _AvBase__WEBPACK_IMPORTED_MODULE_0__["default"] ],
-  props,
-  data () {
-    return {
-      animId: null,
-      audio: null,
-      analyser: null,
-      ctx: null,
-      audioCtx: null
-    }
-  },
-  methods: {
-    /**
-     * Main loop. Draws visualization.
-     */
-    mainLoop: function () {
-      const frqBits = this.analyser.frequencyBinCount
-      const step = (this.canvWidth / 2.0) / frqBits
-      const data = new Uint8Array(frqBits)
-      let x = 0
-
-      this._setCanvas()
-      this.analyser.getByteFrequencyData(data)
-
-      this.ctx.lineWidth = this.lineWidth
-      this.ctx.strokeStyle = Array.isArray(this.lineColor)
-        ? this.fillGradient(this.lineColor)
-        : this.lineColor
-      this.ctx.beginPath()
-
-      data.reverse()
-      this.ctx.moveTo(x, this.canvHeight / 2)
-      x = this._drawLine(data, x, step)
-      data.reverse()
-      x = this._drawLine(data, x, step)
-      this.ctx.lineTo(this.canvWidth, this.canvHeight / 2)
-      this.ctx.stroke()
-
-      this.animId = requestAnimationFrame(this.mainLoop)
-    },
-    /**
-     * Canvas clear background fill
-     * @private
-     */
-    _setCanvas: function () {
-      const w = this.canvWidth
-      const h = this.canvHeight
-      const canvColor = this.canvFillColor
-      const gradient = this.ctx.createLinearGradient(w / 2, 0, w / 2, h)
-      let offset = 0
-      this.ctx.clearRect(0, 0, w, h)
-
-      if (!canvColor) return
-
-      if (Array.isArray(canvColor)) {
-        canvColor.forEach(color => {
-          gradient.addColorStop(offset, color)
-          offset += (1 / canvColor.length)
-        })
-        this.ctx.fillStyle = gradient
-      } else {
-        this.ctx.fillStyle = canvColor
-      }
-      this.ctx.fillRect(0, 0, w, h)
-    },
-    /**
-     * Draw line and return last X
-     * @private
-     */
-    _drawLine: function (data, x, step) {
-      const h = this.canvHeight
-      let y = 0
-      data.forEach((v, i) => {
-        // (h / 2) - v / 255 * (h / 2)
-        y = h * (255 - v) / 510
-        if (i % 2) y = h - y
-        this.ctx.lineTo(x, y)
-        x += step
-      })
-      return x
-    }
-  }
-}
-
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (AvLine);
-
-
-/***/ }),
-
-/***/ "./node_modules/vue-audio-visual/src/components/AvMedia.js":
-/*!*****************************************************************!*\
-  !*** ./node_modules/vue-audio-visual/src/components/AvMedia.js ***!
-  \*****************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm-bundler.js");
-
-/**
- * Component props
- */
-const props = {
-  /**
-   * prop: 'media'
-   * MediaStream object for visualisation. Can be delivered by
-   * Web Audio API functions like getUserMedia or RTCPeerConnection
-   */
-  media: {
-    type: MediaStream,
-    required: false,
-    default: null
-  },
-
-  /**
-   * prop: 'canv-width'
-   * Canvas element width. Default 300
-   */
-  canvWidth: {
-    type: Number,
-    default: 300
-  },
-
-  /**
-   * prop: 'canv-class'
-   * Canvas element css class name.
-   */
-  canvClass: {
-    type: String,
-    default: null
-  },
-
-  /**
-   * prop: 'canv-height'
-   * Canvas element height. Default 80
-   */
-  canvHeight: {
-    type: Number,
-    default: 80
-  },
-
-  /**
-   * prop: 'canv-fill-color'
-   * Canvas fill background RGB color.
-   * Default is transperent.
-   */
-  canvFillColor: {
-    type: String,
-    default: null
-  },
-
-  /**
-   * prop: 'fft-size'
-   * Represents the window size in samples that is used when performing
-   * a Fast Fourier Transform (FFT) to get frequency domain data.
-   * Must be power of 2 between 2^5 and 2^15
-   * Default: 8192 for 'wform' 1024 for 'freq'
-   */
-  fftSize: {
-    type: Number,
-    default: null // 1024 // 8192
-  },
-
-  /**
-   * prop: 'type'
-   * Type of visualisation.
-   * wform - using byte time domaine data
-   * frequ - using byte frequency data
-   * wform when not recognized.
-   * Default: wform
-   */
-  type: {
-    type: String,
-    default: 'wform'
-  },
-
-  /**
-   * prop: 'frequ-lnum'
-   * Vertical lines number for frequ type.
-   * Default: 60
-   */
-  frequLnum: {
-    type: Number,
-    default: 60
-  },
-
-  /**
-   * prop: 'frequ-line-cap'
-   * Draw line with rounded end caps.
-   * Default: false
-   */
-  frequLineCap: {
-    type: Boolean,
-    default: false
-  },
-
-  /**
-   * prop: 'frequ-direction'
-   * Direction for frequency visualization.
-   * lr - from left to right
-   * mo - from middle out
-   * lr when not recognized.
-   * Default: wform
-   */
-  frequDirection: {
-    type: String,
-    default: 'lr'
-  },
-
-  /**
-   * prop: 'line-color'
-   * Line color.
-   * Default: lime
-   */
-  lineColor: {
-    type: String,
-    default: 'lime'
-  },
-
-  /**
-   * prop: 'line-width'
-   * Line width.
-   * Default: 0.5 for wform and 3 for frequ
-   */
-  lineWidth: {
-    type: Number,
-    default: null
-  },
-
-  /**
-   * prop: 'radius'
-   * Circle radius.
-   * Default: 4 for circle
-   */
-  radius: {
-    type: Number,
-    default: 4
-  },
-
-  /**
-   * prop: 'connect-destination'
-   * Analyser to connect to audio context's destination
-   * Default: false
-   */
-  connectDestination: {
-    type: Boolean,
-    default: false
-  }
-}
-
-/**
- * Component AvMedia
- */
-const AvMedia = {
-  name: 'av-media',
-  data () {
-    return {
-      ctx: null,
-      audioCtx: null,
-      analyser: null
-    }
-  },
-  props,
-  render (hv2) {
-    if (vue__WEBPACK_IMPORTED_MODULE_0__.h) {
-      // Vue3 render
-      return (0,vue__WEBPACK_IMPORTED_MODULE_0__.h)('div')
-    }
-    // Vue2 render
-    return hv2('div')
-  },
-  mounted () {
-    this.createCanvas()
-  },
-  watch: {
-    media: function (newVal, oldVal) {
-      try {
-        if (newVal) this.setAnalyser()
-        this.draw()
-      } catch (err) {
-        console.log('Failed create analyser', err)
-      }
-    }
-  },
-  methods: {
-    /**
-     * Create Canvas inside div
-     */
-    createCanvas: function () {
-      const canv = document.createElement('canvas')
-      canv.width = this.canvWidth
-      canv.height = this.canvHeight
-      if (this.canvClass) canv.setAttribute('class', this.canvClass)
-      this.ctx = canv.getContext('2d')
-      this.$el.appendChild(canv)
-    },
-
-    /**
-     * Set analyser
-     */
-    setAnalyser: function () {
-      this.audioCtx = this.audioCtx || new AudioContext()
-      this.analyser = this.analyser || this.audioCtx.createAnalyser()
-      const src = this.audioCtx.createMediaStreamSource(this.media)
-
-      src.connect(this.analyser)
-      if (this.fftSize) {
-        this.analyser.fftSize = this.fftSize
-      } else {
-        this.analyser.fftSize = this.type === 'frequ' ? 1024 : 8192
-      }
-      if (this.connectDestination) {
-        this.analyser.connect(this.audioCtx.destination)
-      }
-    },
-
-    draw: function () {
-      const data = new Uint8Array(this.analyser.fftSize)
-
-      if (this.canvFillColor) this.ctx.fillStyle = this.canvFillColor
-      this.ctx.clearRect(0, 0, this.canvWidth, this.canvHeight)
-      this.ctx.beginPath()
-      this.ctx.strokeStyle = this.lineColor
-
-      if (this.type === 'frequ') {
-        this.analyser.getByteFrequencyData(data)
-        this.frequ(data)
-      } else if (this.type === 'circle') {
-        this.analyser.getByteFrequencyData(data)
-        this.circle(data)
-      } else {
-        this.analyser.getByteTimeDomainData(data)
-        this.wform(data)
-      }
-
-      requestAnimationFrame(this.draw)
-    },
-
-    wform: function (data) {
-      const h = this.canvHeight
-      const step = this.canvWidth / this.analyser.fftSize
-      let x = 0
-      this.ctx.lineWidth = this.lineWidth || 0.5
-      data.forEach(v => {
-        const y = (v / 255.0) * h
-        this.ctx.lineTo(x, y)
-        x += step
-      })
-      this.ctx.stroke()
-    },
-
-    frequ: function (data) {
-      const middleOut = this.frequDirection === 'mo'
-      const start = middleOut ? this.canvWidth / 2 : 0
-      const c = middleOut ? this.frequLnum / 2 : this.frequLnum
-      const step = middleOut ? this.canvWidth / c / 2 : this.canvWidth / c
-      const h = this.canvHeight
-      const lw = this.lineWidth || 2
-      for (let i = 0; i < c; i++) {
-        const x = middleOut ? i * step : i * step + lw
-        const v = data.slice(x, x + step).reduce((sum, v) => sum + (v / 255.0 * h), 0) / step
-        const space = (h - v) / 2 + 2 // + 2 is space for caps
-        this.ctx.lineWidth = lw
-        this.ctx.lineCap = this.frequLineCap ? 'round' : 'butt'
-        this.ctx.moveTo(start + x, space)
-        this.ctx.lineTo(start + x, h - space)
-        this.ctx.stroke()
-
-        if (middleOut && i > 0) {
-          this.ctx.moveTo(start - x, space)
-          this.ctx.lineTo(start - x, h - space)
-          this.ctx.stroke()
-        }
-      }
-    },
-
-    circle: function (data) {
-      const cx = this.canvWidth / 2 // center X
-      const cy = this.canvHeight / 2 // center Y
-      const r = this.radius || 4
-      const lineWidth = this.lineWidth
-      const lineSpace = 10
-      const arcStep = Math.ceil(lineWidth + lineSpace)
-      const step = ((lineWidth + lineSpace) / data.length) * (2 * Math.PI)
-      const barLen = this.canvWidth / 1.2 - r
-      let angle = Math.PI
-
-      this.ctx.lineWidth = this.lineWidth || 0.5
-
-      data.forEach((_, index) => {
-        angle += step
-        if (index % arcStep) {
-          return
-        }
-
-        const bits = Math.round(
-          data.slice(index, index + arcStep).reduce((v, t) => t + v, 0) /
-            arcStep
-        )
-
-        const blen = r + (bits / 255.0) * barLen
-        this.ctx.beginPath()
-        this.ctx.lineCap = 'round'
-        this.ctx.moveTo(r * Math.cos(angle) + cx, r * Math.sin(angle) + cy)
-        this.ctx.lineTo(
-          blen * Math.cos(angle) + cx,
-          blen * Math.sin(angle) + cy
-        )
-        this.ctx.stroke()
-      })
-    }
-  }
-}
-
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (AvMedia);
-
-
-/***/ }),
-
-/***/ "./node_modules/vue-audio-visual/src/components/AvWaveform.js":
-/*!********************************************************************!*\
-  !*** ./node_modules/vue-audio-visual/src/components/AvWaveform.js ***!
-  \********************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! axios */ "./node_modules/vue-audio-visual/node_modules/axios/index.js");
-/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _AvBase__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./AvBase */ "./node_modules/vue-audio-visual/src/components/AvBase.js");
-
-
-
-/**
- * Component props
- */
-const props = {
-  /**
-   * prop: 'canv-width'
-   * Canvas element width. Default 500
-   */
-  canvWidth: {
-    type: Number,
-    default: 500
-  },
-  /**
-   * prop: 'canv-height'
-   * Canvas element height. Default 80
-   */
-  canvHeight: {
-    type: Number,
-    default: 80
-  },
-  /**
-   * prop: 'played-line-width'
-   * Waveform line width for played segment of audio
-   * Default: 0.5
-   */
-  playedLineWidth: {
-    type: Number,
-    default: 0.5
-  },
-  /**
-   * prop: 'played-line-color'
-   * Waveform line color for played segment of audio
-   * Default: navy
-   */
-  playedLineColor: {
-    type: String,
-    default: 'navy'
-  },
-  /**
-   * prop: 'noplayed-line-width'
-   * Waveform line width for not yet played segment of audio
-   * Default: 0.5
-   */
-  noplayedLineWidth: {
-    type: Number,
-    default: 0.5
-  },
-  /**
-   * prop: 'noplayed-line-color'
-   * Waveform line color for not yet played segment of audio
-   * Default: lime
-   */
-  noplayedLineColor: {
-    type: String,
-    default: 'lime'
-  },
-  /**
-   * prop: 'playtime'
-   * Display played time next to progress slider.
-   * Default: true
-   */
-  playtime: {
-    type: Boolean,
-    default: true
-  },
-  /**
-   * prop: 'playtime-with-ms'
-   * Display milliseconds in played when true.
-   * For example: 02:55.054
-   * Default: true
-   */
-  playtimeWithMs: {
-    type: Boolean,
-    default: true
-  },
-  /**
-   * prop: 'playtime-font-size'
-   * Played time print font size in pixels.
-   * Default: 12
-   */
-  playtimeFontSize: {
-    type: Number,
-    default: 12
-  },
-  /**
-   * prop: 'playtime-font-family'
-   * Played time print font family.
-   * Default: monospace
-   */
-  playtimeFontFamily: {
-    type: String,
-    default: 'monospace'
-  },
-  /**
-   * prop: 'playtime-font-color'
-   * Played time print font RGB color string.
-   * Default: grey
-   */
-  playtimeFontColor: {
-    type: String,
-    default: 'grey'
-  },
-  /**
-   * prop: 'playtime-text-bottom'
-   * Position playtime text bottom.
-   * Default on top.
-   * Default: false
-   */
-  playtimeTextBottom: {
-    type: Boolean,
-    default: false
-  },
-  /**
-   * prop: 'playtime-slider'
-   * Draw played slider
-   * Default: true
-   */
-  playtimeSlider: {
-    type: Boolean,
-    default: true
-  },
-  /**
-   * prop: 'playtime-slider-color'
-   * Played slider color
-   * Default: red
-   */
-  playtimeSliderColor: {
-    type: String,
-    default: 'red'
-  },
-  /**
-   * prop: 'playtime-slider-width'
-   * Played slider width
-   * Default: 1
-   */
-  playtimeSliderWidth: {
-    type: Number,
-    default: 1
-  },
-  /**
-   * prop: 'playtime-clickable'
-   * Allow click on waveform to change playtime.
-   * Default: true
-   */
-  playtimeClickable: {
-    type: Boolean,
-    default: true
-  },
-  /**
-   * prop: 'requester'
-   * Allow set a custom requester (axios/fetch) to be used.
-   * Default: new axios instance
-   */
-  requester: {
-    type: Function,
-    default: (axios__WEBPACK_IMPORTED_MODULE_0___default())
-  }
-}
-
-/**
- * Component AvLine
- */
-const AvWaveform = {
-  name: 'av-waveform',
-  mixins: [_AvBase__WEBPACK_IMPORTED_MODULE_1__["default"]],
-  props,
-  data () {
-    return {
-      animId: null,
-      ctxWrapper: null,
-      ctx: null,
-      audio: null,
-      duration: null,
-      peaks: []
-    }
-  },
-  mounted () {
-    const conf = {
-      responseType: 'arraybuffer',
-      onDownloadProgress: this.downloadProgress
-    }
-    this.requester.get(this.audio.src, conf)
-      .then(response => this.decode(response))
-      .catch(err => {
-        console.error(`Failed to get file '${this.audio.src}'`)
-        console.log(err)
-      })
-    this.audio.onplay = () => {
-      this.animId = requestAnimationFrame(this.waveformAnim)
-    }
-    this.audio.onpause = () => {
-      cancelAnimationFrame(this.animId)
-      this.animId = null
-    }
-  },
-  methods: {
-    // Stub set analyser method from Mixin AvBase
-    // as there is no need of analyser in that component
-    // this method is called from mixin mounted()
-    setAnalyser: function () {
-      /* istanbul ignore next */
-      return null
-    },
-
-    // Stub mainLoop method from Mixin AvBase as
-    // here different init method will be used.
-    // This method is called from mixin mounted()
-    mainLoop: function () {
-      /* istanbul ignore next */
-      return null
-    },
-
-    /**
-     * Decode audio source response array buffer
-     */
-    decode: function (response) {
-      /* istanbul ignore next */
-      const ctx = new AudioContext()
-      /* istanbul ignore next */
-      ctx.decodeAudioData(response.data, (audioBuffer) => {
-        this.setPeaks(audioBuffer)
-      }, (err) => {
-        console.error('Failed to decode audio data.')
-        console.log(err)
-      })
-    },
-
-    /**
-     * Set peaks array for waveform.
-     * For now use only one channel
-     */
-    setPeaks: function (buffer) {
-      const peaks = []
-      let min = 0
-      let max = 0
-      let top = 0
-      let bottom = 0
-      const segSize = Math.ceil(buffer.length / this.canvWidth)
-      const width = this.canvWidth
-      const height = this.canvHeight
-      this.duration = buffer.duration // while we have buffer why we don't use it ?
-
-      for (let c = 0; c < buffer.numberOfChannels; c++) {
-        const data = buffer.getChannelData(c)
-        for (let s = 0; s < width; s++) {
-          const start = ~~(s * segSize)
-          const end = ~~(start + segSize)
-          min = 0
-          max = 0
-          for (let i = start; i < end; i++) {
-            min = data[i] < min ? data[i] : min
-            max = data[i] > max ? data[i] : max
-          }
-          // merge multi channel data
-          if (peaks[s]) {
-            peaks[s][0] = peaks[s][0] < max ? max : peaks[s][0]
-            peaks[s][1] = peaks[s][1] > min ? min : peaks[s][1]
-          }
-          peaks[s] = [max, min]
-        }
-      }
-      // set peaks relativelly to canvas dimensions
-      for (let i = 0; i < peaks.length; i++) {
-        max = peaks[i][0]
-        min = peaks[i][1]
-        top = ((height / 2) - (max * height / 2))
-        bottom = ((height / 2) - (min * height / 2))
-        peaks[i] = [top, bottom === top ? top + 1 : bottom]
-      }
-      this.peaks = peaks
-
-      if (this.playtimeClickable) {
-        this.ctxWrapper.addEventListener('click', (e) => this.updateTime(e))
-      }
-      this.waveform()
-    },
-
-    /**
-     * Draw wave form.
-     */
-    waveform: function () {
-      const peaks = this.peaks
-      const time = this.audio.currentTime
-      const playX = this.playX(time)
-      let x = 0
-      this.ctx.clearRect(0, 0, this.canvWidth, this.canvHeight)
-      x = this.draw(peaks.slice(0, playX), this.playedLineWidth, this.playedLineColor, x)
-      this.draw(peaks.slice(playX), this.noplayedLineWidth, this.noplayedLineColor, x)
-      this.drawSlider(time)
-      if (this.playtime) this.drawTime(time)
-    },
-
-    /**
-     * Waveform animation proxy
-     */
-    waveformAnim: function () {
-      this.waveform()
-      this.animId = requestAnimationFrame(this.waveformAnim)
-    },
-
-    /**
-     * Draw segment.
-     */
-    draw: function (data, lineWidth, color, x) {
-      this.ctx.lineWidth = lineWidth
-      this.ctx.strokeStyle = color
-      this.ctx.beginPath()
-      data.forEach(v => {
-        this.ctx.moveTo(x, v[0])
-        this.ctx.lineTo(x, v[1])
-        x++
-      })
-      this.ctx.stroke()
-      return x
-    },
-
-    /**
-     * Formatted string of current play time.
-     * @param {Number} Current play time
-     * @return {String}
-     */
-    timeFormat: function (timeSec) {
-      let frmStr = ''
-      const time = parseFloat(timeSec)
-      if (isNaN(time)) {
-        return frmStr
-      }
-
-      const min = ~~(time / 60)
-      const sec = ~~(time % 60)
-      const ms = ~~(time % 1 * 1000)
-
-      frmStr = (min < 10) ? `0${min}:` : `${min}:`
-      frmStr += `0${sec}`.substr(-2)
-      if (this.playtimeWithMs) {
-        frmStr += '.' + `00${ms}`.substr(-3)
-      }
-
-      return frmStr
-    },
-
-    /**
-     * Draw play time next to slider.
-     * @param {Number} Played time sec.millisec.
-     * @return {Void}
-     */
-    drawTime: function (time) {
-      const timeStr = this.timeFormat(time)
-      const offset = 3
-      const textWidth = ~~this.ctx.measureText(timeStr).width
-      const playX = this.playX(time)
-      const textX = playX > (this.canvWidth - textWidth - offset)
-        ? playX - textWidth - offset
-        : playX + offset
-      const textY = this.playtimeTextBottom
-        ? this.canvHeight - this.playtimeFontSize + offset
-        : this.playtimeFontSize + offset
-      this.ctx.fillStyle = this.playtimeFontColor
-      this.ctx.font = `${this.playtimeFontSize}px ${this.playtimeFontFamily}`
-      this.ctx.fillText(timeStr, textX, textY)
-    },
-
-    /**
-     * Draw played slider.
-     * @param {Number} Played time sec.millisec.
-     * @return {Void}
-     */
-    drawSlider: function (time) {
-      const playX = this.playX(time)
-      this.ctx.lineWidth = this.playtimeSliderWidth
-      this.ctx.strokeStyle = this.playtimeSliderColor
-      this.ctx.beginPath()
-      this.ctx.moveTo(playX, 0)
-      this.ctx.lineTo(playX, this.canvHeight)
-      this.ctx.stroke()
-    },
-
-    /**
-     * Get x coodrinate for play time.
-     * @param {Number}
-     * @return {Number}
-     */
-    playX: function (time) {
-      return ~~(time / this.duration * this.canvWidth)
-    },
-
-    /**
-     * Audio playback update time callback.
-     * @param event
-     */
-    updateTime: function (e) {
-      this.audio.currentTime = e.offsetX / this.canvWidth * this.duration
-      if (!this.animId) {
-        // re-draw if animation is not running
-        this.waveform()
-      }
-    },
-
-    /**
-     * Audio source download progress
-     */
-    downloadProgress: function (ev) {
-      const progressX = Math.round(ev.loaded / ev.total * this.canvWidth)
-      this.ctx.clearRect(0, 0, this.canvWidth, this.canvHeight)
-      this.ctx.beginPath()
-      this.ctx.strokeStyle = this.noplayedLineColor
-      this.ctx.moveTo(0, this.canvHeight / 2)
-      this.ctx.lineTo(progressX, this.canvHeight / 2)
-      this.ctx.stroke()
-    }
-  }
-}
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (AvWaveform);
-
-
-/***/ }),
-
-/***/ "./node_modules/vue-audio-visual/src/plugin.js":
-/*!*****************************************************!*\
-  !*** ./node_modules/vue-audio-visual/src/plugin.js ***!
-  \*****************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony import */ var _components_AvBars__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./components/AvBars */ "./node_modules/vue-audio-visual/src/components/AvBars.js");
-/* harmony import */ var _components_AvLine__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./components/AvLine */ "./node_modules/vue-audio-visual/src/components/AvLine.js");
-/* harmony import */ var _components_AvCircle__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./components/AvCircle */ "./node_modules/vue-audio-visual/src/components/AvCircle.js");
-/* harmony import */ var _components_AvWaveform__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./components/AvWaveform */ "./node_modules/vue-audio-visual/src/components/AvWaveform.js");
-/* harmony import */ var _components_AvMedia__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./components/AvMedia */ "./node_modules/vue-audio-visual/src/components/AvMedia.js");
-
-
-
-
-
-
-const AVPlugin = {}
-
-AVPlugin.install = function (Vue) {
-  // browsers compatibility
-  window.AudioContext = window.AudioContext || window.webkitAudioContext || window.mozAudioContext || window.msAudioContext
-  window.requestAnimationFrame = window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.msRequestAnimationFrame
-  // Components
-  Vue.component(_components_AvBars__WEBPACK_IMPORTED_MODULE_0__["default"].name, _components_AvBars__WEBPACK_IMPORTED_MODULE_0__["default"])
-  Vue.component(_components_AvLine__WEBPACK_IMPORTED_MODULE_1__["default"].name, _components_AvLine__WEBPACK_IMPORTED_MODULE_1__["default"])
-  Vue.component(_components_AvCircle__WEBPACK_IMPORTED_MODULE_2__["default"].name, _components_AvCircle__WEBPACK_IMPORTED_MODULE_2__["default"])
-  Vue.component(_components_AvWaveform__WEBPACK_IMPORTED_MODULE_3__["default"].name, _components_AvWaveform__WEBPACK_IMPORTED_MODULE_3__["default"])
-  Vue.component(_components_AvMedia__WEBPACK_IMPORTED_MODULE_4__["default"].name, _components_AvMedia__WEBPACK_IMPORTED_MODULE_4__["default"])
-}
-
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (AVPlugin);
-
-
-/***/ }),
-
 /***/ "./node_modules/vue-loader/dist/exportHelper.js":
 /*!******************************************************!*\
   !*** ./node_modules/vue-loader/dist/exportHelper.js ***!
@@ -65970,6 +62287,73 @@ exports["default"] = (sfc, props) => {
     }
     return target;
 };
+
+
+/***/ }),
+
+/***/ "./node_modules/wavesurfer.js-vue/src/WaveSurferVue.vue":
+/*!**************************************************************!*\
+  !*** ./node_modules/wavesurfer.js-vue/src/WaveSurferVue.vue ***!
+  \**************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _WaveSurferVue_vue_vue_type_template_id_729be26d_scoped_true__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./WaveSurferVue.vue?vue&type=template&id=729be26d&scoped=true */ "./node_modules/wavesurfer.js-vue/src/WaveSurferVue.vue?vue&type=template&id=729be26d&scoped=true");
+/* harmony import */ var _WaveSurferVue_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./WaveSurferVue.vue?vue&type=script&lang=js */ "./node_modules/wavesurfer.js-vue/src/WaveSurferVue.vue?vue&type=script&lang=js");
+/* harmony import */ var _WaveSurferVue_vue_vue_type_style_index_0_id_729be26d_lang_css_scoped_true__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./WaveSurferVue.vue?vue&type=style&index=0&id=729be26d&lang=css&scoped=true */ "./node_modules/wavesurfer.js-vue/src/WaveSurferVue.vue?vue&type=style&index=0&id=729be26d&lang=css&scoped=true");
+/* harmony import */ var _Users_GarethRichards_Desktop_projects_audio_app_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
+
+
+
+
+;
+
+
+const __exports__ = /*#__PURE__*/(0,_Users_GarethRichards_Desktop_projects_audio_app_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_3__["default"])(_WaveSurferVue_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_WaveSurferVue_vue_vue_type_template_id_729be26d_scoped_true__WEBPACK_IMPORTED_MODULE_0__.render],['__scopeId',"data-v-729be26d"],['__file',"node_modules/wavesurfer.js-vue/src/WaveSurferVue.vue"]])
+/* hot reload */
+if (false) {}
+
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (__exports__);
+
+/***/ }),
+
+/***/ "./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./node_modules/wavesurfer.js-vue/src/WaveSurferVue.vue?vue&type=script&lang=js":
+/*!*************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./node_modules/wavesurfer.js-vue/src/WaveSurferVue.vue?vue&type=script&lang=js ***!
+  \*************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var wavesurfer_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! wavesurfer.js */ "./node_modules/wavesurfer.js/dist/wavesurfer.js");
+/* harmony import */ var wavesurfer_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(wavesurfer_js__WEBPACK_IMPORTED_MODULE_0__);
+
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  props: ['src', 'options'],
+  data() {
+    return {
+      waveSurfer: {}
+    };
+  },
+  mounted() {
+    let options = this.options;
+    let wsOptions = Object.assign({ container: this.$el }, options);
+    this.waveSurfer = new (wavesurfer_js__WEBPACK_IMPORTED_MODULE_0___default().create)(wsOptions);
+    this.waveSurfer.load(this.src);
+  },
+  beforeDestroy() {
+    this.waveSurfer.destroy();
+  }
+});
 
 
 /***/ }),
@@ -66496,6 +62880,34 @@ __webpack_require__.r(__webpack_exports__);
 
 ;
 const __exports__ = /*#__PURE__*/(0,_Users_GarethRichards_Desktop_projects_audio_app_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__["default"])(_ValidationErrors_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_ValidationErrors_vue_vue_type_template_id_4f3624e2__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/Components/ValidationErrors.vue"]])
+/* hot reload */
+if (false) {}
+
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (__exports__);
+
+/***/ }),
+
+/***/ "./resources/js/Components/Wavesurfer/Wavesurfer.vue":
+/*!***********************************************************!*\
+  !*** ./resources/js/Components/Wavesurfer/Wavesurfer.vue ***!
+  \***********************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _Wavesurfer_vue_vue_type_template_id_738c7b54__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Wavesurfer.vue?vue&type=template&id=738c7b54 */ "./resources/js/Components/Wavesurfer/Wavesurfer.vue?vue&type=template&id=738c7b54");
+/* harmony import */ var _Wavesurfer_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Wavesurfer.vue?vue&type=script&lang=js */ "./resources/js/Components/Wavesurfer/Wavesurfer.vue?vue&type=script&lang=js");
+/* harmony import */ var _Users_GarethRichards_Desktop_projects_audio_app_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
+
+
+
+
+;
+const __exports__ = /*#__PURE__*/(0,_Users_GarethRichards_Desktop_projects_audio_app_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__["default"])(_Wavesurfer_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_Wavesurfer_vue_vue_type_template_id_738c7b54__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/Components/Wavesurfer/Wavesurfer.vue"]])
 /* hot reload */
 if (false) {}
 
@@ -67078,6 +63490,22 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./resources/js/Components/Wavesurfer/Wavesurfer.vue?vue&type=script&lang=js":
+/*!***********************************************************************************!*\
+  !*** ./resources/js/Components/Wavesurfer/Wavesurfer.vue?vue&type=script&lang=js ***!
+  \***********************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* reexport safe */ _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_Wavesurfer_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_0__["default"])
+/* harmony export */ });
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_Wavesurfer_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!../../../../node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./Wavesurfer.vue?vue&type=script&lang=js */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/Components/Wavesurfer/Wavesurfer.vue?vue&type=script&lang=js");
+ 
+
+/***/ }),
+
 /***/ "./resources/js/Pages/Auth/ConfirmPassword.vue?vue&type=script&lang=js":
 /*!*****************************************************************************!*\
   !*** ./resources/js/Pages/Auth/ConfirmPassword.vue?vue&type=script&lang=js ***!
@@ -67542,6 +63970,22 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./resources/js/Components/Wavesurfer/Wavesurfer.vue?vue&type=template&id=738c7b54":
+/*!*****************************************************************************************!*\
+  !*** ./resources/js/Components/Wavesurfer/Wavesurfer.vue?vue&type=template&id=738c7b54 ***!
+  \*****************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "render": () => (/* reexport safe */ _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_dist_templateLoader_js_ruleSet_1_rules_2_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_Wavesurfer_vue_vue_type_template_id_738c7b54__WEBPACK_IMPORTED_MODULE_0__.render)
+/* harmony export */ });
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_dist_templateLoader_js_ruleSet_1_rules_2_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_Wavesurfer_vue_vue_type_template_id_738c7b54__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!../../../../node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!../../../../node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./Wavesurfer.vue?vue&type=template&id=738c7b54 */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/Components/Wavesurfer/Wavesurfer.vue?vue&type=template&id=738c7b54");
+
+
+/***/ }),
+
 /***/ "./resources/js/Pages/Auth/ConfirmPassword.vue?vue&type=template&id=475ae21d":
 /*!***********************************************************************************!*\
   !*** ./resources/js/Pages/Auth/ConfirmPassword.vue?vue&type=template&id=475ae21d ***!
@@ -67715,6 +64159,19 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./node_modules/wavesurfer.js-vue/src/WaveSurferVue.vue?vue&type=style&index=0&id=729be26d&lang=css&scoped=true":
+/*!**********************************************************************************************************************!*\
+  !*** ./node_modules/wavesurfer.js-vue/src/WaveSurferVue.vue?vue&type=style&index=0&id=729be26d&lang=css&scoped=true ***!
+  \**********************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _style_loader_dist_cjs_js_css_loader_dist_cjs_js_clonedRuleSet_9_use_1_vue_loader_dist_stylePostLoader_js_postcss_loader_dist_cjs_js_clonedRuleSet_9_use_2_vue_loader_dist_index_js_ruleSet_0_use_0_WaveSurferVue_vue_vue_type_style_index_0_id_729be26d_lang_css_scoped_true__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../style-loader/dist/cjs.js!../../css-loader/dist/cjs.js??clonedRuleSet-9.use[1]!../../vue-loader/dist/stylePostLoader.js!../../postcss-loader/dist/cjs.js??clonedRuleSet-9.use[2]!../../vue-loader/dist/index.js??ruleSet[0].use[0]!./WaveSurferVue.vue?vue&type=style&index=0&id=729be26d&lang=css&scoped=true */ "./node_modules/style-loader/dist/cjs.js!./node_modules/css-loader/dist/cjs.js??clonedRuleSet-9.use[1]!./node_modules/vue-loader/dist/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-9.use[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./node_modules/wavesurfer.js-vue/src/WaveSurferVue.vue?vue&type=style&index=0&id=729be26d&lang=css&scoped=true");
+
+
+/***/ }),
+
 /***/ "./resources/js/Pages/Welcome.vue?vue&type=style&index=0&id=317d1a6e&scoped=true&lang=css":
 /*!************************************************************************************************!*\
   !*** ./resources/js/Pages/Welcome.vue?vue&type=style&index=0&id=317d1a6e&scoped=true&lang=css ***!
@@ -67725,6 +64182,58 @@ __webpack_require__.r(__webpack_exports__);
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _node_modules_style_loader_dist_cjs_js_node_modules_css_loader_dist_cjs_js_clonedRuleSet_9_use_1_node_modules_vue_loader_dist_stylePostLoader_js_node_modules_postcss_loader_dist_cjs_js_clonedRuleSet_9_use_2_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_Welcome_vue_vue_type_style_index_0_id_317d1a6e_scoped_true_lang_css__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/style-loader/dist/cjs.js!../../../node_modules/css-loader/dist/cjs.js??clonedRuleSet-9.use[1]!../../../node_modules/vue-loader/dist/stylePostLoader.js!../../../node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-9.use[2]!../../../node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./Welcome.vue?vue&type=style&index=0&id=317d1a6e&scoped=true&lang=css */ "./node_modules/style-loader/dist/cjs.js!./node_modules/css-loader/dist/cjs.js??clonedRuleSet-9.use[1]!./node_modules/vue-loader/dist/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-9.use[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/Pages/Welcome.vue?vue&type=style&index=0&id=317d1a6e&scoped=true&lang=css");
 
+
+/***/ }),
+
+/***/ "./node_modules/wavesurfer.js-vue/src/WaveSurferVue.vue?vue&type=script&lang=js":
+/*!**************************************************************************************!*\
+  !*** ./node_modules/wavesurfer.js-vue/src/WaveSurferVue.vue?vue&type=script&lang=js ***!
+  \**************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* reexport safe */ _vue_loader_dist_index_js_ruleSet_0_use_0_WaveSurferVue_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_0__["default"])
+/* harmony export */ });
+/* harmony import */ var _vue_loader_dist_index_js_ruleSet_0_use_0_WaveSurferVue_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../vue-loader/dist/index.js??ruleSet[0].use[0]!./WaveSurferVue.vue?vue&type=script&lang=js */ "./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./node_modules/wavesurfer.js-vue/src/WaveSurferVue.vue?vue&type=script&lang=js");
+ 
+
+/***/ }),
+
+/***/ "./node_modules/wavesurfer.js-vue/src/WaveSurferVue.vue?vue&type=template&id=729be26d&scoped=true":
+/*!********************************************************************************************************!*\
+  !*** ./node_modules/wavesurfer.js-vue/src/WaveSurferVue.vue?vue&type=template&id=729be26d&scoped=true ***!
+  \********************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "render": () => (/* reexport safe */ _vue_loader_dist_templateLoader_js_ruleSet_1_rules_2_vue_loader_dist_index_js_ruleSet_0_use_0_WaveSurferVue_vue_vue_type_template_id_729be26d_scoped_true__WEBPACK_IMPORTED_MODULE_0__.render)
+/* harmony export */ });
+/* harmony import */ var _vue_loader_dist_templateLoader_js_ruleSet_1_rules_2_vue_loader_dist_index_js_ruleSet_0_use_0_WaveSurferVue_vue_vue_type_template_id_729be26d_scoped_true__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!../../vue-loader/dist/index.js??ruleSet[0].use[0]!./WaveSurferVue.vue?vue&type=template&id=729be26d&scoped=true */ "./node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./node_modules/wavesurfer.js-vue/src/WaveSurferVue.vue?vue&type=template&id=729be26d&scoped=true");
+
+
+/***/ }),
+
+/***/ "./node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./node_modules/wavesurfer.js-vue/src/WaveSurferVue.vue?vue&type=template&id=729be26d&scoped=true":
+/*!*****************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./node_modules/wavesurfer.js-vue/src/WaveSurferVue.vue?vue&type=template&id=729be26d&scoped=true ***!
+  \*****************************************************************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "render": () => (/* binding */ render)
+/* harmony export */ });
+/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm-bundler.js");
+
+
+function render(_ctx, _cache, $props, $setup, $data, $options) {
+  return ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div"))
+}
 
 /***/ }),
 
@@ -68485,6 +64994,6578 @@ function index (app, vueClipboardConfig) {
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (index);
 
 
+
+/***/ }),
+
+/***/ "./node_modules/wavesurfer.js-vue/src/index.js":
+/*!*****************************************************!*\
+  !*** ./node_modules/wavesurfer.js-vue/src/index.js ***!
+  \*****************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _WaveSurferVue_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./WaveSurferVue.vue */ "./node_modules/wavesurfer.js-vue/src/WaveSurferVue.vue");
+
+
+if (typeof window !== 'undefined' && window.Vue) {
+  window.Vue.use(_WaveSurferVue_vue__WEBPACK_IMPORTED_MODULE_0__["default"]);
+}
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  install(Vue, options) {
+    Vue.component('wavesurfer', _WaveSurferVue_vue__WEBPACK_IMPORTED_MODULE_0__["default"]);
+  }
+});
+
+
+/***/ }),
+
+/***/ "./node_modules/wavesurfer.js/dist/wavesurfer.js":
+/*!*******************************************************!*\
+  !*** ./node_modules/wavesurfer.js/dist/wavesurfer.js ***!
+  \*******************************************************/
+/***/ ((module) => {
+
+/*!
+ * wavesurfer.js 5.2.0 (2021-08-16)
+ * https://wavesurfer-js.org
+ * @license BSD-3-Clause
+ */
+(function webpackUniversalModuleDefinition(root, factory) {
+	if(true)
+		module.exports = factory();
+	else {}
+})(self, function() {
+return /******/ (() => { // webpackBootstrap
+/******/ 	var __webpack_modules__ = ({
+
+/***/ "./src/drawer.canvasentry.js":
+/*!***********************************!*\
+  !*** ./src/drawer.canvasentry.js ***!
+  \***********************************/
+/***/ ((module, exports, __nested_webpack_require_747__) => {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports.default = void 0;
+
+var _style = _interopRequireDefault(__nested_webpack_require_747__(/*! ./util/style */ "./src/util/style.js"));
+
+var _getId = _interopRequireDefault(__nested_webpack_require_747__(/*! ./util/get-id */ "./src/util/get-id.js"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+/**
+ * The `CanvasEntry` class represents an element consisting of a wave `canvas`
+ * and an (optional) progress wave `canvas`.
+ *
+ * The `MultiCanvas` renderer uses one or more `CanvasEntry` instances to
+ * render a waveform, depending on the zoom level.
+ */
+var CanvasEntry = /*#__PURE__*/function () {
+  function CanvasEntry() {
+    _classCallCheck(this, CanvasEntry);
+
+    /**
+     * The wave node
+     *
+     * @type {HTMLCanvasElement}
+     */
+    this.wave = null;
+    /**
+     * The wave canvas rendering context
+     *
+     * @type {CanvasRenderingContext2D}
+     */
+
+    this.waveCtx = null;
+    /**
+     * The (optional) progress wave node
+     *
+     * @type {HTMLCanvasElement}
+     */
+
+    this.progress = null;
+    /**
+     * The (optional) progress wave canvas rendering context
+     *
+     * @type {CanvasRenderingContext2D}
+     */
+
+    this.progressCtx = null;
+    /**
+     * Start of the area the canvas should render, between 0 and 1
+     *
+     * @type {number}
+     */
+
+    this.start = 0;
+    /**
+     * End of the area the canvas should render, between 0 and 1
+     *
+     * @type {number}
+     */
+
+    this.end = 1;
+    /**
+     * Unique identifier for this entry
+     *
+     * @type {string}
+     */
+
+    this.id = (0, _getId.default)(typeof this.constructor.name !== 'undefined' ? this.constructor.name.toLowerCase() + '_' : 'canvasentry_');
+    /**
+     * Canvas 2d context attributes
+     *
+     * @type {object}
+     */
+
+    this.canvasContextAttributes = {};
+  }
+  /**
+   * Store the wave canvas element and create the 2D rendering context
+   *
+   * @param {HTMLCanvasElement} element The wave `canvas` element.
+   */
+
+
+  _createClass(CanvasEntry, [{
+    key: "initWave",
+    value: function initWave(element) {
+      this.wave = element;
+      this.waveCtx = this.wave.getContext('2d', this.canvasContextAttributes);
+    }
+    /**
+     * Store the progress wave canvas element and create the 2D rendering
+     * context
+     *
+     * @param {HTMLCanvasElement} element The progress wave `canvas` element.
+     */
+
+  }, {
+    key: "initProgress",
+    value: function initProgress(element) {
+      this.progress = element;
+      this.progressCtx = this.progress.getContext('2d', this.canvasContextAttributes);
+    }
+    /**
+     * Update the dimensions
+     *
+     * @param {number} elementWidth Width of the entry
+     * @param {number} totalWidth Total width of the multi canvas renderer
+     * @param {number} width The new width of the element
+     * @param {number} height The new height of the element
+     */
+
+  }, {
+    key: "updateDimensions",
+    value: function updateDimensions(elementWidth, totalWidth, width, height) {
+      // where the canvas starts and ends in the waveform, represented as a
+      // decimal between 0 and 1
+      this.start = this.wave.offsetLeft / totalWidth || 0;
+      this.end = this.start + elementWidth / totalWidth; // set wave canvas dimensions
+
+      this.wave.width = width;
+      this.wave.height = height;
+      var elementSize = {
+        width: elementWidth + 'px'
+      };
+      (0, _style.default)(this.wave, elementSize);
+
+      if (this.hasProgressCanvas) {
+        // set progress canvas dimensions
+        this.progress.width = width;
+        this.progress.height = height;
+        (0, _style.default)(this.progress, elementSize);
+      }
+    }
+    /**
+     * Clear the wave and progress rendering contexts
+     */
+
+  }, {
+    key: "clearWave",
+    value: function clearWave() {
+      // wave
+      this.waveCtx.clearRect(0, 0, this.waveCtx.canvas.width, this.waveCtx.canvas.height); // progress
+
+      if (this.hasProgressCanvas) {
+        this.progressCtx.clearRect(0, 0, this.progressCtx.canvas.width, this.progressCtx.canvas.height);
+      }
+    }
+    /**
+     * Set the fill styles for wave and progress
+     *
+     * @param {string} waveColor Fill color for the wave canvas
+     * @param {?string} progressColor Fill color for the progress canvas
+     */
+
+  }, {
+    key: "setFillStyles",
+    value: function setFillStyles(waveColor, progressColor) {
+      this.waveCtx.fillStyle = waveColor;
+
+      if (this.hasProgressCanvas) {
+        this.progressCtx.fillStyle = progressColor;
+      }
+    }
+    /**
+     * Set the canvas transforms for wave and progress
+     *
+     * @param {boolean} vertical Whether to render vertically
+     */
+
+  }, {
+    key: "applyCanvasTransforms",
+    value: function applyCanvasTransforms(vertical) {
+      if (vertical) {
+        // Reflect the waveform across the line y = -x
+        this.waveCtx.setTransform(0, 1, 1, 0, 0, 0);
+
+        if (this.hasProgressCanvas) {
+          this.progressCtx.setTransform(0, 1, 1, 0, 0, 0);
+        }
+      }
+    }
+    /**
+     * Draw a rectangle for wave and progress
+     *
+     * @param {number} x X start position
+     * @param {number} y Y start position
+     * @param {number} width Width of the rectangle
+     * @param {number} height Height of the rectangle
+     * @param {number} radius Radius of the rectangle
+     */
+
+  }, {
+    key: "fillRects",
+    value: function fillRects(x, y, width, height, radius) {
+      this.fillRectToContext(this.waveCtx, x, y, width, height, radius);
+
+      if (this.hasProgressCanvas) {
+        this.fillRectToContext(this.progressCtx, x, y, width, height, radius);
+      }
+    }
+    /**
+     * Draw the actual rectangle on a `canvas` element
+     *
+     * @param {CanvasRenderingContext2D} ctx Rendering context of target canvas
+     * @param {number} x X start position
+     * @param {number} y Y start position
+     * @param {number} width Width of the rectangle
+     * @param {number} height Height of the rectangle
+     * @param {number} radius Radius of the rectangle
+     */
+
+  }, {
+    key: "fillRectToContext",
+    value: function fillRectToContext(ctx, x, y, width, height, radius) {
+      if (!ctx) {
+        return;
+      }
+
+      if (radius) {
+        this.drawRoundedRect(ctx, x, y, width, height, radius);
+      } else {
+        ctx.fillRect(x, y, width, height);
+      }
+    }
+    /**
+     * Draw a rounded rectangle on Canvas
+     *
+     * @param {CanvasRenderingContext2D} ctx Canvas context
+     * @param {number} x X-position of the rectangle
+     * @param {number} y Y-position of the rectangle
+     * @param {number} width Width of the rectangle
+     * @param {number} height Height of the rectangle
+     * @param {number} radius Radius of the rectangle
+     *
+     * @return {void}
+     * @example drawRoundedRect(ctx, 50, 50, 5, 10, 3)
+     */
+
+  }, {
+    key: "drawRoundedRect",
+    value: function drawRoundedRect(ctx, x, y, width, height, radius) {
+      if (height === 0) {
+        return;
+      } // peaks are float values from -1 to 1. Use absolute height values in
+      // order to correctly calculate rounded rectangle coordinates
+
+
+      if (height < 0) {
+        height *= -1;
+        y -= height;
+      }
+
+      ctx.beginPath();
+      ctx.moveTo(x + radius, y);
+      ctx.lineTo(x + width - radius, y);
+      ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+      ctx.lineTo(x + width, y + height - radius);
+      ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+      ctx.lineTo(x + radius, y + height);
+      ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+      ctx.lineTo(x, y + radius);
+      ctx.quadraticCurveTo(x, y, x + radius, y);
+      ctx.closePath();
+      ctx.fill();
+    }
+    /**
+     * Render the actual wave and progress lines
+     *
+     * @param {number[]} peaks Array with peaks data
+     * @param {number} absmax Maximum peak value (absolute)
+     * @param {number} halfH Half the height of the waveform
+     * @param {number} offsetY Offset to the top
+     * @param {number} start The x-offset of the beginning of the area that
+     * should be rendered
+     * @param {number} end The x-offset of the end of the area that
+     * should be rendered
+     */
+
+  }, {
+    key: "drawLines",
+    value: function drawLines(peaks, absmax, halfH, offsetY, start, end) {
+      this.drawLineToContext(this.waveCtx, peaks, absmax, halfH, offsetY, start, end);
+
+      if (this.hasProgressCanvas) {
+        this.drawLineToContext(this.progressCtx, peaks, absmax, halfH, offsetY, start, end);
+      }
+    }
+    /**
+     * Render the actual waveform line on a `canvas` element
+     *
+     * @param {CanvasRenderingContext2D} ctx Rendering context of target canvas
+     * @param {number[]} peaks Array with peaks data
+     * @param {number} absmax Maximum peak value (absolute)
+     * @param {number} halfH Half the height of the waveform
+     * @param {number} offsetY Offset to the top
+     * @param {number} start The x-offset of the beginning of the area that
+     * should be rendered
+     * @param {number} end The x-offset of the end of the area that
+     * should be rendered
+     */
+
+  }, {
+    key: "drawLineToContext",
+    value: function drawLineToContext(ctx, peaks, absmax, halfH, offsetY, start, end) {
+      if (!ctx) {
+        return;
+      }
+
+      var length = peaks.length / 2;
+      var first = Math.round(length * this.start); // use one more peak value to make sure we join peaks at ends -- unless,
+      // of course, this is the last canvas
+
+      var last = Math.round(length * this.end) + 1;
+      var canvasStart = first;
+      var canvasEnd = last;
+      var scale = this.wave.width / (canvasEnd - canvasStart - 1); // optimization
+
+      var halfOffset = halfH + offsetY;
+      var absmaxHalf = absmax / halfH;
+      ctx.beginPath();
+      ctx.moveTo((canvasStart - first) * scale, halfOffset);
+      ctx.lineTo((canvasStart - first) * scale, halfOffset - Math.round((peaks[2 * canvasStart] || 0) / absmaxHalf));
+      var i, peak, h;
+
+      for (i = canvasStart; i < canvasEnd; i++) {
+        peak = peaks[2 * i] || 0;
+        h = Math.round(peak / absmaxHalf);
+        ctx.lineTo((i - first) * scale + this.halfPixel, halfOffset - h);
+      } // draw the bottom edge going backwards, to make a single
+      // closed hull to fill
+
+
+      var j = canvasEnd - 1;
+
+      for (j; j >= canvasStart; j--) {
+        peak = peaks[2 * j + 1] || 0;
+        h = Math.round(peak / absmaxHalf);
+        ctx.lineTo((j - first) * scale + this.halfPixel, halfOffset - h);
+      }
+
+      ctx.lineTo((canvasStart - first) * scale, halfOffset - Math.round((peaks[2 * canvasStart + 1] || 0) / absmaxHalf));
+      ctx.closePath();
+      ctx.fill();
+    }
+    /**
+     * Destroys this entry
+     */
+
+  }, {
+    key: "destroy",
+    value: function destroy() {
+      this.waveCtx = null;
+      this.wave = null;
+      this.progressCtx = null;
+      this.progress = null;
+    }
+    /**
+     * Return image data of the wave `canvas` element
+     *
+     * When using a `type` of `'blob'`, this will return a `Promise` that
+     * resolves with a `Blob` instance.
+     *
+     * @param {string} format='image/png' An optional value of a format type.
+     * @param {number} quality=0.92 An optional value between 0 and 1.
+     * @param {string} type='dataURL' Either 'dataURL' or 'blob'.
+     * @return {string|Promise} When using the default `'dataURL'` `type` this
+     * returns a data URL. When using the `'blob'` `type` this returns a
+     * `Promise` that resolves with a `Blob` instance.
+     */
+
+  }, {
+    key: "getImage",
+    value: function getImage(format, quality, type) {
+      var _this = this;
+
+      if (type === 'blob') {
+        return new Promise(function (resolve) {
+          _this.wave.toBlob(resolve, format, quality);
+        });
+      } else if (type === 'dataURL') {
+        return this.wave.toDataURL(format, quality);
+      }
+    }
+  }]);
+
+  return CanvasEntry;
+}();
+
+exports.default = CanvasEntry;
+module.exports = exports.default;
+
+/***/ }),
+
+/***/ "./src/drawer.js":
+/*!***********************!*\
+  !*** ./src/drawer.js ***!
+  \***********************/
+/***/ ((module, exports, __nested_webpack_require_13686__) => {
+
+"use strict";
+
+
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports.default = void 0;
+
+var util = _interopRequireWildcard(__nested_webpack_require_13686__(/*! ./util */ "./src/util/index.js"));
+
+function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function _getRequireWildcardCache(nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
+
+function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || _typeof(obj) !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } else if (call !== void 0) { throw new TypeError("Derived constructors may only return object or undefined"); } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+/**
+ * Parent class for renderers
+ *
+ * @extends {Observer}
+ */
+var Drawer = /*#__PURE__*/function (_util$Observer) {
+  _inherits(Drawer, _util$Observer);
+
+  var _super = _createSuper(Drawer);
+
+  /**
+   * @param {HTMLElement} container The container node of the wavesurfer instance
+   * @param {WavesurferParams} params The wavesurfer initialisation options
+   */
+  function Drawer(container, params) {
+    var _this;
+
+    _classCallCheck(this, Drawer);
+
+    _this = _super.call(this);
+    _this.container = util.withOrientation(container, params.vertical);
+    /**
+     * @type {WavesurferParams}
+     */
+
+    _this.params = params;
+    /**
+     * The width of the renderer
+     * @type {number}
+     */
+
+    _this.width = 0;
+    /**
+     * The height of the renderer
+     * @type {number}
+     */
+
+    _this.height = params.height * _this.params.pixelRatio;
+    _this.lastPos = 0;
+    /**
+     * The `<wave>` element which is added to the container
+     * @type {HTMLElement}
+     */
+
+    _this.wrapper = null;
+    return _this;
+  }
+  /**
+   * Alias of `util.style`
+   *
+   * @param {HTMLElement} el The element that the styles will be applied to
+   * @param {Object} styles The map of propName: attribute, both are used as-is
+   * @return {HTMLElement} el
+   */
+
+
+  _createClass(Drawer, [{
+    key: "style",
+    value: function style(el, styles) {
+      return util.style(el, styles);
+    }
+    /**
+     * Create the wrapper `<wave>` element, style it and set up the events for
+     * interaction
+     */
+
+  }, {
+    key: "createWrapper",
+    value: function createWrapper() {
+      this.wrapper = util.withOrientation(this.container.appendChild(document.createElement('wave')), this.params.vertical);
+      this.style(this.wrapper, {
+        display: 'block',
+        position: 'relative',
+        userSelect: 'none',
+        webkitUserSelect: 'none',
+        height: this.params.height + 'px'
+      });
+
+      if (this.params.fillParent || this.params.scrollParent) {
+        this.style(this.wrapper, {
+          width: '100%',
+          overflowX: this.params.hideScrollbar ? 'hidden' : 'auto',
+          overflowY: 'hidden'
+        });
+      }
+
+      this.setupWrapperEvents();
+    }
+    /**
+     * Handle click event
+     *
+     * @param {Event} e Click event
+     * @param {?boolean} noPrevent Set to true to not call `e.preventDefault()`
+     * @return {number} Playback position from 0 to 1
+     */
+
+  }, {
+    key: "handleEvent",
+    value: function handleEvent(e, noPrevent) {
+      !noPrevent && e.preventDefault();
+      var clientX = util.withOrientation(e.targetTouches ? e.targetTouches[0] : e, this.params.vertical).clientX;
+      var bbox = this.wrapper.getBoundingClientRect();
+      var nominalWidth = this.width;
+      var parentWidth = this.getWidth();
+      var progressPixels = this.getProgressPixels(bbox, clientX);
+      var progress;
+
+      if (!this.params.fillParent && nominalWidth < parentWidth) {
+        progress = progressPixels * (this.params.pixelRatio / nominalWidth) || 0;
+      } else {
+        progress = (progressPixels + this.wrapper.scrollLeft) / this.wrapper.scrollWidth || 0;
+      }
+
+      return util.clamp(progress, 0, 1);
+    }
+  }, {
+    key: "getProgressPixels",
+    value: function getProgressPixels(wrapperBbox, clientX) {
+      if (this.params.rtl) {
+        return wrapperBbox.right - clientX;
+      } else {
+        return clientX - wrapperBbox.left;
+      }
+    }
+  }, {
+    key: "setupWrapperEvents",
+    value: function setupWrapperEvents() {
+      var _this2 = this;
+
+      this.wrapper.addEventListener('click', function (e) {
+        var orientedEvent = util.withOrientation(e, _this2.params.vertical);
+        var scrollbarHeight = _this2.wrapper.offsetHeight - _this2.wrapper.clientHeight;
+
+        if (scrollbarHeight !== 0) {
+          // scrollbar is visible.  Check if click was on it
+          var bbox = _this2.wrapper.getBoundingClientRect();
+
+          if (orientedEvent.clientY >= bbox.bottom - scrollbarHeight) {
+            // ignore mousedown as it was on the scrollbar
+            return;
+          }
+        }
+
+        if (_this2.params.interact) {
+          _this2.fireEvent('click', e, _this2.handleEvent(e));
+        }
+      });
+      this.wrapper.addEventListener('dblclick', function (e) {
+        if (_this2.params.interact) {
+          _this2.fireEvent('dblclick', e, _this2.handleEvent(e));
+        }
+      });
+      this.wrapper.addEventListener('scroll', function (e) {
+        return _this2.fireEvent('scroll', e);
+      });
+    }
+    /**
+     * Draw peaks on the canvas
+     *
+     * @param {number[]|Number.<Array[]>} peaks Can also be an array of arrays
+     * for split channel rendering
+     * @param {number} length The width of the area that should be drawn
+     * @param {number} start The x-offset of the beginning of the area that
+     * should be rendered
+     * @param {number} end The x-offset of the end of the area that should be
+     * rendered
+     */
+
+  }, {
+    key: "drawPeaks",
+    value: function drawPeaks(peaks, length, start, end) {
+      if (!this.setWidth(length)) {
+        this.clearWave();
+      }
+
+      this.params.barWidth ? this.drawBars(peaks, 0, start, end) : this.drawWave(peaks, 0, start, end);
+    }
+    /**
+     * Scroll to the beginning
+     */
+
+  }, {
+    key: "resetScroll",
+    value: function resetScroll() {
+      if (this.wrapper !== null) {
+        this.wrapper.scrollLeft = 0;
+      }
+    }
+    /**
+     * Recenter the view-port at a certain percent of the waveform
+     *
+     * @param {number} percent Value from 0 to 1 on the waveform
+     */
+
+  }, {
+    key: "recenter",
+    value: function recenter(percent) {
+      var position = this.wrapper.scrollWidth * percent;
+      this.recenterOnPosition(position, true);
+    }
+    /**
+     * Recenter the view-port on a position, either scroll there immediately or
+     * in steps of 5 pixels
+     *
+     * @param {number} position X-offset in pixels
+     * @param {boolean} immediate Set to true to immediately scroll somewhere
+     */
+
+  }, {
+    key: "recenterOnPosition",
+    value: function recenterOnPosition(position, immediate) {
+      var scrollLeft = this.wrapper.scrollLeft;
+      var half = ~~(this.wrapper.clientWidth / 2);
+      var maxScroll = this.wrapper.scrollWidth - this.wrapper.clientWidth;
+      var target = position - half;
+      var offset = target - scrollLeft;
+
+      if (maxScroll == 0) {
+        // no need to continue if scrollbar is not there
+        return;
+      } // if the cursor is currently visible...
+
+
+      if (!immediate && -half <= offset && offset < half) {
+        // set rate at which waveform is centered
+        var rate = this.params.autoCenterRate; // make rate depend on width of view and length of waveform
+
+        rate /= half;
+        rate *= maxScroll;
+        offset = Math.max(-rate, Math.min(rate, offset));
+        target = scrollLeft + offset;
+      } // limit target to valid range (0 to maxScroll)
+
+
+      target = Math.max(0, Math.min(maxScroll, target)); // no use attempting to scroll if we're not moving
+
+      if (target != scrollLeft) {
+        this.wrapper.scrollLeft = target;
+      }
+    }
+    /**
+     * Get the current scroll position in pixels
+     *
+     * @return {number} Horizontal scroll position in pixels
+     */
+
+  }, {
+    key: "getScrollX",
+    value: function getScrollX() {
+      var x = 0;
+
+      if (this.wrapper) {
+        var pixelRatio = this.params.pixelRatio;
+        x = Math.round(this.wrapper.scrollLeft * pixelRatio); // In cases of elastic scroll (safari with mouse wheel) you can
+        // scroll beyond the limits of the container
+        // Calculate and floor the scrollable extent to make sure an out
+        // of bounds value is not returned
+        // Ticket #1312
+
+        if (this.params.scrollParent) {
+          var maxScroll = ~~(this.wrapper.scrollWidth * pixelRatio - this.getWidth());
+          x = Math.min(maxScroll, Math.max(0, x));
+        }
+      }
+
+      return x;
+    }
+    /**
+     * Get the width of the container
+     *
+     * @return {number} The width of the container
+     */
+
+  }, {
+    key: "getWidth",
+    value: function getWidth() {
+      return Math.round(this.container.clientWidth * this.params.pixelRatio);
+    }
+    /**
+     * Set the width of the container
+     *
+     * @param {number} width The new width of the container
+     * @return {boolean} Whether the width of the container was updated or not
+     */
+
+  }, {
+    key: "setWidth",
+    value: function setWidth(width) {
+      if (this.width == width) {
+        return false;
+      }
+
+      this.width = width;
+
+      if (this.params.fillParent || this.params.scrollParent) {
+        this.style(this.wrapper, {
+          width: ''
+        });
+      } else {
+        var newWidth = ~~(this.width / this.params.pixelRatio) + 'px';
+        this.style(this.wrapper, {
+          width: newWidth
+        });
+      }
+
+      this.updateSize();
+      return true;
+    }
+    /**
+     * Set the height of the container
+     *
+     * @param {number} height The new height of the container.
+     * @return {boolean} Whether the height of the container was updated or not
+     */
+
+  }, {
+    key: "setHeight",
+    value: function setHeight(height) {
+      if (height == this.height) {
+        return false;
+      }
+
+      this.height = height;
+      this.style(this.wrapper, {
+        height: ~~(this.height / this.params.pixelRatio) + 'px'
+      });
+      this.updateSize();
+      return true;
+    }
+    /**
+     * Called by wavesurfer when progress should be rendered
+     *
+     * @param {number} progress From 0 to 1
+     */
+
+  }, {
+    key: "progress",
+    value: function progress(_progress) {
+      var minPxDelta = 1 / this.params.pixelRatio;
+      var pos = Math.round(_progress * this.width) * minPxDelta;
+
+      if (pos < this.lastPos || pos - this.lastPos >= minPxDelta) {
+        this.lastPos = pos;
+
+        if (this.params.scrollParent && this.params.autoCenter) {
+          var newPos = ~~(this.wrapper.scrollWidth * _progress);
+          this.recenterOnPosition(newPos, this.params.autoCenterImmediately);
+        }
+
+        this.updateProgress(pos);
+      }
+    }
+    /**
+     * This is called when wavesurfer is destroyed
+     */
+
+  }, {
+    key: "destroy",
+    value: function destroy() {
+      this.unAll();
+
+      if (this.wrapper) {
+        if (this.wrapper.parentNode == this.container.domElement) {
+          this.container.removeChild(this.wrapper.domElement);
+        }
+
+        this.wrapper = null;
+      }
+    }
+    /* Renderer-specific methods */
+
+    /**
+     * Called after cursor related params have changed.
+     *
+     * @abstract
+     */
+
+  }, {
+    key: "updateCursor",
+    value: function updateCursor() {}
+    /**
+     * Called when the size of the container changes so the renderer can adjust
+     *
+     * @abstract
+     */
+
+  }, {
+    key: "updateSize",
+    value: function updateSize() {}
+    /**
+     * Draw a waveform with bars
+     *
+     * @abstract
+     * @param {number[]|Number.<Array[]>} peaks Can also be an array of arrays for split channel
+     * rendering
+     * @param {number} channelIndex The index of the current channel. Normally
+     * should be 0
+     * @param {number} start The x-offset of the beginning of the area that
+     * should be rendered
+     * @param {number} end The x-offset of the end of the area that should be
+     * rendered
+     */
+
+  }, {
+    key: "drawBars",
+    value: function drawBars(peaks, channelIndex, start, end) {}
+    /**
+     * Draw a waveform
+     *
+     * @abstract
+     * @param {number[]|Number.<Array[]>} peaks Can also be an array of arrays for split channel
+     * rendering
+     * @param {number} channelIndex The index of the current channel. Normally
+     * should be 0
+     * @param {number} start The x-offset of the beginning of the area that
+     * should be rendered
+     * @param {number} end The x-offset of the end of the area that should be
+     * rendered
+     */
+
+  }, {
+    key: "drawWave",
+    value: function drawWave(peaks, channelIndex, start, end) {}
+    /**
+     * Clear the waveform
+     *
+     * @abstract
+     */
+
+  }, {
+    key: "clearWave",
+    value: function clearWave() {}
+    /**
+     * Render the new progress
+     *
+     * @abstract
+     * @param {number} position X-Offset of progress position in pixels
+     */
+
+  }, {
+    key: "updateProgress",
+    value: function updateProgress(position) {}
+  }]);
+
+  return Drawer;
+}(util.Observer);
+
+exports.default = Drawer;
+module.exports = exports.default;
+
+/***/ }),
+
+/***/ "./src/drawer.multicanvas.js":
+/*!***********************************!*\
+  !*** ./src/drawer.multicanvas.js ***!
+  \***********************************/
+/***/ ((module, exports, __nested_webpack_require_30815__) => {
+
+"use strict";
+
+
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports.default = void 0;
+
+var _drawer = _interopRequireDefault(__nested_webpack_require_30815__(/*! ./drawer */ "./src/drawer.js"));
+
+var util = _interopRequireWildcard(__nested_webpack_require_30815__(/*! ./util */ "./src/util/index.js"));
+
+var _drawer2 = _interopRequireDefault(__nested_webpack_require_30815__(/*! ./drawer.canvasentry */ "./src/drawer.canvasentry.js"));
+
+function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function _getRequireWildcardCache(nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
+
+function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || _typeof(obj) !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } else if (call !== void 0) { throw new TypeError("Derived constructors may only return object or undefined"); } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+/**
+ * MultiCanvas renderer for wavesurfer. Is currently the default and sole
+ * builtin renderer.
+ *
+ * A `MultiCanvas` consists of one or more `CanvasEntry` instances, depending
+ * on the zoom level.
+ */
+var MultiCanvas = /*#__PURE__*/function (_Drawer) {
+  _inherits(MultiCanvas, _Drawer);
+
+  var _super = _createSuper(MultiCanvas);
+
+  /**
+   * @param {HTMLElement} container The container node of the wavesurfer instance
+   * @param {WavesurferParams} params The wavesurfer initialisation options
+   */
+  function MultiCanvas(container, params) {
+    var _this;
+
+    _classCallCheck(this, MultiCanvas);
+
+    _this = _super.call(this, container, params);
+    /**
+     * @type {number}
+     */
+
+    _this.maxCanvasWidth = params.maxCanvasWidth;
+    /**
+     * @type {number}
+     */
+
+    _this.maxCanvasElementWidth = Math.round(params.maxCanvasWidth / params.pixelRatio);
+    /**
+     * Whether or not the progress wave is rendered. If the `waveColor`
+     * and `progressColor` are the same color it is not.
+     *
+     * @type {boolean}
+     */
+
+    _this.hasProgressCanvas = params.waveColor != params.progressColor;
+    /**
+     * @type {number}
+     */
+
+    _this.halfPixel = 0.5 / params.pixelRatio;
+    /**
+     * List of `CanvasEntry` instances.
+     *
+     * @type {Array}
+     */
+
+    _this.canvases = [];
+    /**
+     * @type {HTMLElement}
+     */
+
+    _this.progressWave = null;
+    /**
+     * Class used to generate entries.
+     *
+     * @type {function}
+     */
+
+    _this.EntryClass = _drawer2.default;
+    /**
+     * Canvas 2d context attributes.
+     *
+     * @type {object}
+     */
+
+    _this.canvasContextAttributes = params.drawingContextAttributes;
+    /**
+     * Overlap added between entries to prevent vertical white stripes
+     * between `canvas` elements.
+     *
+     * @type {number}
+     */
+
+    _this.overlap = 2 * Math.ceil(params.pixelRatio / 2);
+    /**
+     * The radius of the wave bars. Makes bars rounded
+     *
+     * @type {number}
+     */
+
+    _this.barRadius = params.barRadius || 0;
+    /**
+     * Whether to render the waveform vertically. Defaults to false.
+     *
+     * @type {boolean}
+     */
+
+    _this.vertical = params.vertical;
+    return _this;
+  }
+  /**
+   * Initialize the drawer
+   */
+
+
+  _createClass(MultiCanvas, [{
+    key: "init",
+    value: function init() {
+      this.createWrapper();
+      this.createElements();
+    }
+    /**
+     * Create the canvas elements and style them
+     *
+     */
+
+  }, {
+    key: "createElements",
+    value: function createElements() {
+      this.progressWave = util.withOrientation(this.wrapper.appendChild(document.createElement('wave')), this.params.vertical);
+      this.style(this.progressWave, {
+        position: 'absolute',
+        zIndex: 3,
+        left: 0,
+        top: 0,
+        bottom: 0,
+        overflow: 'hidden',
+        width: '0',
+        display: 'none',
+        boxSizing: 'border-box',
+        borderRightStyle: 'solid',
+        pointerEvents: 'none'
+      });
+      this.addCanvas();
+      this.updateCursor();
+    }
+    /**
+     * Update cursor style
+     */
+
+  }, {
+    key: "updateCursor",
+    value: function updateCursor() {
+      this.style(this.progressWave, {
+        borderRightWidth: this.params.cursorWidth + 'px',
+        borderRightColor: this.params.cursorColor
+      });
+    }
+    /**
+     * Adjust to the updated size by adding or removing canvases
+     */
+
+  }, {
+    key: "updateSize",
+    value: function updateSize() {
+      var _this2 = this;
+
+      var totalWidth = Math.round(this.width / this.params.pixelRatio);
+      var requiredCanvases = Math.ceil(totalWidth / (this.maxCanvasElementWidth + this.overlap)); // add required canvases
+
+      while (this.canvases.length < requiredCanvases) {
+        this.addCanvas();
+      } // remove older existing canvases, if any
+
+
+      while (this.canvases.length > requiredCanvases) {
+        this.removeCanvas();
+      }
+
+      var canvasWidth = this.maxCanvasWidth + this.overlap;
+      var lastCanvas = this.canvases.length - 1;
+      this.canvases.forEach(function (entry, i) {
+        if (i == lastCanvas) {
+          canvasWidth = _this2.width - _this2.maxCanvasWidth * lastCanvas;
+        }
+
+        _this2.updateDimensions(entry, canvasWidth, _this2.height);
+
+        entry.clearWave();
+      });
+    }
+    /**
+     * Add a canvas to the canvas list
+     *
+     */
+
+  }, {
+    key: "addCanvas",
+    value: function addCanvas() {
+      var entry = new this.EntryClass();
+      entry.canvasContextAttributes = this.canvasContextAttributes;
+      entry.hasProgressCanvas = this.hasProgressCanvas;
+      entry.halfPixel = this.halfPixel;
+      var leftOffset = this.maxCanvasElementWidth * this.canvases.length; // wave
+
+      var wave = util.withOrientation(this.wrapper.appendChild(document.createElement('canvas')), this.params.vertical);
+      this.style(wave, {
+        position: 'absolute',
+        zIndex: 2,
+        left: leftOffset + 'px',
+        top: 0,
+        bottom: 0,
+        height: '100%',
+        pointerEvents: 'none'
+      });
+      entry.initWave(wave); // progress
+
+      if (this.hasProgressCanvas) {
+        var progress = util.withOrientation(this.progressWave.appendChild(document.createElement('canvas')), this.params.vertical);
+        this.style(progress, {
+          position: 'absolute',
+          left: leftOffset + 'px',
+          top: 0,
+          bottom: 0,
+          height: '100%'
+        });
+        entry.initProgress(progress);
+      }
+
+      this.canvases.push(entry);
+    }
+    /**
+     * Pop single canvas from the list
+     *
+     */
+
+  }, {
+    key: "removeCanvas",
+    value: function removeCanvas() {
+      var lastEntry = this.canvases[this.canvases.length - 1]; // wave
+
+      lastEntry.wave.parentElement.removeChild(lastEntry.wave.domElement); // progress
+
+      if (this.hasProgressCanvas) {
+        lastEntry.progress.parentElement.removeChild(lastEntry.progress.domElement);
+      } // cleanup
+
+
+      if (lastEntry) {
+        lastEntry.destroy();
+        lastEntry = null;
+      }
+
+      this.canvases.pop();
+    }
+    /**
+     * Update the dimensions of a canvas element
+     *
+     * @param {CanvasEntry} entry Target entry
+     * @param {number} width The new width of the element
+     * @param {number} height The new height of the element
+     */
+
+  }, {
+    key: "updateDimensions",
+    value: function updateDimensions(entry, width, height) {
+      var elementWidth = Math.round(width / this.params.pixelRatio);
+      var totalWidth = Math.round(this.width / this.params.pixelRatio); // update canvas dimensions
+
+      entry.updateDimensions(elementWidth, totalWidth, width, height); // style element
+
+      this.style(this.progressWave, {
+        display: 'block'
+      });
+    }
+    /**
+     * Clear the whole multi-canvas
+     */
+
+  }, {
+    key: "clearWave",
+    value: function clearWave() {
+      var _this3 = this;
+
+      util.frame(function () {
+        _this3.canvases.forEach(function (entry) {
+          return entry.clearWave();
+        });
+      })();
+    }
+    /**
+     * Draw a waveform with bars
+     *
+     * @param {number[]|Number.<Array[]>} peaks Can also be an array of arrays
+     * for split channel rendering
+     * @param {number} channelIndex The index of the current channel. Normally
+     * should be 0. Must be an integer.
+     * @param {number} start The x-offset of the beginning of the area that
+     * should be rendered
+     * @param {number} end The x-offset of the end of the area that should be
+     * rendered
+     * @returns {void}
+     */
+
+  }, {
+    key: "drawBars",
+    value: function drawBars(peaks, channelIndex, start, end) {
+      var _this4 = this;
+
+      return this.prepareDraw(peaks, channelIndex, start, end, function (_ref) {
+        var absmax = _ref.absmax,
+            hasMinVals = _ref.hasMinVals,
+            height = _ref.height,
+            offsetY = _ref.offsetY,
+            halfH = _ref.halfH,
+            peaks = _ref.peaks,
+            ch = _ref.channelIndex;
+
+        // if drawBars was called within ws.empty we don't pass a start and
+        // don't want anything to happen
+        if (start === undefined) {
+          return;
+        } // Skip every other value if there are negatives.
+
+
+        var peakIndexScale = hasMinVals ? 2 : 1;
+        var length = peaks.length / peakIndexScale;
+        var bar = _this4.params.barWidth * _this4.params.pixelRatio;
+        var gap = _this4.params.barGap === null ? Math.max(_this4.params.pixelRatio, ~~(bar / 2)) : Math.max(_this4.params.pixelRatio, _this4.params.barGap * _this4.params.pixelRatio);
+        var step = bar + gap;
+        var scale = length / _this4.width;
+        var first = start;
+        var last = end;
+        var i = first;
+
+        for (i; i < last; i += step) {
+          var peak = peaks[Math.floor(i * scale * peakIndexScale)] || 0;
+          var h = Math.round(peak / absmax * halfH);
+          /* in case of silences, allow the user to specify that we
+           * always draw *something* (normally a 1px high bar) */
+
+          if (h == 0 && _this4.params.barMinHeight) {
+            h = _this4.params.barMinHeight;
+          }
+
+          _this4.fillRect(i + _this4.halfPixel, halfH - h + offsetY, bar + _this4.halfPixel, h * 2, _this4.barRadius, ch);
+        }
+      });
+    }
+    /**
+     * Draw a waveform
+     *
+     * @param {number[]|Number.<Array[]>} peaks Can also be an array of arrays
+     * for split channel rendering
+     * @param {number} channelIndex The index of the current channel. Normally
+     * should be 0
+     * @param {number?} start The x-offset of the beginning of the area that
+     * should be rendered (If this isn't set only a flat line is rendered)
+     * @param {number?} end The x-offset of the end of the area that should be
+     * rendered
+     * @returns {void}
+     */
+
+  }, {
+    key: "drawWave",
+    value: function drawWave(peaks, channelIndex, start, end) {
+      var _this5 = this;
+
+      return this.prepareDraw(peaks, channelIndex, start, end, function (_ref2) {
+        var absmax = _ref2.absmax,
+            hasMinVals = _ref2.hasMinVals,
+            height = _ref2.height,
+            offsetY = _ref2.offsetY,
+            halfH = _ref2.halfH,
+            peaks = _ref2.peaks,
+            channelIndex = _ref2.channelIndex;
+
+        if (!hasMinVals) {
+          var reflectedPeaks = [];
+          var len = peaks.length;
+          var i = 0;
+
+          for (i; i < len; i++) {
+            reflectedPeaks[2 * i] = peaks[i];
+            reflectedPeaks[2 * i + 1] = -peaks[i];
+          }
+
+          peaks = reflectedPeaks;
+        } // if drawWave was called within ws.empty we don't pass a start and
+        // end and simply want a flat line
+
+
+        if (start !== undefined) {
+          _this5.drawLine(peaks, absmax, halfH, offsetY, start, end, channelIndex);
+        } // always draw a median line
+
+
+        _this5.fillRect(0, halfH + offsetY - _this5.halfPixel, _this5.width, _this5.halfPixel, _this5.barRadius, channelIndex);
+      });
+    }
+    /**
+     * Tell the canvas entries to render their portion of the waveform
+     *
+     * @param {number[]} peaks Peaks data
+     * @param {number} absmax Maximum peak value (absolute)
+     * @param {number} halfH Half the height of the waveform
+     * @param {number} offsetY Offset to the top
+     * @param {number} start The x-offset of the beginning of the area that
+     * should be rendered
+     * @param {number} end The x-offset of the end of the area that
+     * should be rendered
+     * @param {channelIndex} channelIndex The channel index of the line drawn
+     */
+
+  }, {
+    key: "drawLine",
+    value: function drawLine(peaks, absmax, halfH, offsetY, start, end, channelIndex) {
+      var _this6 = this;
+
+      var _ref3 = this.params.splitChannelsOptions.channelColors[channelIndex] || {},
+          waveColor = _ref3.waveColor,
+          progressColor = _ref3.progressColor;
+
+      this.canvases.forEach(function (entry, i) {
+        _this6.setFillStyles(entry, waveColor, progressColor);
+
+        _this6.applyCanvasTransforms(entry, _this6.params.vertical);
+
+        entry.drawLines(peaks, absmax, halfH, offsetY, start, end);
+      });
+    }
+    /**
+     * Draw a rectangle on the multi-canvas
+     *
+     * @param {number} x X-position of the rectangle
+     * @param {number} y Y-position of the rectangle
+     * @param {number} width Width of the rectangle
+     * @param {number} height Height of the rectangle
+     * @param {number} radius Radius of the rectangle
+     * @param {channelIndex} channelIndex The channel index of the bar drawn
+     */
+
+  }, {
+    key: "fillRect",
+    value: function fillRect(x, y, width, height, radius, channelIndex) {
+      var startCanvas = Math.floor(x / this.maxCanvasWidth);
+      var endCanvas = Math.min(Math.ceil((x + width) / this.maxCanvasWidth) + 1, this.canvases.length);
+      var i = startCanvas;
+
+      for (i; i < endCanvas; i++) {
+        var entry = this.canvases[i];
+        var leftOffset = i * this.maxCanvasWidth;
+        var intersection = {
+          x1: Math.max(x, i * this.maxCanvasWidth),
+          y1: y,
+          x2: Math.min(x + width, i * this.maxCanvasWidth + entry.wave.width),
+          y2: y + height
+        };
+
+        if (intersection.x1 < intersection.x2) {
+          var _ref4 = this.params.splitChannelsOptions.channelColors[channelIndex] || {},
+              waveColor = _ref4.waveColor,
+              progressColor = _ref4.progressColor;
+
+          this.setFillStyles(entry, waveColor, progressColor);
+          this.applyCanvasTransforms(entry, this.params.vertical);
+          entry.fillRects(intersection.x1 - leftOffset, intersection.y1, intersection.x2 - intersection.x1, intersection.y2 - intersection.y1, radius);
+        }
+      }
+    }
+    /**
+     * Returns whether to hide the channel from being drawn based on params.
+     *
+     * @param {number} channelIndex The index of the current channel.
+     * @returns {bool} True to hide the channel, false to draw.
+     */
+
+  }, {
+    key: "hideChannel",
+    value: function hideChannel(channelIndex) {
+      return this.params.splitChannels && this.params.splitChannelsOptions.filterChannels.includes(channelIndex);
+    }
+    /**
+     * Performs preparation tasks and calculations which are shared by `drawBars`
+     * and `drawWave`
+     *
+     * @param {number[]|Number.<Array[]>} peaks Can also be an array of arrays for
+     * split channel rendering
+     * @param {number} channelIndex The index of the current channel. Normally
+     * should be 0
+     * @param {number?} start The x-offset of the beginning of the area that
+     * should be rendered. If this isn't set only a flat line is rendered
+     * @param {number?} end The x-offset of the end of the area that should be
+     * rendered
+     * @param {function} fn The render function to call, e.g. `drawWave`
+     * @param {number} drawIndex The index of the current channel after filtering.
+     * @param {number?} normalizedMax Maximum modulation value across channels for use with relativeNormalization. Ignored when undefined
+     * @returns {void}
+     */
+
+  }, {
+    key: "prepareDraw",
+    value: function prepareDraw(peaks, channelIndex, start, end, fn, drawIndex, normalizedMax) {
+      var _this7 = this;
+
+      return util.frame(function () {
+        // Split channels and call this function with the channelIndex set
+        if (peaks[0] instanceof Array) {
+          var channels = peaks;
+
+          if (_this7.params.splitChannels) {
+            var filteredChannels = channels.filter(function (c, i) {
+              return !_this7.hideChannel(i);
+            });
+
+            if (!_this7.params.splitChannelsOptions.overlay) {
+              _this7.setHeight(Math.max(filteredChannels.length, 1) * _this7.params.height * _this7.params.pixelRatio);
+            }
+
+            var overallAbsMax;
+
+            if (_this7.params.splitChannelsOptions && _this7.params.splitChannelsOptions.relativeNormalization) {
+              // calculate maximum peak across channels to use for normalization
+              overallAbsMax = util.max(channels.map(function (channelPeaks) {
+                return util.absMax(channelPeaks);
+              }));
+            }
+
+            return channels.forEach(function (channelPeaks, i) {
+              return _this7.prepareDraw(channelPeaks, i, start, end, fn, filteredChannels.indexOf(channelPeaks), overallAbsMax);
+            });
+          }
+
+          peaks = channels[0];
+        } // Return and do not draw channel peaks if hidden.
+
+
+        if (_this7.hideChannel(channelIndex)) {
+          return;
+        } // calculate maximum modulation value, either from the barHeight
+        // parameter or if normalize=true from the largest value in the peak
+        // set
+
+
+        var absmax = 1 / _this7.params.barHeight;
+
+        if (_this7.params.normalize) {
+          absmax = normalizedMax === undefined ? util.absMax(peaks) : normalizedMax;
+        } // Bar wave draws the bottom only as a reflection of the top,
+        // so we don't need negative values
+
+
+        var hasMinVals = [].some.call(peaks, function (val) {
+          return val < 0;
+        });
+        var height = _this7.params.height * _this7.params.pixelRatio;
+        var halfH = height / 2;
+        var offsetY = height * drawIndex || 0; // Override offsetY if overlay is true
+
+        if (_this7.params.splitChannelsOptions && _this7.params.splitChannelsOptions.overlay) {
+          offsetY = 0;
+        }
+
+        return fn({
+          absmax: absmax,
+          hasMinVals: hasMinVals,
+          height: height,
+          offsetY: offsetY,
+          halfH: halfH,
+          peaks: peaks,
+          channelIndex: channelIndex
+        });
+      })();
+    }
+    /**
+     * Set the fill styles for a certain entry (wave and progress)
+     *
+     * @param {CanvasEntry} entry Target entry
+     * @param {string} waveColor Wave color to draw this entry
+     * @param {string} progressColor Progress color to draw this entry
+     */
+
+  }, {
+    key: "setFillStyles",
+    value: function setFillStyles(entry) {
+      var waveColor = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : this.params.waveColor;
+      var progressColor = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : this.params.progressColor;
+      entry.setFillStyles(waveColor, progressColor);
+    }
+    /**
+     * Set the canvas transforms for a certain entry (wave and progress)
+     *
+     * @param {CanvasEntry} entry Target entry
+     * @param {boolean} vertical Whether to render the waveform vertically
+     */
+
+  }, {
+    key: "applyCanvasTransforms",
+    value: function applyCanvasTransforms(entry) {
+      var vertical = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+      entry.applyCanvasTransforms(vertical);
+    }
+    /**
+     * Return image data of the multi-canvas
+     *
+     * When using a `type` of `'blob'`, this will return a `Promise`.
+     *
+     * @param {string} format='image/png' An optional value of a format type.
+     * @param {number} quality=0.92 An optional value between 0 and 1.
+     * @param {string} type='dataURL' Either 'dataURL' or 'blob'.
+     * @return {string|string[]|Promise} When using the default `'dataURL'`
+     * `type` this returns a single data URL or an array of data URLs,
+     * one for each canvas. When using the `'blob'` `type` this returns a
+     * `Promise` that resolves with an array of `Blob` instances, one for each
+     * canvas.
+     */
+
+  }, {
+    key: "getImage",
+    value: function getImage(format, quality, type) {
+      if (type === 'blob') {
+        return Promise.all(this.canvases.map(function (entry) {
+          return entry.getImage(format, quality, type);
+        }));
+      } else if (type === 'dataURL') {
+        var images = this.canvases.map(function (entry) {
+          return entry.getImage(format, quality, type);
+        });
+        return images.length > 1 ? images : images[0];
+      }
+    }
+    /**
+     * Render the new progress
+     *
+     * @param {number} position X-offset of progress position in pixels
+     */
+
+  }, {
+    key: "updateProgress",
+    value: function updateProgress(position) {
+      this.style(this.progressWave, {
+        width: position + 'px'
+      });
+    }
+  }]);
+
+  return MultiCanvas;
+}(_drawer.default);
+
+exports.default = MultiCanvas;
+module.exports = exports.default;
+
+/***/ }),
+
+/***/ "./src/mediaelement-webaudio.js":
+/*!**************************************!*\
+  !*** ./src/mediaelement-webaudio.js ***!
+  \**************************************/
+/***/ ((module, exports, __nested_webpack_require_56119__) => {
+
+"use strict";
+
+
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports.default = void 0;
+
+var _mediaelement = _interopRequireDefault(__nested_webpack_require_56119__(/*! ./mediaelement */ "./src/mediaelement.js"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _get(target, property, receiver) { if (typeof Reflect !== "undefined" && Reflect.get) { _get = Reflect.get; } else { _get = function _get(target, property, receiver) { var base = _superPropBase(target, property); if (!base) return; var desc = Object.getOwnPropertyDescriptor(base, property); if (desc.get) { return desc.get.call(receiver); } return desc.value; }; } return _get(target, property, receiver || target); }
+
+function _superPropBase(object, property) { while (!Object.prototype.hasOwnProperty.call(object, property)) { object = _getPrototypeOf(object); if (object === null) break; } return object; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } else if (call !== void 0) { throw new TypeError("Derived constructors may only return object or undefined"); } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+/**
+ * MediaElementWebAudio backend: load audio via an HTML5 audio tag, but playback with the WebAudio API.
+ * The advantage here is that the html5 <audio> tag can perform range requests on the server and not
+ * buffer the entire file in one request, and you still get the filtering and scripting functionality
+ * of the webaudio API.
+ * Note that in order to use range requests and prevent buffering, you must provide peak data.
+ *
+ * @since 3.2.0
+ */
+var MediaElementWebAudio = /*#__PURE__*/function (_MediaElement) {
+  _inherits(MediaElementWebAudio, _MediaElement);
+
+  var _super = _createSuper(MediaElementWebAudio);
+
+  /**
+   * Construct the backend
+   *
+   * @param {WavesurferParams} params Wavesurfer parameters
+   */
+  function MediaElementWebAudio(params) {
+    var _this;
+
+    _classCallCheck(this, MediaElementWebAudio);
+
+    _this = _super.call(this, params);
+    /** @private */
+
+    _this.params = params;
+    /** @private */
+
+    _this.sourceMediaElement = null;
+    return _this;
+  }
+  /**
+   * Initialise the backend, called in `wavesurfer.createBackend()`
+   */
+
+
+  _createClass(MediaElementWebAudio, [{
+    key: "init",
+    value: function init() {
+      this.setPlaybackRate(this.params.audioRate);
+      this.createTimer();
+      this.createVolumeNode();
+      this.createScriptNode();
+      this.createAnalyserNode();
+    }
+    /**
+     * Private method called by both `load` (from url)
+     * and `loadElt` (existing media element) methods.
+     *
+     * @param {HTMLMediaElement} media HTML5 Audio or Video element
+     * @param {number[]|Number.<Array[]>} peaks Array of peak data
+     * @param {string} preload HTML 5 preload attribute value
+     * @private
+     */
+
+  }, {
+    key: "_load",
+    value: function _load(media, peaks, preload) {
+      _get(_getPrototypeOf(MediaElementWebAudio.prototype), "_load", this).call(this, media, peaks, preload);
+
+      this.createMediaElementSource(media);
+    }
+    /**
+     * Create MediaElementSource node
+     *
+     * @since 3.2.0
+     * @param {HTMLMediaElement} mediaElement HTML5 Audio to load
+     */
+
+  }, {
+    key: "createMediaElementSource",
+    value: function createMediaElementSource(mediaElement) {
+      this.sourceMediaElement = this.ac.createMediaElementSource(mediaElement);
+      this.sourceMediaElement.connect(this.analyser);
+    }
+  }, {
+    key: "play",
+    value: function play(start, end) {
+      this.resumeAudioContext();
+      return _get(_getPrototypeOf(MediaElementWebAudio.prototype), "play", this).call(this, start, end);
+    }
+    /**
+     * This is called when wavesurfer is destroyed
+     *
+     */
+
+  }, {
+    key: "destroy",
+    value: function destroy() {
+      _get(_getPrototypeOf(MediaElementWebAudio.prototype), "destroy", this).call(this);
+
+      this.destroyWebAudio();
+    }
+  }]);
+
+  return MediaElementWebAudio;
+}(_mediaelement.default);
+
+exports.default = MediaElementWebAudio;
+module.exports = exports.default;
+
+/***/ }),
+
+/***/ "./src/mediaelement.js":
+/*!*****************************!*\
+  !*** ./src/mediaelement.js ***!
+  \*****************************/
+/***/ ((module, exports, __nested_webpack_require_63244__) => {
+
+"use strict";
+
+
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports.default = void 0;
+
+var _webaudio = _interopRequireDefault(__nested_webpack_require_63244__(/*! ./webaudio */ "./src/webaudio.js"));
+
+var util = _interopRequireWildcard(__nested_webpack_require_63244__(/*! ./util */ "./src/util/index.js"));
+
+function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function _getRequireWildcardCache(nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
+
+function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || _typeof(obj) !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _get(target, property, receiver) { if (typeof Reflect !== "undefined" && Reflect.get) { _get = Reflect.get; } else { _get = function _get(target, property, receiver) { var base = _superPropBase(target, property); if (!base) return; var desc = Object.getOwnPropertyDescriptor(base, property); if (desc.get) { return desc.get.call(receiver); } return desc.value; }; } return _get(target, property, receiver || target); }
+
+function _superPropBase(object, property) { while (!Object.prototype.hasOwnProperty.call(object, property)) { object = _getPrototypeOf(object); if (object === null) break; } return object; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } else if (call !== void 0) { throw new TypeError("Derived constructors may only return object or undefined"); } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+/**
+ * MediaElement backend
+ */
+var MediaElement = /*#__PURE__*/function (_WebAudio) {
+  _inherits(MediaElement, _WebAudio);
+
+  var _super = _createSuper(MediaElement);
+
+  /**
+   * Construct the backend
+   *
+   * @param {WavesurferParams} params Wavesurfer parameters
+   */
+  function MediaElement(params) {
+    var _this;
+
+    _classCallCheck(this, MediaElement);
+
+    _this = _super.call(this, params);
+    /** @private */
+
+    _this.params = params;
+    /**
+     * Initially a dummy media element to catch errors. Once `_load` is
+     * called, this will contain the actual `HTMLMediaElement`.
+     * @private
+     */
+
+    _this.media = {
+      currentTime: 0,
+      duration: 0,
+      paused: true,
+      playbackRate: 1,
+      play: function play() {},
+      pause: function pause() {},
+      volume: 0
+    };
+    /** @private */
+
+    _this.mediaType = params.mediaType.toLowerCase();
+    /** @private */
+
+    _this.elementPosition = params.elementPosition;
+    /** @private */
+
+    _this.peaks = null;
+    /** @private */
+
+    _this.playbackRate = 1;
+    /** @private */
+
+    _this.volume = 1;
+    /** @private */
+
+    _this.isMuted = false;
+    /** @private */
+
+    _this.buffer = null;
+    /** @private */
+
+    _this.onPlayEnd = null;
+    /** @private */
+
+    _this.mediaListeners = {};
+    return _this;
+  }
+  /**
+   * Initialise the backend, called in `wavesurfer.createBackend()`
+   */
+
+
+  _createClass(MediaElement, [{
+    key: "init",
+    value: function init() {
+      this.setPlaybackRate(this.params.audioRate);
+      this.createTimer();
+    }
+    /**
+     * Attach event listeners to media element.
+     */
+
+  }, {
+    key: "_setupMediaListeners",
+    value: function _setupMediaListeners() {
+      var _this2 = this;
+
+      this.mediaListeners.error = function () {
+        _this2.fireEvent('error', 'Error loading media element');
+      };
+
+      this.mediaListeners.canplay = function () {
+        _this2.fireEvent('canplay');
+      };
+
+      this.mediaListeners.ended = function () {
+        _this2.fireEvent('finish');
+      }; // listen to and relay play, pause and seeked events to enable
+      // playback control from the external media element
+
+
+      this.mediaListeners.play = function () {
+        _this2.fireEvent('play');
+      };
+
+      this.mediaListeners.pause = function () {
+        _this2.fireEvent('pause');
+      };
+
+      this.mediaListeners.seeked = function (event) {
+        _this2.fireEvent('seek');
+      };
+
+      this.mediaListeners.volumechange = function (event) {
+        _this2.isMuted = _this2.media.muted;
+
+        if (_this2.isMuted) {
+          _this2.volume = 0;
+        } else {
+          _this2.volume = _this2.media.volume;
+        }
+
+        _this2.fireEvent('volume');
+      }; // reset event listeners
+
+
+      Object.keys(this.mediaListeners).forEach(function (id) {
+        _this2.media.removeEventListener(id, _this2.mediaListeners[id]);
+
+        _this2.media.addEventListener(id, _this2.mediaListeners[id]);
+      });
+    }
+    /**
+     * Create a timer to provide a more precise `audioprocess` event.
+     */
+
+  }, {
+    key: "createTimer",
+    value: function createTimer() {
+      var _this3 = this;
+
+      var onAudioProcess = function onAudioProcess() {
+        if (_this3.isPaused()) {
+          return;
+        }
+
+        _this3.fireEvent('audioprocess', _this3.getCurrentTime()); // Call again in the next frame
+
+
+        util.frame(onAudioProcess)();
+      };
+
+      this.on('play', onAudioProcess); // Update the progress one more time to prevent it from being stuck in
+      // case of lower framerates
+
+      this.on('pause', function () {
+        _this3.fireEvent('audioprocess', _this3.getCurrentTime());
+      });
+    }
+    /**
+     * Create media element with url as its source,
+     * and append to container element.
+     *
+     * @param {string} url Path to media file
+     * @param {HTMLElement} container HTML element
+     * @param {number[]|Number.<Array[]>} peaks Array of peak data
+     * @param {string} preload HTML 5 preload attribute value
+     * @throws Will throw an error if the `url` argument is not a valid media
+     * element.
+     */
+
+  }, {
+    key: "load",
+    value: function load(url, container, peaks, preload) {
+      var media = document.createElement(this.mediaType);
+      media.controls = this.params.mediaControls;
+      media.autoplay = this.params.autoplay || false;
+      media.preload = preload == null ? 'auto' : preload;
+      media.src = url;
+      media.style.width = '100%';
+      var prevMedia = container.querySelector(this.mediaType);
+
+      if (prevMedia) {
+        container.removeChild(prevMedia);
+      }
+
+      container.appendChild(media);
+
+      this._load(media, peaks, preload);
+    }
+    /**
+     * Load existing media element.
+     *
+     * @param {HTMLMediaElement} elt HTML5 Audio or Video element
+     * @param {number[]|Number.<Array[]>} peaks Array of peak data
+     */
+
+  }, {
+    key: "loadElt",
+    value: function loadElt(elt, peaks) {
+      elt.controls = this.params.mediaControls;
+      elt.autoplay = this.params.autoplay || false;
+
+      this._load(elt, peaks, elt.preload);
+    }
+    /**
+     * Method called by both `load` (from url)
+     * and `loadElt` (existing media element) methods.
+     *
+     * @param {HTMLMediaElement} media HTML5 Audio or Video element
+     * @param {number[]|Number.<Array[]>} peaks Array of peak data
+     * @param {string} preload HTML 5 preload attribute value
+     * @throws Will throw an error if the `media` argument is not a valid media
+     * element.
+     * @private
+     */
+
+  }, {
+    key: "_load",
+    value: function _load(media, peaks, preload) {
+      // verify media element is valid
+      if (!(media instanceof HTMLMediaElement) || typeof media.addEventListener === 'undefined') {
+        throw new Error('media parameter is not a valid media element');
+      } // load must be called manually on iOS, otherwise peaks won't draw
+      // until a user interaction triggers load --> 'ready' event
+      //
+      // note that we avoid calling media.load here when given peaks and preload == 'none'
+      // as this almost always triggers some browser fetch of the media.
+
+
+      if (typeof media.load == 'function' && !(peaks && preload == 'none')) {
+        // Resets the media element and restarts the media resource. Any
+        // pending events are discarded. How much media data is fetched is
+        // still affected by the preload attribute.
+        media.load();
+      }
+
+      this.media = media;
+
+      this._setupMediaListeners();
+
+      this.peaks = peaks;
+      this.onPlayEnd = null;
+      this.buffer = null;
+      this.isMuted = media.muted;
+      this.setPlaybackRate(this.playbackRate);
+      this.setVolume(this.volume);
+    }
+    /**
+     * Used by `wavesurfer.isPlaying()` and `wavesurfer.playPause()`
+     *
+     * @return {boolean} Media paused or not
+     */
+
+  }, {
+    key: "isPaused",
+    value: function isPaused() {
+      return !this.media || this.media.paused;
+    }
+    /**
+     * Used by `wavesurfer.getDuration()`
+     *
+     * @return {number} Duration
+     */
+
+  }, {
+    key: "getDuration",
+    value: function getDuration() {
+      if (this.explicitDuration) {
+        return this.explicitDuration;
+      }
+
+      var duration = (this.buffer || this.media).duration;
+
+      if (duration >= Infinity) {
+        // streaming audio
+        duration = this.media.seekable.end(0);
+      }
+
+      return duration;
+    }
+    /**
+     * Returns the current time in seconds relative to the audio-clip's
+     * duration.
+     *
+     * @return {number} Current time
+     */
+
+  }, {
+    key: "getCurrentTime",
+    value: function getCurrentTime() {
+      return this.media && this.media.currentTime;
+    }
+    /**
+     * Get the position from 0 to 1
+     *
+     * @return {number} Current position
+     */
+
+  }, {
+    key: "getPlayedPercents",
+    value: function getPlayedPercents() {
+      return this.getCurrentTime() / this.getDuration() || 0;
+    }
+    /**
+     * Get the audio source playback rate.
+     *
+     * @return {number} Playback rate
+     */
+
+  }, {
+    key: "getPlaybackRate",
+    value: function getPlaybackRate() {
+      return this.playbackRate || this.media.playbackRate;
+    }
+    /**
+     * Set the audio source playback rate.
+     *
+     * @param {number} value Playback rate
+     */
+
+  }, {
+    key: "setPlaybackRate",
+    value: function setPlaybackRate(value) {
+      this.playbackRate = value || 1;
+      this.media.playbackRate = this.playbackRate;
+    }
+    /**
+     * Used by `wavesurfer.seekTo()`
+     *
+     * @param {number} start Position to start at in seconds
+     */
+
+  }, {
+    key: "seekTo",
+    value: function seekTo(start) {
+      if (start != null) {
+        this.media.currentTime = start;
+      }
+
+      this.clearPlayEnd();
+    }
+    /**
+     * Plays the loaded audio region.
+     *
+     * @param {number} start Start offset in seconds, relative to the beginning
+     * of a clip.
+     * @param {number} end When to stop, relative to the beginning of a clip.
+     * @emits MediaElement#play
+     * @return {Promise} Result
+     */
+
+  }, {
+    key: "play",
+    value: function play(start, end) {
+      this.seekTo(start);
+      var promise = this.media.play();
+      end && this.setPlayEnd(end);
+      return promise;
+    }
+    /**
+     * Pauses the loaded audio.
+     *
+     * @emits MediaElement#pause
+     * @return {Promise} Result
+     */
+
+  }, {
+    key: "pause",
+    value: function pause() {
+      var promise;
+
+      if (this.media) {
+        promise = this.media.pause();
+      }
+
+      this.clearPlayEnd();
+      return promise;
+    }
+    /**
+     * Set the play end
+     *
+     * @param {number} end Where to end
+     */
+
+  }, {
+    key: "setPlayEnd",
+    value: function setPlayEnd(end) {
+      var _this4 = this;
+
+      this.clearPlayEnd();
+
+      this._onPlayEnd = function (time) {
+        if (time >= end) {
+          _this4.pause();
+
+          _this4.seekTo(end);
+        }
+      };
+
+      this.on('audioprocess', this._onPlayEnd);
+    }
+    /** @private */
+
+  }, {
+    key: "clearPlayEnd",
+    value: function clearPlayEnd() {
+      if (this._onPlayEnd) {
+        this.un('audioprocess', this._onPlayEnd);
+        this._onPlayEnd = null;
+      }
+    }
+    /**
+     * Compute the max and min value of the waveform when broken into
+     * <length> subranges.
+     *
+     * @param {number} length How many subranges to break the waveform into.
+     * @param {number} first First sample in the required range.
+     * @param {number} last Last sample in the required range.
+     * @return {number[]|Number.<Array[]>} Array of 2*<length> peaks or array of
+     * arrays of peaks consisting of (max, min) values for each subrange.
+     */
+
+  }, {
+    key: "getPeaks",
+    value: function getPeaks(length, first, last) {
+      if (this.buffer) {
+        return _get(_getPrototypeOf(MediaElement.prototype), "getPeaks", this).call(this, length, first, last);
+      }
+
+      return this.peaks || [];
+    }
+    /**
+     * Set the sink id for the media player
+     *
+     * @param {string} deviceId String value representing audio device id.
+     * @returns {Promise} A Promise that resolves to `undefined` when there
+     * are no errors.
+     */
+
+  }, {
+    key: "setSinkId",
+    value: function setSinkId(deviceId) {
+      if (deviceId) {
+        if (!this.media.setSinkId) {
+          return Promise.reject(new Error('setSinkId is not supported in your browser'));
+        }
+
+        return this.media.setSinkId(deviceId);
+      }
+
+      return Promise.reject(new Error('Invalid deviceId: ' + deviceId));
+    }
+    /**
+     * Get the current volume
+     *
+     * @return {number} value A floating point value between 0 and 1.
+     */
+
+  }, {
+    key: "getVolume",
+    value: function getVolume() {
+      return this.volume;
+    }
+    /**
+     * Set the audio volume
+     *
+     * @param {number} value A floating point value between 0 and 1.
+     */
+
+  }, {
+    key: "setVolume",
+    value: function setVolume(value) {
+      this.volume = value; // no need to change when it's already at that volume
+
+      if (this.media.volume !== this.volume) {
+        this.media.volume = this.volume;
+      }
+    }
+    /**
+     * Enable or disable muted audio
+     *
+     * @since 4.0.0
+     * @param {boolean} muted Specify `true` to mute audio.
+     */
+
+  }, {
+    key: "setMute",
+    value: function setMute(muted) {
+      // This causes a volume change to be emitted too through the
+      // volumechange event listener.
+      this.isMuted = this.media.muted = muted;
+    }
+    /**
+     * This is called when wavesurfer is destroyed
+     *
+     */
+
+  }, {
+    key: "destroy",
+    value: function destroy() {
+      var _this5 = this;
+
+      this.pause();
+      this.unAll();
+      this.destroyed = true; // cleanup media event listeners
+
+      Object.keys(this.mediaListeners).forEach(function (id) {
+        if (_this5.media) {
+          _this5.media.removeEventListener(id, _this5.mediaListeners[id]);
+        }
+      });
+
+      if (this.params.removeMediaElementOnDestroy && this.media && this.media.parentNode) {
+        this.media.parentNode.removeChild(this.media);
+      }
+
+      this.media = null;
+    }
+  }]);
+
+  return MediaElement;
+}(_webaudio.default);
+
+exports.default = MediaElement;
+module.exports = exports.default;
+
+/***/ }),
+
+/***/ "./src/peakcache.js":
+/*!**************************!*\
+  !*** ./src/peakcache.js ***!
+  \**************************/
+/***/ ((module, exports) => {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports.default = void 0;
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+/**
+ * Caches the decoded peaks data to improve rendering speed for large audio
+ *
+ * Is used if the option parameter `partialRender` is set to `true`
+ */
+var PeakCache = /*#__PURE__*/function () {
+  /**
+   * Instantiate cache
+   */
+  function PeakCache() {
+    _classCallCheck(this, PeakCache);
+
+    this.clearPeakCache();
+  }
+  /**
+   * Empty the cache
+   */
+
+
+  _createClass(PeakCache, [{
+    key: "clearPeakCache",
+    value: function clearPeakCache() {
+      /**
+       * Flat array with entries that are always in pairs to mark the
+       * beginning and end of each subrange.  This is a convenience so we can
+       * iterate over the pairs for easy set difference operations.
+       * @private
+       */
+      this.peakCacheRanges = [];
+      /**
+       * Length of the entire cachable region, used for resetting the cache
+       * when this changes (zoom events, for instance).
+       * @private
+       */
+
+      this.peakCacheLength = -1;
+    }
+    /**
+     * Add a range of peaks to the cache
+     *
+     * @param {number} length The length of the range
+     * @param {number} start The x offset of the start of the range
+     * @param {number} end The x offset of the end of the range
+     * @return {Number.<Array[]>} Array with arrays of numbers
+     */
+
+  }, {
+    key: "addRangeToPeakCache",
+    value: function addRangeToPeakCache(length, start, end) {
+      if (length != this.peakCacheLength) {
+        this.clearPeakCache();
+        this.peakCacheLength = length;
+      } // Return ranges that weren't in the cache before the call.
+
+
+      var uncachedRanges = [];
+      var i = 0; // Skip ranges before the current start.
+
+      while (i < this.peakCacheRanges.length && this.peakCacheRanges[i] < start) {
+        i++;
+      } // If |i| is even, |start| falls after an existing range.  Otherwise,
+      // |start| falls between an existing range, and the uncached region
+      // starts when we encounter the next node in |peakCacheRanges| or
+      // |end|, whichever comes first.
+
+
+      if (i % 2 == 0) {
+        uncachedRanges.push(start);
+      }
+
+      while (i < this.peakCacheRanges.length && this.peakCacheRanges[i] <= end) {
+        uncachedRanges.push(this.peakCacheRanges[i]);
+        i++;
+      } // If |i| is even, |end| is after all existing ranges.
+
+
+      if (i % 2 == 0) {
+        uncachedRanges.push(end);
+      } // Filter out the 0-length ranges.
+
+
+      uncachedRanges = uncachedRanges.filter(function (item, pos, arr) {
+        if (pos == 0) {
+          return item != arr[pos + 1];
+        } else if (pos == arr.length - 1) {
+          return item != arr[pos - 1];
+        }
+
+        return item != arr[pos - 1] && item != arr[pos + 1];
+      }); // Merge the two ranges together, uncachedRanges will either contain
+      // wholly new points, or duplicates of points in peakCacheRanges.  If
+      // duplicates are detected, remove both and extend the range.
+
+      this.peakCacheRanges = this.peakCacheRanges.concat(uncachedRanges);
+      this.peakCacheRanges = this.peakCacheRanges.sort(function (a, b) {
+        return a - b;
+      }).filter(function (item, pos, arr) {
+        if (pos == 0) {
+          return item != arr[pos + 1];
+        } else if (pos == arr.length - 1) {
+          return item != arr[pos - 1];
+        }
+
+        return item != arr[pos - 1] && item != arr[pos + 1];
+      }); // Push the uncached ranges into an array of arrays for ease of
+      // iteration in the functions that call this.
+
+      var uncachedRangePairs = [];
+
+      for (i = 0; i < uncachedRanges.length; i += 2) {
+        uncachedRangePairs.push([uncachedRanges[i], uncachedRanges[i + 1]]);
+      }
+
+      return uncachedRangePairs;
+    }
+    /**
+     * For testing
+     *
+     * @return {Number.<Array[]>} Array with arrays of numbers
+     */
+
+  }, {
+    key: "getCacheRanges",
+    value: function getCacheRanges() {
+      var peakCacheRangePairs = [];
+      var i;
+
+      for (i = 0; i < this.peakCacheRanges.length; i += 2) {
+        peakCacheRangePairs.push([this.peakCacheRanges[i], this.peakCacheRanges[i + 1]]);
+      }
+
+      return peakCacheRangePairs;
+    }
+  }]);
+
+  return PeakCache;
+}();
+
+exports.default = PeakCache;
+module.exports = exports.default;
+
+/***/ }),
+
+/***/ "./src/util/absMax.js":
+/*!****************************!*\
+  !*** ./src/util/absMax.js ***!
+  \****************************/
+/***/ ((module, exports, __nested_webpack_require_87138__) => {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports.default = absMax;
+
+var _max = _interopRequireDefault(__nested_webpack_require_87138__(/*! ./max */ "./src/util/max.js"));
+
+var _min = _interopRequireDefault(__nested_webpack_require_87138__(/*! ./min */ "./src/util/min.js"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/**
+ * Get the largest absolute value in an array
+ *
+ * @param   {Array} values Array of numbers
+ * @returns {Number} Largest number found
+ * @example console.log(max([-3, 2, 1]), max([-3, 2, 4])); // logs 3 4
+ * @since 4.3.0
+ */
+function absMax(values) {
+  var max = (0, _max.default)(values);
+  var min = (0, _min.default)(values);
+  return -min > max ? -min : max;
+}
+
+module.exports = exports.default;
+
+/***/ }),
+
+/***/ "./src/util/clamp.js":
+/*!***************************!*\
+  !*** ./src/util/clamp.js ***!
+  \***************************/
+/***/ ((module, exports) => {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports.default = clamp;
+
+/**
+ * Returns a number limited to the given range.
+ *
+ * @param {number} val The number to be limited to a range
+ * @param {number} min The lower boundary of the limit range
+ * @param {number} max The upper boundary of the limit range
+ * @returns {number} A number in the range [min, max]
+ */
+function clamp(val, min, max) {
+  return Math.min(Math.max(min, val), max);
+}
+
+module.exports = exports.default;
+
+/***/ }),
+
+/***/ "./src/util/fetch.js":
+/*!***************************!*\
+  !*** ./src/util/fetch.js ***!
+  \***************************/
+/***/ ((module, exports, __nested_webpack_require_88816__) => {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports.default = fetchFile;
+
+var _observer = _interopRequireDefault(__nested_webpack_require_88816__(/*! ./observer */ "./src/util/observer.js"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+var ProgressHandler = /*#__PURE__*/function () {
+  /**
+   * Instantiate ProgressHandler
+   *
+   * @param {Observer} instance The `fetchFile` observer instance.
+   * @param {Number} contentLength Content length.
+   * @param {Response} response Response object.
+   */
+  function ProgressHandler(instance, contentLength, response) {
+    _classCallCheck(this, ProgressHandler);
+
+    this.instance = instance;
+    this.instance._reader = response.body.getReader();
+    this.total = parseInt(contentLength, 10);
+    this.loaded = 0;
+  }
+  /**
+   * A method that is called once, immediately after the `ReadableStream``
+   * is constructed.
+   *
+   * @param {ReadableStreamDefaultController} controller Controller instance
+   *     used to control the stream.
+   */
+
+
+  _createClass(ProgressHandler, [{
+    key: "start",
+    value: function start(controller) {
+      var _this = this;
+
+      var read = function read() {
+        // instance._reader.read() returns a promise that resolves
+        // when a value has been received
+        _this.instance._reader.read().then(function (_ref) {
+          var done = _ref.done,
+              value = _ref.value;
+
+          // result objects contain two properties:
+          // done  - true if the stream has already given you all its data.
+          // value - some data. Always undefined when done is true.
+          if (done) {
+            // ensure onProgress called when content-length=0
+            if (_this.total === 0) {
+              _this.instance.onProgress.call(_this.instance, {
+                loaded: _this.loaded,
+                total: _this.total,
+                lengthComputable: false
+              });
+            } // no more data needs to be consumed, close the stream
+
+
+            controller.close();
+            return;
+          }
+
+          _this.loaded += value.byteLength;
+
+          _this.instance.onProgress.call(_this.instance, {
+            loaded: _this.loaded,
+            total: _this.total,
+            lengthComputable: !(_this.total === 0)
+          }); // enqueue the next data chunk into our target stream
+
+
+          controller.enqueue(value);
+          read();
+        }).catch(function (error) {
+          controller.error(error);
+        });
+      };
+
+      read();
+    }
+  }]);
+
+  return ProgressHandler;
+}();
+/**
+ * Load a file using `fetch`.
+ *
+ * @param {object} options Request options to use. See example below.
+ * @returns {Observer} Observer instance
+ * @example
+ * // default options
+ * let options = {
+ *     url: undefined,
+ *     method: 'GET',
+ *     mode: 'cors',
+ *     credentials: 'same-origin',
+ *     cache: 'default',
+ *     responseType: 'json',
+ *     requestHeaders: [],
+ *     redirect: 'follow',
+ *     referrer: 'client'
+ * };
+ *
+ * // override some options
+ * options.url = '../media/demo.wav';
+
+ * // available types: 'arraybuffer', 'blob', 'json' or 'text'
+ * options.responseType = 'arraybuffer';
+ *
+ * // make fetch call
+ * let request = util.fetchFile(options);
+ *
+ * // listen for events
+ * request.on('progress', e => {
+ *     console.log('progress', e);
+ * });
+ *
+ * request.on('success', data => {
+ *     console.log('success!', data);
+ * });
+ *
+ * request.on('error', e => {
+ *     console.warn('fetchFile error: ', e);
+ * });
+ */
+
+
+function fetchFile(options) {
+  if (!options) {
+    throw new Error('fetch options missing');
+  } else if (!options.url) {
+    throw new Error('fetch url missing');
+  }
+
+  var instance = new _observer.default();
+  var fetchHeaders = new Headers();
+  var fetchRequest = new Request(options.url); // add ability to abort
+
+  instance.controller = new AbortController(); // check if headers have to be added
+
+  if (options && options.requestHeaders) {
+    // add custom request headers
+    options.requestHeaders.forEach(function (header) {
+      fetchHeaders.append(header.key, header.value);
+    });
+  } // parse fetch options
+
+
+  var responseType = options.responseType || 'json';
+  var fetchOptions = {
+    method: options.method || 'GET',
+    headers: fetchHeaders,
+    mode: options.mode || 'cors',
+    credentials: options.credentials || 'same-origin',
+    cache: options.cache || 'default',
+    redirect: options.redirect || 'follow',
+    referrer: options.referrer || 'client',
+    signal: instance.controller.signal
+  };
+  fetch(fetchRequest, fetchOptions).then(function (response) {
+    // store response reference
+    instance.response = response;
+    var progressAvailable = true;
+
+    if (!response.body) {
+      // ReadableStream is not yet supported in this browser
+      // see https://developer.mozilla.org/en-US/docs/Web/API/ReadableStream
+      progressAvailable = false;
+    } // Server must send CORS header "Access-Control-Expose-Headers: content-length"
+
+
+    var contentLength = response.headers.get('content-length');
+
+    if (contentLength === null) {
+      // Content-Length server response header missing.
+      // Don't evaluate download progress if we can't compare against a total size
+      // see https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS#Access-Control-Expose-Headers
+      progressAvailable = false;
+    }
+
+    if (!progressAvailable) {
+      // not able to check download progress so skip it
+      return response;
+    } // fire progress event when during load
+
+
+    instance.onProgress = function (e) {
+      instance.fireEvent('progress', e);
+    };
+
+    return new Response(new ReadableStream(new ProgressHandler(instance, contentLength, response)), fetchOptions);
+  }).then(function (response) {
+    var errMsg;
+
+    if (response.ok) {
+      switch (responseType) {
+        case 'arraybuffer':
+          return response.arrayBuffer();
+
+        case 'json':
+          return response.json();
+
+        case 'blob':
+          return response.blob();
+
+        case 'text':
+          return response.text();
+
+        default:
+          errMsg = 'Unknown responseType: ' + responseType;
+          break;
+      }
+    }
+
+    if (!errMsg) {
+      errMsg = 'HTTP error status: ' + response.status;
+    }
+
+    throw new Error(errMsg);
+  }).then(function (response) {
+    instance.fireEvent('success', response);
+  }).catch(function (error) {
+    instance.fireEvent('error', error);
+  }); // return the fetch request
+
+  instance.fetchRequest = fetchRequest;
+  return instance;
+}
+
+module.exports = exports.default;
+
+/***/ }),
+
+/***/ "./src/util/frame.js":
+/*!***************************!*\
+  !*** ./src/util/frame.js ***!
+  \***************************/
+/***/ ((module, exports, __nested_webpack_require_96321__) => {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports.default = frame;
+
+var _requestAnimationFrame = _interopRequireDefault(__nested_webpack_require_96321__(/*! ./request-animation-frame */ "./src/util/request-animation-frame.js"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/**
+ * Create a function which will be called at the next requestAnimationFrame
+ * cycle
+ *
+ * @param {function} func The function to call
+ *
+ * @return {func} The function wrapped within a requestAnimationFrame
+ */
+function frame(func) {
+  return function () {
+    for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+      args[_key] = arguments[_key];
+    }
+
+    return (0, _requestAnimationFrame.default)(function () {
+      return func.apply(void 0, args);
+    });
+  };
+}
+
+module.exports = exports.default;
+
+/***/ }),
+
+/***/ "./src/util/get-id.js":
+/*!****************************!*\
+  !*** ./src/util/get-id.js ***!
+  \****************************/
+/***/ ((module, exports) => {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports.default = getId;
+
+/**
+ * Get a random prefixed ID
+ *
+ * @param {String} prefix Prefix to use. Default is `'wavesurfer_'`.
+ * @returns {String} Random prefixed ID
+ * @example
+ * console.log(getId()); // logs 'wavesurfer_b5pors4ru6g'
+ *
+ * let prefix = 'foo-';
+ * console.log(getId(prefix)); // logs 'foo-b5pors4ru6g'
+ */
+function getId(prefix) {
+  if (prefix === undefined) {
+    prefix = 'wavesurfer_';
+  }
+
+  return prefix + Math.random().toString(32).substring(2);
+}
+
+module.exports = exports.default;
+
+/***/ }),
+
+/***/ "./src/util/index.js":
+/*!***************************!*\
+  !*** ./src/util/index.js ***!
+  \***************************/
+/***/ ((__unused_webpack_module, exports, __nested_webpack_require_98203__) => {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+Object.defineProperty(exports, "getId", ({
+  enumerable: true,
+  get: function get() {
+    return _getId.default;
+  }
+}));
+Object.defineProperty(exports, "max", ({
+  enumerable: true,
+  get: function get() {
+    return _max.default;
+  }
+}));
+Object.defineProperty(exports, "min", ({
+  enumerable: true,
+  get: function get() {
+    return _min.default;
+  }
+}));
+Object.defineProperty(exports, "absMax", ({
+  enumerable: true,
+  get: function get() {
+    return _absMax.default;
+  }
+}));
+Object.defineProperty(exports, "Observer", ({
+  enumerable: true,
+  get: function get() {
+    return _observer.default;
+  }
+}));
+Object.defineProperty(exports, "style", ({
+  enumerable: true,
+  get: function get() {
+    return _style.default;
+  }
+}));
+Object.defineProperty(exports, "requestAnimationFrame", ({
+  enumerable: true,
+  get: function get() {
+    return _requestAnimationFrame.default;
+  }
+}));
+Object.defineProperty(exports, "frame", ({
+  enumerable: true,
+  get: function get() {
+    return _frame.default;
+  }
+}));
+Object.defineProperty(exports, "debounce", ({
+  enumerable: true,
+  get: function get() {
+    return _debounce.default;
+  }
+}));
+Object.defineProperty(exports, "preventClick", ({
+  enumerable: true,
+  get: function get() {
+    return _preventClick.default;
+  }
+}));
+Object.defineProperty(exports, "fetchFile", ({
+  enumerable: true,
+  get: function get() {
+    return _fetch.default;
+  }
+}));
+Object.defineProperty(exports, "clamp", ({
+  enumerable: true,
+  get: function get() {
+    return _clamp.default;
+  }
+}));
+Object.defineProperty(exports, "withOrientation", ({
+  enumerable: true,
+  get: function get() {
+    return _orientation.default;
+  }
+}));
+Object.defineProperty(exports, "ignoreSilenceMode", ({
+  enumerable: true,
+  get: function get() {
+    return _silenceMode.default;
+  }
+}));
+
+var _getId = _interopRequireDefault(__nested_webpack_require_98203__(/*! ./get-id */ "./src/util/get-id.js"));
+
+var _max = _interopRequireDefault(__nested_webpack_require_98203__(/*! ./max */ "./src/util/max.js"));
+
+var _min = _interopRequireDefault(__nested_webpack_require_98203__(/*! ./min */ "./src/util/min.js"));
+
+var _absMax = _interopRequireDefault(__nested_webpack_require_98203__(/*! ./absMax */ "./src/util/absMax.js"));
+
+var _observer = _interopRequireDefault(__nested_webpack_require_98203__(/*! ./observer */ "./src/util/observer.js"));
+
+var _style = _interopRequireDefault(__nested_webpack_require_98203__(/*! ./style */ "./src/util/style.js"));
+
+var _requestAnimationFrame = _interopRequireDefault(__nested_webpack_require_98203__(/*! ./request-animation-frame */ "./src/util/request-animation-frame.js"));
+
+var _frame = _interopRequireDefault(__nested_webpack_require_98203__(/*! ./frame */ "./src/util/frame.js"));
+
+var _debounce = _interopRequireDefault(__nested_webpack_require_98203__(/*! debounce */ "./node_modules/debounce/index.js"));
+
+var _preventClick = _interopRequireDefault(__nested_webpack_require_98203__(/*! ./prevent-click */ "./src/util/prevent-click.js"));
+
+var _fetch = _interopRequireDefault(__nested_webpack_require_98203__(/*! ./fetch */ "./src/util/fetch.js"));
+
+var _clamp = _interopRequireDefault(__nested_webpack_require_98203__(/*! ./clamp */ "./src/util/clamp.js"));
+
+var _orientation = _interopRequireDefault(__nested_webpack_require_98203__(/*! ./orientation */ "./src/util/orientation.js"));
+
+var _silenceMode = _interopRequireDefault(__nested_webpack_require_98203__(/*! ./silence-mode */ "./src/util/silence-mode.js"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/***/ }),
+
+/***/ "./src/util/max.js":
+/*!*************************!*\
+  !*** ./src/util/max.js ***!
+  \*************************/
+/***/ ((module, exports) => {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports.default = max;
+
+/**
+ * Get the largest value
+ *
+ * @param   {Array} values Array of numbers
+ * @returns {Number} Largest number found
+ * @example console.log(max([1, 2, 3])); // logs 3
+ */
+function max(values) {
+  var largest = -Infinity;
+  Object.keys(values).forEach(function (i) {
+    if (values[i] > largest) {
+      largest = values[i];
+    }
+  });
+  return largest;
+}
+
+module.exports = exports.default;
+
+/***/ }),
+
+/***/ "./src/util/min.js":
+/*!*************************!*\
+  !*** ./src/util/min.js ***!
+  \*************************/
+/***/ ((module, exports) => {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports.default = min;
+
+/**
+ * Get the smallest value
+ *
+ * @param   {Array} values Array of numbers
+ * @returns {Number} Smallest number found
+ * @example console.log(min([1, 2, 3])); // logs 1
+ */
+function min(values) {
+  var smallest = Number(Infinity);
+  Object.keys(values).forEach(function (i) {
+    if (values[i] < smallest) {
+      smallest = values[i];
+    }
+  });
+  return smallest;
+}
+
+module.exports = exports.default;
+
+/***/ }),
+
+/***/ "./src/util/observer.js":
+/*!******************************!*\
+  !*** ./src/util/observer.js ***!
+  \******************************/
+/***/ ((module, exports) => {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports.default = void 0;
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+/**
+ * @typedef {Object} ListenerDescriptor
+ * @property {string} name The name of the event
+ * @property {function} callback The callback
+ * @property {function} un The function to call to remove the listener
+ */
+
+/**
+ * Observer class
+ */
+var Observer = /*#__PURE__*/function () {
+  /**
+   * Instantiate Observer
+   */
+  function Observer() {
+    _classCallCheck(this, Observer);
+
+    /**
+     * @private
+     * @todo Initialise the handlers here already and remove the conditional
+     * assignment in `on()`
+     */
+    this._disabledEventEmissions = [];
+    this.handlers = null;
+  }
+  /**
+   * Attach a handler function for an event.
+   *
+   * @param {string} event Name of the event to listen to
+   * @param {function} fn The callback to trigger when the event is fired
+   * @return {ListenerDescriptor} The event descriptor
+   */
+
+
+  _createClass(Observer, [{
+    key: "on",
+    value: function on(event, fn) {
+      var _this = this;
+
+      if (!this.handlers) {
+        this.handlers = {};
+      }
+
+      var handlers = this.handlers[event];
+
+      if (!handlers) {
+        handlers = this.handlers[event] = [];
+      }
+
+      handlers.push(fn); // Return an event descriptor
+
+      return {
+        name: event,
+        callback: fn,
+        un: function un(e, fn) {
+          return _this.un(e, fn);
+        }
+      };
+    }
+    /**
+     * Remove an event handler.
+     *
+     * @param {string} event Name of the event the listener that should be
+     * removed listens to
+     * @param {function} fn The callback that should be removed
+     */
+
+  }, {
+    key: "un",
+    value: function un(event, fn) {
+      if (!this.handlers) {
+        return;
+      }
+
+      var handlers = this.handlers[event];
+      var i;
+
+      if (handlers) {
+        if (fn) {
+          for (i = handlers.length - 1; i >= 0; i--) {
+            if (handlers[i] == fn) {
+              handlers.splice(i, 1);
+            }
+          }
+        } else {
+          handlers.length = 0;
+        }
+      }
+    }
+    /**
+     * Remove all event handlers.
+     */
+
+  }, {
+    key: "unAll",
+    value: function unAll() {
+      this.handlers = null;
+    }
+    /**
+     * Attach a handler to an event. The handler is executed at most once per
+     * event type.
+     *
+     * @param {string} event The event to listen to
+     * @param {function} handler The callback that is only to be called once
+     * @return {ListenerDescriptor} The event descriptor
+     */
+
+  }, {
+    key: "once",
+    value: function once(event, handler) {
+      var _this2 = this;
+
+      var fn = function fn() {
+        for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+          args[_key] = arguments[_key];
+        }
+
+        /*  eslint-disable no-invalid-this */
+        handler.apply(_this2, args);
+        /*  eslint-enable no-invalid-this */
+
+        setTimeout(function () {
+          _this2.un(event, fn);
+        }, 0);
+      };
+
+      return this.on(event, fn);
+    }
+    /**
+     * Disable firing a list of events by name. When specified, event handlers for any event type
+     * passed in here will not be called.
+     *
+     * @since 4.0.0
+     * @param {string[]} eventNames an array of event names to disable emissions for
+     * @example
+     * // disable seek and interaction events
+     * wavesurfer.setDisabledEventEmissions(['seek', 'interaction']);
+     */
+
+  }, {
+    key: "setDisabledEventEmissions",
+    value: function setDisabledEventEmissions(eventNames) {
+      this._disabledEventEmissions = eventNames;
+    }
+    /**
+     * plugins borrow part of this class without calling the constructor,
+     * so we have to be careful about _disabledEventEmissions
+     */
+
+  }, {
+    key: "_isDisabledEventEmission",
+    value: function _isDisabledEventEmission(event) {
+      return this._disabledEventEmissions && this._disabledEventEmissions.includes(event);
+    }
+    /**
+     * Manually fire an event
+     *
+     * @param {string} event The event to fire manually
+     * @param {...any} args The arguments with which to call the listeners
+     */
+
+  }, {
+    key: "fireEvent",
+    value: function fireEvent(event) {
+      for (var _len2 = arguments.length, args = new Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
+        args[_key2 - 1] = arguments[_key2];
+      }
+
+      if (!this.handlers || this._isDisabledEventEmission(event)) {
+        return;
+      }
+
+      var handlers = this.handlers[event];
+      handlers && handlers.forEach(function (fn) {
+        fn.apply(void 0, args);
+      });
+    }
+  }]);
+
+  return Observer;
+}();
+
+exports.default = Observer;
+module.exports = exports.default;
+
+/***/ }),
+
+/***/ "./src/util/orientation.js":
+/*!*********************************!*\
+  !*** ./src/util/orientation.js ***!
+  \*********************************/
+/***/ ((module, exports) => {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports.default = withOrientation;
+var verticalPropMap = {
+  width: 'height',
+  height: 'width',
+  overflowX: 'overflowY',
+  overflowY: 'overflowX',
+  clientWidth: 'clientHeight',
+  clientHeight: 'clientWidth',
+  clientX: 'clientY',
+  clientY: 'clientX',
+  scrollWidth: 'scrollHeight',
+  scrollLeft: 'scrollTop',
+  offsetLeft: 'offsetTop',
+  offsetTop: 'offsetLeft',
+  offsetHeight: 'offsetWidth',
+  offsetWidth: 'offsetHeight',
+  left: 'top',
+  right: 'bottom',
+  top: 'left',
+  bottom: 'right',
+  borderRightStyle: 'borderBottomStyle',
+  borderRightWidth: 'borderBottomWidth',
+  borderRightColor: 'borderBottomColor'
+};
+/**
+ * Convert a horizontally-oriented property name to a vertical one.
+ *
+ * @param {string} prop A property name
+ * @param {bool} vertical Whether the element is oriented vertically
+ * @returns {string} prop, converted appropriately
+ */
+
+function mapProp(prop, vertical) {
+  if (Object.prototype.hasOwnProperty.call(verticalPropMap, prop)) {
+    return vertical ? verticalPropMap[prop] : prop;
+  } else {
+    return prop;
+  }
+}
+
+var isProxy = Symbol("isProxy");
+/**
+ * Returns an appropriately oriented object based on vertical.
+ * If vertical is true, attribute getting and setting will be mapped through
+ * verticalPropMap, so that e.g. getting the object's .width will give its
+ * .height instead.
+ * Certain methods of an oriented object will return oriented objects as well.
+ * Oriented objects can't be added to the DOM directly since they are Proxy objects
+ * and thus fail typechecks. Use domElement to get the actual element for this.
+ *
+ * @param {object} target The object to be wrapped and oriented
+ * @param {bool} vertical Whether the element is oriented vertically
+ * @returns {Proxy} An oriented object with attr translation via verticalAttrMap
+ * @since 5.0.0
+ */
+
+function withOrientation(target, vertical) {
+  if (target[isProxy]) {
+    return target;
+  } else {
+    return new Proxy(target, {
+      get: function get(obj, prop, receiver) {
+        if (prop === isProxy) {
+          return true;
+        } else if (prop === 'domElement') {
+          return obj;
+        } else if (prop === 'style') {
+          return withOrientation(obj.style, vertical);
+        } else if (prop === 'canvas') {
+          return withOrientation(obj.canvas, vertical);
+        } else if (prop === 'getBoundingClientRect') {
+          return function () {
+            return withOrientation(obj.getBoundingClientRect.apply(obj, arguments), vertical);
+          };
+        } else if (prop === 'getContext') {
+          return function () {
+            return withOrientation(obj.getContext.apply(obj, arguments), vertical);
+          };
+        } else {
+          var value = obj[mapProp(prop, vertical)];
+          return typeof value == 'function' ? value.bind(obj) : value;
+        }
+      },
+      set: function set(obj, prop, value) {
+        obj[mapProp(prop, vertical)] = value;
+        return true;
+      }
+    });
+  }
+}
+
+module.exports = exports.default;
+
+/***/ }),
+
+/***/ "./src/util/prevent-click.js":
+/*!***********************************!*\
+  !*** ./src/util/prevent-click.js ***!
+  \***********************************/
+/***/ ((module, exports) => {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports.default = preventClick;
+
+/**
+ * Stops propagation of click event and removes event listener
+ *
+ * @private
+ * @param {object} event The click event
+ */
+function preventClickHandler(event) {
+  event.stopPropagation();
+  document.body.removeEventListener('click', preventClickHandler, true);
+}
+/**
+ * Starts listening for click event and prevent propagation
+ *
+ * @param {object} values Values
+ */
+
+
+function preventClick(values) {
+  document.body.addEventListener('click', preventClickHandler, true);
+}
+
+module.exports = exports.default;
+
+/***/ }),
+
+/***/ "./src/util/request-animation-frame.js":
+/*!*********************************************!*\
+  !*** ./src/util/request-animation-frame.js ***!
+  \*********************************************/
+/***/ ((module, exports) => {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports.default = void 0;
+
+/* eslint-disable valid-jsdoc */
+
+/**
+ * Returns the `requestAnimationFrame` function for the browser, or a shim with
+ * `setTimeout` if the function is not found
+ *
+ * @return {function} Available `requestAnimationFrame` function for the browser
+ */
+var _default = (window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame || function (callback, element) {
+  return setTimeout(callback, 1000 / 60);
+}).bind(window);
+
+exports.default = _default;
+module.exports = exports.default;
+
+/***/ }),
+
+/***/ "./src/util/silence-mode.js":
+/*!**********************************!*\
+  !*** ./src/util/silence-mode.js ***!
+  \**********************************/
+/***/ ((module, exports) => {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports.default = ignoreSilenceMode;
+
+/**
+ * Ignores device silence mode when using the `WebAudio` backend.
+ *
+ * Many mobile devices contain a hardware button to mute the ringtone for incoming
+ * calls and messages. Unfortunately, on some platforms like iOS, this also mutes
+ * wavesurfer's audio when using the `WebAudio` backend. This function creates a
+ * temporary `<audio>` element that makes sure the WebAudio backend keeps playing
+ * when muting the device ringer.
+ *
+ * @since 5.2.0
+ */
+function ignoreSilenceMode() {
+  // Set the src to a short bit of url encoded as a silent mp3
+  // NOTE The silence MP3 must be high quality, when web audio sounds are played
+  // in parallel the web audio sound is mixed to match the bitrate of the html sound
+  // 0.01 seconds of silence VBR220-260 Joint Stereo 859B
+  var audioData = "data:audio/mpeg;base64,//uQxAAAAAAAAAAAAAAAAAAAAAAAWGluZwAAAA8AAAACAAACcQCAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICA//////////////////////////////////////////////////////////////////8AAABhTEFNRTMuMTAwA8MAAAAAAAAAABQgJAUHQQAB9AAAAnGMHkkIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA//sQxAADgnABGiAAQBCqgCRMAAgEAH///////////////7+n/9FTuQsQH//////2NG0jWUGlio5gLQTOtIoeR2WX////X4s9Atb/JRVCbBUpeRUq//////////////////9RUi0f2jn/+xDECgPCjAEQAABN4AAANIAAAAQVTEFNRTMuMTAwVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVQ=="; // disable iOS Airplay (setting the attribute in js doesn't work)
+
+  var tmp = document.createElement("div");
+  tmp.innerHTML = '<audio x-webkit-airplay="deny"></audio>';
+  var audioSilentMode = tmp.children.item(0);
+  audioSilentMode.src = audioData;
+  audioSilentMode.preload = "auto";
+  audioSilentMode.type = "audio/mpeg";
+  audioSilentMode.disableRemotePlayback = true; // play
+
+  audioSilentMode.play(); // cleanup
+
+  audioSilentMode.remove();
+  tmp.remove();
+}
+
+module.exports = exports.default;
+
+/***/ }),
+
+/***/ "./src/util/style.js":
+/*!***************************!*\
+  !*** ./src/util/style.js ***!
+  \***************************/
+/***/ ((module, exports) => {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports.default = style;
+
+/**
+ * Apply a map of styles to an element
+ *
+ * @param {HTMLElement} el The element that the styles will be applied to
+ * @param {Object} styles The map of propName: attribute, both are used as-is
+ *
+ * @return {HTMLElement} el
+ */
+function style(el, styles) {
+  Object.keys(styles).forEach(function (prop) {
+    if (el.style[prop] !== styles[prop]) {
+      el.style[prop] = styles[prop];
+    }
+  });
+  return el;
+}
+
+module.exports = exports.default;
+
+/***/ }),
+
+/***/ "./src/wavesurfer.js":
+/*!***************************!*\
+  !*** ./src/wavesurfer.js ***!
+  \***************************/
+/***/ ((module, exports, __nested_webpack_require_117085__) => {
+
+"use strict";
+
+
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports.default = void 0;
+
+var util = _interopRequireWildcard(__nested_webpack_require_117085__(/*! ./util */ "./src/util/index.js"));
+
+var _drawer = _interopRequireDefault(__nested_webpack_require_117085__(/*! ./drawer.multicanvas */ "./src/drawer.multicanvas.js"));
+
+var _webaudio = _interopRequireDefault(__nested_webpack_require_117085__(/*! ./webaudio */ "./src/webaudio.js"));
+
+var _mediaelement = _interopRequireDefault(__nested_webpack_require_117085__(/*! ./mediaelement */ "./src/mediaelement.js"));
+
+var _peakcache = _interopRequireDefault(__nested_webpack_require_117085__(/*! ./peakcache */ "./src/peakcache.js"));
+
+var _mediaelementWebaudio = _interopRequireDefault(__nested_webpack_require_117085__(/*! ./mediaelement-webaudio */ "./src/mediaelement-webaudio.js"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function _getRequireWildcardCache(nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
+
+function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || _typeof(obj) !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } else if (call !== void 0) { throw new TypeError("Derived constructors may only return object or undefined"); } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+/*
+ * This work is licensed under a BSD-3-Clause License.
+ */
+
+/** @external {HTMLElement} https://developer.mozilla.org/en/docs/Web/API/HTMLElement */
+
+/** @external {OfflineAudioContext} https://developer.mozilla.org/en-US/docs/Web/API/OfflineAudioContext */
+
+/** @external {File} https://developer.mozilla.org/en-US/docs/Web/API/File */
+
+/** @external {Blob} https://developer.mozilla.org/en-US/docs/Web/API/Blob */
+
+/** @external {CanvasRenderingContext2D} https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D */
+
+/** @external {MediaStreamConstraints} https://developer.mozilla.org/en-US/docs/Web/API/MediaStreamConstraints */
+
+/** @external {AudioNode} https://developer.mozilla.org/de/docs/Web/API/AudioNode */
+
+/**
+ * @typedef {Object} WavesurferParams
+ * @property {AudioContext} audioContext=null Use your own previously
+ * initialized AudioContext or leave blank.
+ * @property {number} audioRate=1 Speed at which to play audio. Lower number is
+ * slower.
+ * @property {ScriptProcessorNode} audioScriptProcessor=null Use your own previously
+ * initialized ScriptProcessorNode or leave blank.
+ * @property {boolean} autoCenter=true If a scrollbar is present, center the
+ * waveform on current progress
+ * @property {number} autoCenterRate=5 If autoCenter is active, rate at which the
+ * waveform is centered
+ * @property {boolean} autoCenterImmediately=false If autoCenter is active, immediately
+ * center waveform on current progress
+ * @property {string} backend='WebAudio' `'WebAudio'|'MediaElement'|'MediaElementWebAudio'` In most cases
+ * you don't have to set this manually. MediaElement is a fallback for unsupported browsers.
+ * MediaElementWebAudio allows to use WebAudio API also with big audio files, loading audio like with
+ * MediaElement backend (HTML5 audio tag). You have to use the same methods of MediaElement backend for loading and
+ * playback, giving also peaks, so the audio data are not decoded. In this way you can use WebAudio features, like filters,
+ * also with audio with big duration. For example:
+ * ` wavesurfer.load(url | HTMLMediaElement, peaks, preload, duration);
+ *   wavesurfer.play();
+ *   wavesurfer.setFilter(customFilter);
+ * `
+ * @property {string} backgroundColor=null Change background color of the
+ * waveform container.
+ * @property {number} barHeight=1 The height of the wave bars.
+ * @property {number} barRadius=0 The radius of the wave bars. Makes bars rounded
+ * @property {number} barGap=null The optional spacing between bars of the wave,
+ * if not provided will be calculated in legacy format.
+ * @property {number} barWidth=null Draw the waveform using bars.
+ * @property {number} barMinHeight=null If specified, draw at least a bar of this height,
+ * eliminating waveform gaps
+ * @property {boolean} closeAudioContext=false Close and nullify all audio
+ * contexts when the destroy method is called.
+ * @property {!string|HTMLElement} container CSS selector or HTML element where
+ * the waveform should be drawn. This is the only required parameter.
+ * @property {string} cursorColor='#333' The fill color of the cursor indicating
+ * the playhead position.
+ * @property {number} cursorWidth=1 Measured in pixels.
+ * @property {object} drawingContextAttributes={desynchronized: false} Drawing context
+ * attributes.
+ * @property {number} duration=null Optional audio length so pre-rendered peaks
+ * can be display immediately for example.
+ * @property {boolean} fillParent=true Whether to fill the entire container or
+ * draw only according to `minPxPerSec`.
+ * @property {boolean} forceDecode=false Force decoding of audio using web audio
+ * when zooming to get a more detailed waveform.
+ * @property {number} height=128 The height of the waveform. Measured in
+ * pixels.
+ * @property {boolean} hideScrollbar=false Whether to hide the horizontal
+ * scrollbar when one would normally be shown.
+ * @property {boolean} ignoreSilenceMode=false If true, ignores device silence mode
+ * when using the `WebAudio` backend.
+ * @property {boolean} interact=true Whether the mouse interaction will be
+ * enabled at initialization. You can switch this parameter at any time later
+ * on.
+ * @property {boolean} loopSelection=true (Use with regions plugin) Enable
+ * looping of selected regions
+ * @property {number} maxCanvasWidth=4000 Maximum width of a single canvas in
+ * pixels, excluding a small overlap (2 * `pixelRatio`, rounded up to the next
+ * even integer). If the waveform is longer than this value, additional canvases
+ * will be used to render the waveform, which is useful for very large waveforms
+ * that may be too wide for browsers to draw on a single canvas.
+ * @property {boolean} mediaControls=false (Use with backend `MediaElement` or `MediaElementWebAudio`)
+ * this enables the native controls for the media element
+ * @property {string} mediaType='audio' (Use with backend `MediaElement` or `MediaElementWebAudio`)
+ * `'audio'|'video'` ('video' only for `MediaElement`)
+ * @property {number} minPxPerSec=20 Minimum number of pixels per second of
+ * audio.
+ * @property {boolean} normalize=false If true, normalize by the maximum peak
+ * instead of 1.0.
+ * @property {boolean} partialRender=false Use the PeakCache to improve
+ * rendering speed of large waveforms
+ * @property {number} pixelRatio=window.devicePixelRatio The pixel ratio used to
+ * calculate display
+ * @property {PluginDefinition[]} plugins=[] An array of plugin definitions to
+ * register during instantiation, they will be directly initialised unless they
+ * are added with the `deferInit` property set to true.
+ * @property {string} progressColor='#555' The fill color of the part of the
+ * waveform behind the cursor. When `progressColor` and `waveColor` are the same
+ * the progress wave is not rendered at all.
+ * @property {boolean} removeMediaElementOnDestroy=true Set to false to keep the
+ * media element in the DOM when the player is destroyed. This is useful when
+ * reusing an existing media element via the `loadMediaElement` method.
+ * @property {Object} renderer=MultiCanvas Can be used to inject a custom
+ * renderer.
+ * @property {boolean|number} responsive=false If set to `true` resize the
+ * waveform, when the window is resized. This is debounced with a `100ms`
+ * timeout by default. If this parameter is a number it represents that timeout.
+ * @property {boolean} rtl=false If set to `true`, renders waveform from
+ * right-to-left.
+ * @property {boolean} scrollParent=false Whether to scroll the container with a
+ * lengthy waveform. Otherwise the waveform is shrunk to the container width
+ * (see fillParent).
+ * @property {number} skipLength=2 Number of seconds to skip with the
+ * skipForward() and skipBackward() methods.
+ * @property {boolean} splitChannels=false Render with separate waveforms for
+ * the channels of the audio
+ * @property {SplitChannelOptions} splitChannelsOptions={} Options for splitChannel rendering
+ * @property {boolean} vertical=false Render the waveform vertically instead of horizontally.
+ * @property {string} waveColor='#999' The fill color of the waveform after the
+ * cursor.
+ * @property {object} xhr={} XHR options. For example:
+ * `let xhr = {
+ *     cache: 'default',
+ *     mode: 'cors',
+ *     method: 'GET',
+ *     credentials: 'same-origin',
+ *     redirect: 'follow',
+ *     referrer: 'client',
+ *     requestHeaders: [
+ *         {
+ *             key: 'Authorization',
+ *             value: 'my-token'
+ *         }
+ *     ]
+ * };`
+ */
+
+/**
+ * @typedef {Object} PluginDefinition
+ * @desc The Object used to describe a plugin
+ * @example wavesurfer.addPlugin(pluginDefinition);
+ * @property {string} name The name of the plugin, the plugin instance will be
+ * added as a property to the wavesurfer instance under this name
+ * @property {?Object} staticProps The properties that should be added to the
+ * wavesurfer instance as static properties
+ * @property {?boolean} deferInit Don't initialise plugin
+ * automatically
+ * @property {Object} params={} The plugin parameters, they are the first parameter
+ * passed to the plugin class constructor function
+ * @property {PluginClass} instance The plugin instance factory, is called with
+ * the dependency specified in extends. Returns the plugin class.
+ */
+
+/**
+ * @typedef {Object} SplitChannelOptions
+ * @desc parameters applied when splitChannels option is true
+ * @property {boolean} overlay=false determines whether channels are rendered on top of each other or on separate tracks
+ * @property {object} channelColors={} object describing color for each channel. Example:
+ * {
+ *     0: {
+ *         progressColor: 'green',
+ *         waveColor: 'pink'
+ *     },
+ *     1: {
+ *         progressColor: 'orange',
+ *         waveColor: 'purple'
+ *     }
+ * }
+ * @property {number[]} filterChannels=[] indexes of channels to be hidden from rendering
+ * @property {boolean} relativeNormalization=false determines whether
+ * normalization is done per channel or maintains proportionality between
+ * channels. Only applied when normalize and splitChannels are both true.
+ * @since 4.3.0
+ */
+
+/**
+ * @interface PluginClass
+ *
+ * @desc This is the interface which is implemented by all plugin classes. Note
+ * that this only turns into an observer after being passed through
+ * `wavesurfer.addPlugin`.
+ *
+ * @extends {Observer}
+ */
+var PluginClass = /*#__PURE__*/function () {
+  /**
+   * Construct the plugin
+   *
+   * @param {Object} params={} The plugin params (specific to the plugin)
+   * @param {Object} ws The wavesurfer instance
+   */
+  function PluginClass(params, ws) {
+    _classCallCheck(this, PluginClass);
+  }
+  /**
+   * Initialise the plugin
+   *
+   * Start doing something. This is called by
+   * `wavesurfer.initPlugin(pluginName)`
+   */
+
+
+  _createClass(PluginClass, [{
+    key: "create",
+    value:
+    /**
+     * Plugin definition factory
+     *
+     * This function must be used to create a plugin definition which can be
+     * used by wavesurfer to correctly instantiate the plugin.
+     *
+     * It returns a `PluginDefinition` object representing the plugin.
+     *
+     * @param {Object} params={} The plugin params (specific to the plugin)
+     */
+    function create(params) {}
+  }, {
+    key: "init",
+    value: function init() {}
+    /**
+     * Destroy the plugin instance
+     *
+     * Stop doing something. This is called by
+     * `wavesurfer.destroyPlugin(pluginName)`
+     */
+
+  }, {
+    key: "destroy",
+    value: function destroy() {}
+  }]);
+
+  return PluginClass;
+}();
+/**
+ * WaveSurfer core library class
+ *
+ * @extends {Observer}
+ * @example
+ * const params = {
+ *   container: '#waveform',
+ *   waveColor: 'violet',
+ *   progressColor: 'purple'
+ * };
+ *
+ * // initialise like this
+ * const wavesurfer = WaveSurfer.create(params);
+ *
+ * // or like this ...
+ * const wavesurfer = new WaveSurfer(params);
+ * wavesurfer.init();
+ *
+ * // load audio file
+ * wavesurfer.load('example/media/demo.wav');
+ */
+
+
+var WaveSurfer = /*#__PURE__*/function (_util$Observer) {
+  _inherits(WaveSurfer, _util$Observer);
+
+  var _super = _createSuper(WaveSurfer);
+
+  /**
+   * Initialise wavesurfer instance
+   *
+   * @param {WavesurferParams} params Instantiation options for wavesurfer
+   * @example
+   * const wavesurfer = new WaveSurfer(params);
+   * @returns {this} Wavesurfer instance
+   */
+  function WaveSurfer(params) {
+    var _this;
+
+    _classCallCheck(this, WaveSurfer);
+
+    _this = _super.call(this);
+    /**
+     * Extract relevant parameters (or defaults)
+     * @private
+     */
+
+    _this.defaultParams = {
+      audioContext: null,
+      audioScriptProcessor: null,
+      audioRate: 1,
+      autoCenter: true,
+      autoCenterRate: 5,
+      autoCenterImmediately: false,
+      backend: 'WebAudio',
+      backgroundColor: null,
+      barHeight: 1,
+      barRadius: 0,
+      barGap: null,
+      barMinHeight: null,
+      container: null,
+      cursorColor: '#333',
+      cursorWidth: 1,
+      dragSelection: true,
+      drawingContextAttributes: {
+        // Boolean that hints the user agent to reduce the latency
+        // by desynchronizing the canvas paint cycle from the event
+        // loop
+        desynchronized: false
+      },
+      duration: null,
+      fillParent: true,
+      forceDecode: false,
+      height: 128,
+      hideScrollbar: false,
+      ignoreSilenceMode: false,
+      interact: true,
+      loopSelection: true,
+      maxCanvasWidth: 4000,
+      mediaContainer: null,
+      mediaControls: false,
+      mediaType: 'audio',
+      minPxPerSec: 20,
+      normalize: false,
+      partialRender: false,
+      pixelRatio: window.devicePixelRatio || screen.deviceXDPI / screen.logicalXDPI,
+      plugins: [],
+      progressColor: '#555',
+      removeMediaElementOnDestroy: true,
+      renderer: _drawer.default,
+      responsive: false,
+      rtl: false,
+      scrollParent: false,
+      skipLength: 2,
+      splitChannels: false,
+      splitChannelsOptions: {
+        overlay: false,
+        channelColors: {},
+        filterChannels: [],
+        relativeNormalization: false
+      },
+      vertical: false,
+      waveColor: '#999',
+      xhr: {}
+    };
+    _this.backends = {
+      MediaElement: _mediaelement.default,
+      WebAudio: _webaudio.default,
+      MediaElementWebAudio: _mediaelementWebaudio.default
+    };
+    _this.util = util;
+    _this.params = Object.assign({}, _this.defaultParams, params);
+    _this.params.splitChannelsOptions = Object.assign({}, _this.defaultParams.splitChannelsOptions, params.splitChannelsOptions);
+    /** @private */
+
+    _this.container = 'string' == typeof params.container ? document.querySelector(_this.params.container) : _this.params.container;
+
+    if (!_this.container) {
+      throw new Error('Container element not found');
+    }
+
+    if (_this.params.mediaContainer == null) {
+      /** @private */
+      _this.mediaContainer = _this.container;
+    } else if (typeof _this.params.mediaContainer == 'string') {
+      /** @private */
+      _this.mediaContainer = document.querySelector(_this.params.mediaContainer);
+    } else {
+      /** @private */
+      _this.mediaContainer = _this.params.mediaContainer;
+    }
+
+    if (!_this.mediaContainer) {
+      throw new Error('Media Container element not found');
+    }
+
+    if (_this.params.maxCanvasWidth <= 1) {
+      throw new Error('maxCanvasWidth must be greater than 1');
+    } else if (_this.params.maxCanvasWidth % 2 == 1) {
+      throw new Error('maxCanvasWidth must be an even number');
+    }
+
+    if (_this.params.rtl === true) {
+      if (_this.params.vertical === true) {
+        util.style(_this.container, {
+          transform: 'rotateX(180deg)'
+        });
+      } else {
+        util.style(_this.container, {
+          transform: 'rotateY(180deg)'
+        });
+      }
+    }
+
+    if (_this.params.backgroundColor) {
+      _this.setBackgroundColor(_this.params.backgroundColor);
+    }
+    /**
+     * @private Used to save the current volume when muting so we can
+     * restore once unmuted
+     * @type {number}
+     */
+
+
+    _this.savedVolume = 0;
+    /**
+     * @private The current muted state
+     * @type {boolean}
+     */
+
+    _this.isMuted = false;
+    /**
+     * @private Will hold a list of event descriptors that need to be
+     * canceled on subsequent loads of audio
+     * @type {Object[]}
+     */
+
+    _this.tmpEvents = [];
+    /**
+     * @private Holds any running audio downloads
+     * @type {Observer}
+     */
+
+    _this.currentRequest = null;
+    /** @private */
+
+    _this.arraybuffer = null;
+    /** @private */
+
+    _this.drawer = null;
+    /** @private */
+
+    _this.backend = null;
+    /** @private */
+
+    _this.peakCache = null; // cache constructor objects
+
+    if (typeof _this.params.renderer !== 'function') {
+      throw new Error('Renderer parameter is invalid');
+    }
+    /**
+     * @private The uninitialised Drawer class
+     */
+
+
+    _this.Drawer = _this.params.renderer;
+    /**
+     * @private The uninitialised Backend class
+     */
+    // Back compat
+
+    if (_this.params.backend == 'AudioElement') {
+      _this.params.backend = 'MediaElement';
+    }
+
+    if ((_this.params.backend == 'WebAudio' || _this.params.backend === 'MediaElementWebAudio') && !_webaudio.default.prototype.supportsWebAudio.call(null)) {
+      _this.params.backend = 'MediaElement';
+    }
+
+    _this.Backend = _this.backends[_this.params.backend];
+    /**
+     * @private map of plugin names that are currently initialised
+     */
+
+    _this.initialisedPluginList = {};
+    /** @private */
+
+    _this.isDestroyed = false;
+    /**
+     * Get the current ready status.
+     *
+     * @example const isReady = wavesurfer.isReady;
+     * @return {boolean}
+     */
+
+    _this.isReady = false; // responsive debounced event listener. If this.params.responsive is not
+    // set, this is never called. Use 100ms or this.params.responsive as
+    // timeout for the debounce function.
+
+    var prevWidth = 0;
+    _this._onResize = util.debounce(function () {
+      if (prevWidth != _this.drawer.wrapper.clientWidth && !_this.params.scrollParent) {
+        prevWidth = _this.drawer.wrapper.clientWidth;
+
+        _this.drawer.fireEvent('redraw');
+      }
+    }, typeof _this.params.responsive === 'number' ? _this.params.responsive : 100);
+    return _possibleConstructorReturn(_this, _assertThisInitialized(_this));
+  }
+  /**
+   * Initialise the wave
+   *
+   * @example
+   * var wavesurfer = new WaveSurfer(params);
+   * wavesurfer.init();
+   * @return {this} The wavesurfer instance
+   */
+
+
+  _createClass(WaveSurfer, [{
+    key: "init",
+    value: function init() {
+      this.registerPlugins(this.params.plugins);
+      this.createDrawer();
+      this.createBackend();
+      this.createPeakCache();
+      return this;
+    }
+    /**
+     * Add and initialise array of plugins (if `plugin.deferInit` is falsey),
+     * this function is called in the init function of wavesurfer
+     *
+     * @param {PluginDefinition[]} plugins An array of plugin definitions
+     * @emits {WaveSurfer#plugins-registered} Called with the array of plugin definitions
+     * @return {this} The wavesurfer instance
+     */
+
+  }, {
+    key: "registerPlugins",
+    value: function registerPlugins(plugins) {
+      var _this2 = this;
+
+      // first instantiate all the plugins
+      plugins.forEach(function (plugin) {
+        return _this2.addPlugin(plugin);
+      }); // now run the init functions
+
+      plugins.forEach(function (plugin) {
+        // call init function of the plugin if deferInit is falsey
+        // in that case you would manually use initPlugins()
+        if (!plugin.deferInit) {
+          _this2.initPlugin(plugin.name);
+        }
+      });
+      this.fireEvent('plugins-registered', plugins);
+      return this;
+    }
+    /**
+     * Get a map of plugin names that are currently initialised
+     *
+     * @example wavesurfer.getPlugins();
+     * @return {Object} Object with plugin names
+     */
+
+  }, {
+    key: "getActivePlugins",
+    value: function getActivePlugins() {
+      return this.initialisedPluginList;
+    }
+    /**
+     * Add a plugin object to wavesurfer
+     *
+     * @param {PluginDefinition} plugin A plugin definition
+     * @emits {WaveSurfer#plugin-added} Called with the name of the plugin that was added
+     * @example wavesurfer.addPlugin(WaveSurfer.minimap());
+     * @return {this} The wavesurfer instance
+     */
+
+  }, {
+    key: "addPlugin",
+    value: function addPlugin(plugin) {
+      var _this3 = this;
+
+      if (!plugin.name) {
+        throw new Error('Plugin does not have a name!');
+      }
+
+      if (!plugin.instance) {
+        throw new Error("Plugin ".concat(plugin.name, " does not have an instance property!"));
+      } // staticProps properties are applied to wavesurfer instance
+
+
+      if (plugin.staticProps) {
+        Object.keys(plugin.staticProps).forEach(function (pluginStaticProp) {
+          /**
+           * Properties defined in a plugin definition's `staticProps` property are added as
+           * staticProps properties of the WaveSurfer instance
+           */
+          _this3[pluginStaticProp] = plugin.staticProps[pluginStaticProp];
+        });
+      }
+
+      var Instance = plugin.instance; // turn the plugin instance into an observer
+
+      var observerPrototypeKeys = Object.getOwnPropertyNames(util.Observer.prototype);
+      observerPrototypeKeys.forEach(function (key) {
+        Instance.prototype[key] = util.Observer.prototype[key];
+      });
+      /**
+       * Instantiated plugin classes are added as a property of the wavesurfer
+       * instance
+       * @type {Object}
+       */
+
+      this[plugin.name] = new Instance(plugin.params || {}, this);
+      this.fireEvent('plugin-added', plugin.name);
+      return this;
+    }
+    /**
+     * Initialise a plugin
+     *
+     * @param {string} name A plugin name
+     * @emits WaveSurfer#plugin-initialised
+     * @example wavesurfer.initPlugin('minimap');
+     * @return {this} The wavesurfer instance
+     */
+
+  }, {
+    key: "initPlugin",
+    value: function initPlugin(name) {
+      if (!this[name]) {
+        throw new Error("Plugin ".concat(name, " has not been added yet!"));
+      }
+
+      if (this.initialisedPluginList[name]) {
+        // destroy any already initialised plugins
+        this.destroyPlugin(name);
+      }
+
+      this[name].init();
+      this.initialisedPluginList[name] = true;
+      this.fireEvent('plugin-initialised', name);
+      return this;
+    }
+    /**
+     * Destroy a plugin
+     *
+     * @param {string} name A plugin name
+     * @emits WaveSurfer#plugin-destroyed
+     * @example wavesurfer.destroyPlugin('minimap');
+     * @returns {this} The wavesurfer instance
+     */
+
+  }, {
+    key: "destroyPlugin",
+    value: function destroyPlugin(name) {
+      if (!this[name]) {
+        throw new Error("Plugin ".concat(name, " has not been added yet and cannot be destroyed!"));
+      }
+
+      if (!this.initialisedPluginList[name]) {
+        throw new Error("Plugin ".concat(name, " is not active and cannot be destroyed!"));
+      }
+
+      if (typeof this[name].destroy !== 'function') {
+        throw new Error("Plugin ".concat(name, " does not have a destroy function!"));
+      }
+
+      this[name].destroy();
+      delete this.initialisedPluginList[name];
+      this.fireEvent('plugin-destroyed', name);
+      return this;
+    }
+    /**
+     * Destroy all initialised plugins. Convenience function to use when
+     * wavesurfer is removed
+     *
+     * @private
+     */
+
+  }, {
+    key: "destroyAllPlugins",
+    value: function destroyAllPlugins() {
+      var _this4 = this;
+
+      Object.keys(this.initialisedPluginList).forEach(function (name) {
+        return _this4.destroyPlugin(name);
+      });
+    }
+    /**
+     * Create the drawer and draw the waveform
+     *
+     * @private
+     * @emits WaveSurfer#drawer-created
+     */
+
+  }, {
+    key: "createDrawer",
+    value: function createDrawer() {
+      var _this5 = this;
+
+      this.drawer = new this.Drawer(this.container, this.params);
+      this.drawer.init();
+      this.fireEvent('drawer-created', this.drawer);
+
+      if (this.params.responsive !== false) {
+        window.addEventListener('resize', this._onResize, true);
+        window.addEventListener('orientationchange', this._onResize, true);
+      }
+
+      this.drawer.on('redraw', function () {
+        _this5.drawBuffer();
+
+        _this5.drawer.progress(_this5.backend.getPlayedPercents());
+      }); // Click-to-seek
+
+      this.drawer.on('click', function (e, progress) {
+        setTimeout(function () {
+          return _this5.seekTo(progress);
+        }, 0);
+      }); // Relay the scroll event from the drawer
+
+      this.drawer.on('scroll', function (e) {
+        if (_this5.params.partialRender) {
+          _this5.drawBuffer();
+        }
+
+        _this5.fireEvent('scroll', e);
+      });
+    }
+    /**
+     * Create the backend
+     *
+     * @private
+     * @emits WaveSurfer#backend-created
+     */
+
+  }, {
+    key: "createBackend",
+    value: function createBackend() {
+      var _this6 = this;
+
+      if (this.backend) {
+        this.backend.destroy();
+      }
+
+      this.backend = new this.Backend(this.params);
+      this.backend.init();
+      this.fireEvent('backend-created', this.backend);
+      this.backend.on('finish', function () {
+        _this6.drawer.progress(_this6.backend.getPlayedPercents());
+
+        _this6.fireEvent('finish');
+      });
+      this.backend.on('play', function () {
+        return _this6.fireEvent('play');
+      });
+      this.backend.on('pause', function () {
+        return _this6.fireEvent('pause');
+      });
+      this.backend.on('audioprocess', function (time) {
+        _this6.drawer.progress(_this6.backend.getPlayedPercents());
+
+        _this6.fireEvent('audioprocess', time);
+      }); // only needed for MediaElement and MediaElementWebAudio backend
+
+      if (this.params.backend === 'MediaElement' || this.params.backend === 'MediaElementWebAudio') {
+        this.backend.on('seek', function () {
+          _this6.drawer.progress(_this6.backend.getPlayedPercents());
+        });
+        this.backend.on('volume', function () {
+          var newVolume = _this6.getVolume();
+
+          _this6.fireEvent('volume', newVolume);
+
+          if (_this6.backend.isMuted !== _this6.isMuted) {
+            _this6.isMuted = _this6.backend.isMuted;
+
+            _this6.fireEvent('mute', _this6.isMuted);
+          }
+        });
+      }
+    }
+    /**
+     * Create the peak cache
+     *
+     * @private
+     */
+
+  }, {
+    key: "createPeakCache",
+    value: function createPeakCache() {
+      if (this.params.partialRender) {
+        this.peakCache = new _peakcache.default();
+      }
+    }
+    /**
+     * Get the duration of the audio clip
+     *
+     * @example const duration = wavesurfer.getDuration();
+     * @return {number} Duration in seconds
+     */
+
+  }, {
+    key: "getDuration",
+    value: function getDuration() {
+      return this.backend.getDuration();
+    }
+    /**
+     * Get the current playback position
+     *
+     * @example const currentTime = wavesurfer.getCurrentTime();
+     * @return {number} Playback position in seconds
+     */
+
+  }, {
+    key: "getCurrentTime",
+    value: function getCurrentTime() {
+      return this.backend.getCurrentTime();
+    }
+    /**
+     * Set the current play time in seconds.
+     *
+     * @param {number} seconds A positive number in seconds. E.g. 10 means 10
+     * seconds, 60 means 1 minute
+     */
+
+  }, {
+    key: "setCurrentTime",
+    value: function setCurrentTime(seconds) {
+      if (seconds >= this.getDuration()) {
+        this.seekTo(1);
+      } else {
+        this.seekTo(seconds / this.getDuration());
+      }
+    }
+    /**
+     * Starts playback from the current position. Optional start and end
+     * measured in seconds can be used to set the range of audio to play.
+     *
+     * @param {?number} start Position to start at
+     * @param {?number} end Position to end at
+     * @emits WaveSurfer#interaction
+     * @return {Promise} Result of the backend play method
+     * @example
+     * // play from second 1 to 5
+     * wavesurfer.play(1, 5);
+     */
+
+  }, {
+    key: "play",
+    value: function play(start, end) {
+      var _this7 = this;
+
+      if (this.params.ignoreSilenceMode) {
+        // ignores device hardware silence mode
+        util.ignoreSilenceMode();
+      }
+
+      this.fireEvent('interaction', function () {
+        return _this7.play(start, end);
+      });
+      return this.backend.play(start, end);
+    }
+    /**
+     * Set a point in seconds for playback to stop at.
+     *
+     * @param {number} position Position (in seconds) to stop at
+     * @version 3.3.0
+     */
+
+  }, {
+    key: "setPlayEnd",
+    value: function setPlayEnd(position) {
+      this.backend.setPlayEnd(position);
+    }
+    /**
+     * Stops and pauses playback
+     *
+     * @example wavesurfer.pause();
+     * @return {Promise} Result of the backend pause method
+     */
+
+  }, {
+    key: "pause",
+    value: function pause() {
+      if (!this.backend.isPaused()) {
+        return this.backend.pause();
+      }
+    }
+    /**
+     * Toggle playback
+     *
+     * @example wavesurfer.playPause();
+     * @return {Promise} Result of the backend play or pause method
+     */
+
+  }, {
+    key: "playPause",
+    value: function playPause() {
+      return this.backend.isPaused() ? this.play() : this.pause();
+    }
+    /**
+     * Get the current playback state
+     *
+     * @example const isPlaying = wavesurfer.isPlaying();
+     * @return {boolean} False if paused, true if playing
+     */
+
+  }, {
+    key: "isPlaying",
+    value: function isPlaying() {
+      return !this.backend.isPaused();
+    }
+    /**
+     * Skip backward
+     *
+     * @param {?number} seconds Amount to skip back, if not specified `skipLength`
+     * is used
+     * @example wavesurfer.skipBackward();
+     */
+
+  }, {
+    key: "skipBackward",
+    value: function skipBackward(seconds) {
+      this.skip(-seconds || -this.params.skipLength);
+    }
+    /**
+     * Skip forward
+     *
+     * @param {?number} seconds Amount to skip back, if not specified `skipLength`
+     * is used
+     * @example wavesurfer.skipForward();
+     */
+
+  }, {
+    key: "skipForward",
+    value: function skipForward(seconds) {
+      this.skip(seconds || this.params.skipLength);
+    }
+    /**
+     * Skip a number of seconds from the current position (use a negative value
+     * to go backwards).
+     *
+     * @param {number} offset Amount to skip back or forwards
+     * @example
+     * // go back 2 seconds
+     * wavesurfer.skip(-2);
+     */
+
+  }, {
+    key: "skip",
+    value: function skip(offset) {
+      var duration = this.getDuration() || 1;
+      var position = this.getCurrentTime() || 0;
+      position = Math.max(0, Math.min(duration, position + (offset || 0)));
+      this.seekAndCenter(position / duration);
+    }
+    /**
+     * Seeks to a position and centers the view
+     *
+     * @param {number} progress Between 0 (=beginning) and 1 (=end)
+     * @example
+     * // seek and go to the middle of the audio
+     * wavesurfer.seekTo(0.5);
+     */
+
+  }, {
+    key: "seekAndCenter",
+    value: function seekAndCenter(progress) {
+      this.seekTo(progress);
+      this.drawer.recenter(progress);
+    }
+    /**
+     * Seeks to a position
+     *
+     * @param {number} progress Between 0 (=beginning) and 1 (=end)
+     * @emits WaveSurfer#interaction
+     * @emits WaveSurfer#seek
+     * @example
+     * // seek to the middle of the audio
+     * wavesurfer.seekTo(0.5);
+     */
+
+  }, {
+    key: "seekTo",
+    value: function seekTo(progress) {
+      var _this8 = this;
+
+      // return an error if progress is not a number between 0 and 1
+      if (typeof progress !== 'number' || !isFinite(progress) || progress < 0 || progress > 1) {
+        throw new Error('Error calling wavesurfer.seekTo, parameter must be a number between 0 and 1!');
+      }
+
+      this.fireEvent('interaction', function () {
+        return _this8.seekTo(progress);
+      });
+      var isWebAudioBackend = this.params.backend === 'WebAudio';
+      var paused = this.backend.isPaused();
+
+      if (isWebAudioBackend && !paused) {
+        this.backend.pause();
+      } // avoid small scrolls while paused seeking
+
+
+      var oldScrollParent = this.params.scrollParent;
+      this.params.scrollParent = false;
+      this.backend.seekTo(progress * this.getDuration());
+      this.drawer.progress(progress);
+
+      if (isWebAudioBackend && !paused) {
+        this.backend.play();
+      }
+
+      this.params.scrollParent = oldScrollParent;
+      this.fireEvent('seek', progress);
+    }
+    /**
+     * Stops and goes to the beginning.
+     *
+     * @example wavesurfer.stop();
+     */
+
+  }, {
+    key: "stop",
+    value: function stop() {
+      this.pause();
+      this.seekTo(0);
+      this.drawer.progress(0);
+    }
+    /**
+     * Sets the ID of the audio device to use for output and returns a Promise.
+     *
+     * @param {string} deviceId String value representing underlying output
+     * device
+     * @returns {Promise} `Promise` that resolves to `undefined` when there are
+     * no errors detected.
+     */
+
+  }, {
+    key: "setSinkId",
+    value: function setSinkId(deviceId) {
+      return this.backend.setSinkId(deviceId);
+    }
+    /**
+     * Set the playback volume.
+     *
+     * @param {number} newVolume A value between 0 and 1, 0 being no
+     * volume and 1 being full volume.
+     * @emits WaveSurfer#volume
+     */
+
+  }, {
+    key: "setVolume",
+    value: function setVolume(newVolume) {
+      this.backend.setVolume(newVolume);
+      this.fireEvent('volume', newVolume);
+    }
+    /**
+     * Get the playback volume.
+     *
+     * @return {number} A value between 0 and 1, 0 being no
+     * volume and 1 being full volume.
+     */
+
+  }, {
+    key: "getVolume",
+    value: function getVolume() {
+      return this.backend.getVolume();
+    }
+    /**
+     * Set the playback rate.
+     *
+     * @param {number} rate A positive number. E.g. 0.5 means half the normal
+     * speed, 2 means double speed and so on.
+     * @example wavesurfer.setPlaybackRate(2);
+     */
+
+  }, {
+    key: "setPlaybackRate",
+    value: function setPlaybackRate(rate) {
+      this.backend.setPlaybackRate(rate);
+    }
+    /**
+     * Get the playback rate.
+     *
+     * @return {number} The current playback rate.
+     */
+
+  }, {
+    key: "getPlaybackRate",
+    value: function getPlaybackRate() {
+      return this.backend.getPlaybackRate();
+    }
+    /**
+     * Toggle the volume on and off. If not currently muted it will save the
+     * current volume value and turn the volume off. If currently muted then it
+     * will restore the volume to the saved value, and then rest the saved
+     * value.
+     *
+     * @example wavesurfer.toggleMute();
+     */
+
+  }, {
+    key: "toggleMute",
+    value: function toggleMute() {
+      this.setMute(!this.isMuted);
+    }
+    /**
+     * Enable or disable muted audio
+     *
+     * @param {boolean} mute Specify `true` to mute audio.
+     * @emits WaveSurfer#volume
+     * @emits WaveSurfer#mute
+     * @example
+     * // unmute
+     * wavesurfer.setMute(false);
+     * console.log(wavesurfer.getMute()) // logs false
+     */
+
+  }, {
+    key: "setMute",
+    value: function setMute(mute) {
+      // ignore all muting requests if the audio is already in that state
+      if (mute === this.isMuted) {
+        this.fireEvent('mute', this.isMuted);
+        return;
+      }
+
+      if (this.backend.setMute) {
+        // Backends such as the MediaElement backend have their own handling
+        // of mute, let them handle it.
+        this.backend.setMute(mute);
+        this.isMuted = mute;
+      } else {
+        if (mute) {
+          // If currently not muted then save current volume,
+          // turn off the volume and update the mute properties
+          this.savedVolume = this.backend.getVolume();
+          this.backend.setVolume(0);
+          this.isMuted = true;
+          this.fireEvent('volume', 0);
+        } else {
+          // If currently muted then restore to the saved volume
+          // and update the mute properties
+          this.backend.setVolume(this.savedVolume);
+          this.isMuted = false;
+          this.fireEvent('volume', this.savedVolume);
+        }
+      }
+
+      this.fireEvent('mute', this.isMuted);
+    }
+    /**
+     * Get the current mute status.
+     *
+     * @example const isMuted = wavesurfer.getMute();
+     * @return {boolean} Current mute status
+     */
+
+  }, {
+    key: "getMute",
+    value: function getMute() {
+      return this.isMuted;
+    }
+    /**
+     * Get the list of current set filters as an array.
+     *
+     * Filters must be set with setFilters method first
+     *
+     * @return {array} List of enabled filters
+     */
+
+  }, {
+    key: "getFilters",
+    value: function getFilters() {
+      return this.backend.filters || [];
+    }
+    /**
+     * Toggles `scrollParent` and redraws
+     *
+     * @example wavesurfer.toggleScroll();
+     */
+
+  }, {
+    key: "toggleScroll",
+    value: function toggleScroll() {
+      this.params.scrollParent = !this.params.scrollParent;
+      this.drawBuffer();
+    }
+    /**
+     * Toggle mouse interaction
+     *
+     * @example wavesurfer.toggleInteraction();
+     */
+
+  }, {
+    key: "toggleInteraction",
+    value: function toggleInteraction() {
+      this.params.interact = !this.params.interact;
+    }
+    /**
+     * Get the fill color of the waveform after the cursor.
+     *
+     * @return {string} A CSS color string.
+     */
+
+  }, {
+    key: "getWaveColor",
+    value: function getWaveColor() {
+      return this.params.waveColor;
+    }
+    /**
+     * Set the fill color of the waveform after the cursor.
+     *
+     * @param {string} color A CSS color string.
+     * @example wavesurfer.setWaveColor('#ddd');
+     */
+
+  }, {
+    key: "setWaveColor",
+    value: function setWaveColor(color) {
+      this.params.waveColor = color;
+      this.drawBuffer();
+    }
+    /**
+     * Get the fill color of the waveform behind the cursor.
+     *
+     * @return {string} A CSS color string.
+     */
+
+  }, {
+    key: "getProgressColor",
+    value: function getProgressColor() {
+      return this.params.progressColor;
+    }
+    /**
+     * Set the fill color of the waveform behind the cursor.
+     *
+     * @param {string} color A CSS color string.
+     * @example wavesurfer.setProgressColor('#400');
+     */
+
+  }, {
+    key: "setProgressColor",
+    value: function setProgressColor(color) {
+      this.params.progressColor = color;
+      this.drawBuffer();
+    }
+    /**
+     * Get the background color of the waveform container.
+     *
+     * @return {string} A CSS color string.
+     */
+
+  }, {
+    key: "getBackgroundColor",
+    value: function getBackgroundColor() {
+      return this.params.backgroundColor;
+    }
+    /**
+     * Set the background color of the waveform container.
+     *
+     * @param {string} color A CSS color string.
+     * @example wavesurfer.setBackgroundColor('#FF00FF');
+     */
+
+  }, {
+    key: "setBackgroundColor",
+    value: function setBackgroundColor(color) {
+      this.params.backgroundColor = color;
+      util.style(this.container, {
+        background: this.params.backgroundColor
+      });
+    }
+    /**
+     * Get the fill color of the cursor indicating the playhead
+     * position.
+     *
+     * @return {string} A CSS color string.
+     */
+
+  }, {
+    key: "getCursorColor",
+    value: function getCursorColor() {
+      return this.params.cursorColor;
+    }
+    /**
+     * Set the fill color of the cursor indicating the playhead
+     * position.
+     *
+     * @param {string} color A CSS color string.
+     * @example wavesurfer.setCursorColor('#222');
+     */
+
+  }, {
+    key: "setCursorColor",
+    value: function setCursorColor(color) {
+      this.params.cursorColor = color;
+      this.drawer.updateCursor();
+    }
+    /**
+     * Get the height of the waveform.
+     *
+     * @return {number} Height measured in pixels.
+     */
+
+  }, {
+    key: "getHeight",
+    value: function getHeight() {
+      return this.params.height;
+    }
+    /**
+     * Set the height of the waveform.
+     *
+     * @param {number} height Height measured in pixels.
+     * @example wavesurfer.setHeight(200);
+     */
+
+  }, {
+    key: "setHeight",
+    value: function setHeight(height) {
+      this.params.height = height;
+      this.drawer.setHeight(height * this.params.pixelRatio);
+      this.drawBuffer();
+    }
+    /**
+     * Hide channels from being drawn on the waveform if splitting channels.
+     *
+     * For example, if we want to draw only the peaks for the right stereo channel:
+     *
+     * const wavesurfer = new WaveSurfer.create({...splitChannels: true});
+     * wavesurfer.load('stereo_audio.mp3');
+     *
+     * wavesurfer.setFilteredChannel([0]); <-- hide left channel peaks.
+     *
+     * @param {array} channelIndices Channels to be filtered out from drawing.
+     * @version 4.0.0
+     */
+
+  }, {
+    key: "setFilteredChannels",
+    value: function setFilteredChannels(channelIndices) {
+      this.params.splitChannelsOptions.filterChannels = channelIndices;
+      this.drawBuffer();
+    }
+    /**
+     * Get the correct peaks for current wave view-port and render wave
+     *
+     * @private
+     * @emits WaveSurfer#redraw
+     */
+
+  }, {
+    key: "drawBuffer",
+    value: function drawBuffer() {
+      var nominalWidth = Math.round(this.getDuration() * this.params.minPxPerSec * this.params.pixelRatio);
+      var parentWidth = this.drawer.getWidth();
+      var width = nominalWidth; // always start at 0 after zooming for scrolling : issue redraw left part
+
+      var start = 0;
+      var end = Math.max(start + parentWidth, width); // Fill container
+
+      if (this.params.fillParent && (!this.params.scrollParent || nominalWidth < parentWidth)) {
+        width = parentWidth;
+        start = 0;
+        end = width;
+      }
+
+      var peaks;
+
+      if (this.params.partialRender) {
+        var newRanges = this.peakCache.addRangeToPeakCache(width, start, end);
+        var i;
+
+        for (i = 0; i < newRanges.length; i++) {
+          peaks = this.backend.getPeaks(width, newRanges[i][0], newRanges[i][1]);
+          this.drawer.drawPeaks(peaks, width, newRanges[i][0], newRanges[i][1]);
+        }
+      } else {
+        peaks = this.backend.getPeaks(width, start, end);
+        this.drawer.drawPeaks(peaks, width, start, end);
+      }
+
+      this.fireEvent('redraw', peaks, width);
+    }
+    /**
+     * Horizontally zooms the waveform in and out. It also changes the parameter
+     * `minPxPerSec` and enables the `scrollParent` option. Calling the function
+     * with a falsey parameter will reset the zoom state.
+     *
+     * @param {?number} pxPerSec Number of horizontal pixels per second of
+     * audio, if none is set the waveform returns to unzoomed state
+     * @emits WaveSurfer#zoom
+     * @example wavesurfer.zoom(20);
+     */
+
+  }, {
+    key: "zoom",
+    value: function zoom(pxPerSec) {
+      if (!pxPerSec) {
+        this.params.minPxPerSec = this.defaultParams.minPxPerSec;
+        this.params.scrollParent = false;
+      } else {
+        this.params.minPxPerSec = pxPerSec;
+        this.params.scrollParent = true;
+      }
+
+      this.drawBuffer();
+      this.drawer.progress(this.backend.getPlayedPercents());
+      this.drawer.recenter(this.getCurrentTime() / this.getDuration());
+      this.fireEvent('zoom', pxPerSec);
+    }
+    /**
+     * Decode buffer and load
+     *
+     * @private
+     * @param {ArrayBuffer} arraybuffer Buffer to process
+     */
+
+  }, {
+    key: "loadArrayBuffer",
+    value: function loadArrayBuffer(arraybuffer) {
+      var _this9 = this;
+
+      this.decodeArrayBuffer(arraybuffer, function (data) {
+        if (!_this9.isDestroyed) {
+          _this9.loadDecodedBuffer(data);
+        }
+      });
+    }
+    /**
+     * Directly load an externally decoded AudioBuffer
+     *
+     * @private
+     * @param {AudioBuffer} buffer Buffer to process
+     * @emits WaveSurfer#ready
+     */
+
+  }, {
+    key: "loadDecodedBuffer",
+    value: function loadDecodedBuffer(buffer) {
+      this.backend.load(buffer);
+      this.drawBuffer();
+      this.isReady = true;
+      this.fireEvent('ready');
+    }
+    /**
+     * Loads audio data from a Blob or File object
+     *
+     * @param {Blob|File} blob Audio data
+     * @example
+     */
+
+  }, {
+    key: "loadBlob",
+    value: function loadBlob(blob) {
+      var _this10 = this;
+
+      // Create file reader
+      var reader = new FileReader();
+      reader.addEventListener('progress', function (e) {
+        return _this10.onProgress(e);
+      });
+      reader.addEventListener('load', function (e) {
+        return _this10.loadArrayBuffer(e.target.result);
+      });
+      reader.addEventListener('error', function () {
+        return _this10.fireEvent('error', 'Error reading file');
+      });
+      reader.readAsArrayBuffer(blob);
+      this.empty();
+    }
+    /**
+     * Loads audio and re-renders the waveform.
+     *
+     * @param {string|HTMLMediaElement} url The url of the audio file or the
+     * audio element with the audio
+     * @param {number[]|Number.<Array[]>} peaks Wavesurfer does not have to decode
+     * the audio to render the waveform if this is specified
+     * @param {?string} preload (Use with backend `MediaElement` and `MediaElementWebAudio`)
+     * `'none'|'metadata'|'auto'` Preload attribute for the media element
+     * @param {?number} duration The duration of the audio. This is used to
+     * render the peaks data in the correct size for the audio duration (as
+     * befits the current `minPxPerSec` and zoom value) without having to decode
+     * the audio.
+     * @returns {void}
+     * @throws Will throw an error if the `url` argument is empty.
+     * @example
+     * // uses fetch or media element to load file (depending on backend)
+     * wavesurfer.load('http://example.com/demo.wav');
+     *
+     * // setting preload attribute with media element backend and supplying
+     * // peaks
+     * wavesurfer.load(
+     *   'http://example.com/demo.wav',
+     *   [0.0218, 0.0183, 0.0165, 0.0198, 0.2137, 0.2888],
+     *   true
+     * );
+     */
+
+  }, {
+    key: "load",
+    value: function load(url, peaks, preload, duration) {
+      if (!url) {
+        throw new Error('url parameter cannot be empty');
+      }
+
+      this.empty();
+
+      if (preload) {
+        // check whether the preload attribute will be usable and if not log
+        // a warning listing the reasons why not and nullify the variable
+        var preloadIgnoreReasons = {
+          "Preload is not 'auto', 'none' or 'metadata'": ['auto', 'metadata', 'none'].indexOf(preload) === -1,
+          'Peaks are not provided': !peaks,
+          "Backend is not of type 'MediaElement' or 'MediaElementWebAudio'": ['MediaElement', 'MediaElementWebAudio'].indexOf(this.params.backend) === -1,
+          'Url is not of type string': typeof url !== 'string'
+        };
+        var activeReasons = Object.keys(preloadIgnoreReasons).filter(function (reason) {
+          return preloadIgnoreReasons[reason];
+        });
+
+        if (activeReasons.length) {
+          // eslint-disable-next-line no-console
+          console.warn('Preload parameter of wavesurfer.load will be ignored because:\n\t- ' + activeReasons.join('\n\t- ')); // stop invalid values from being used
+
+          preload = null;
+        }
+      } // loadBuffer(url, peaks, duration) requires that url is a string
+      // but users can pass in a HTMLMediaElement to WaveSurfer
+
+
+      if (this.params.backend === 'WebAudio' && url instanceof HTMLMediaElement) {
+        url = url.src;
+      }
+
+      switch (this.params.backend) {
+        case 'WebAudio':
+          return this.loadBuffer(url, peaks, duration);
+
+        case 'MediaElement':
+        case 'MediaElementWebAudio':
+          return this.loadMediaElement(url, peaks, preload, duration);
+      }
+    }
+    /**
+     * Loads audio using Web Audio buffer backend.
+     *
+     * @private
+     * @emits WaveSurfer#waveform-ready
+     * @param {string} url URL of audio file
+     * @param {number[]|Number.<Array[]>} peaks Peaks data
+     * @param {?number} duration Optional duration of audio file
+     * @returns {void}
+     */
+
+  }, {
+    key: "loadBuffer",
+    value: function loadBuffer(url, peaks, duration) {
+      var _this11 = this;
+
+      var load = function load(action) {
+        if (action) {
+          _this11.tmpEvents.push(_this11.once('ready', action));
+        }
+
+        return _this11.getArrayBuffer(url, function (data) {
+          return _this11.loadArrayBuffer(data);
+        });
+      };
+
+      if (peaks) {
+        this.backend.setPeaks(peaks, duration);
+        this.drawBuffer();
+        this.fireEvent('waveform-ready');
+        this.tmpEvents.push(this.once('interaction', load));
+      } else {
+        return load();
+      }
+    }
+    /**
+     * Either create a media element, or load an existing media element.
+     *
+     * @private
+     * @emits WaveSurfer#waveform-ready
+     * @param {string|HTMLMediaElement} urlOrElt Either a path to a media file, or an
+     * existing HTML5 Audio/Video Element
+     * @param {number[]|Number.<Array[]>} peaks Array of peaks. Required to bypass web audio
+     * dependency
+     * @param {?boolean} preload Set to true if the preload attribute of the
+     * audio element should be enabled
+     * @param {?number} duration Optional duration of audio file
+     */
+
+  }, {
+    key: "loadMediaElement",
+    value: function loadMediaElement(urlOrElt, peaks, preload, duration) {
+      var _this12 = this;
+
+      var url = urlOrElt;
+
+      if (typeof urlOrElt === 'string') {
+        this.backend.load(url, this.mediaContainer, peaks, preload);
+      } else {
+        var elt = urlOrElt;
+        this.backend.loadElt(elt, peaks); // If peaks are not provided,
+        // url = element.src so we can get peaks with web audio
+
+        url = elt.src;
+      }
+
+      this.tmpEvents.push(this.backend.once('canplay', function () {
+        // ignore when backend was already destroyed
+        if (!_this12.backend.destroyed) {
+          _this12.drawBuffer();
+
+          _this12.isReady = true;
+
+          _this12.fireEvent('ready');
+        }
+      }), this.backend.once('error', function (err) {
+        return _this12.fireEvent('error', err);
+      })); // If peaks are provided, render them and fire the `waveform-ready` event.
+
+      if (peaks) {
+        this.backend.setPeaks(peaks, duration);
+        this.drawBuffer();
+        this.fireEvent('waveform-ready');
+      } // If no pre-decoded peaks are provided, or are provided with
+      // forceDecode flag, attempt to download the audio file and decode it
+      // with Web Audio.
+
+
+      if ((!peaks || this.params.forceDecode) && this.backend.supportsWebAudio()) {
+        this.getArrayBuffer(url, function (arraybuffer) {
+          _this12.decodeArrayBuffer(arraybuffer, function (buffer) {
+            _this12.backend.buffer = buffer;
+
+            _this12.backend.setPeaks(null);
+
+            _this12.drawBuffer();
+
+            _this12.fireEvent('waveform-ready');
+          });
+        });
+      }
+    }
+    /**
+     * Decode an array buffer and pass data to a callback
+     *
+     * @private
+     * @param {Object} arraybuffer The array buffer to decode
+     * @param {function} callback The function to call on complete
+     */
+
+  }, {
+    key: "decodeArrayBuffer",
+    value: function decodeArrayBuffer(arraybuffer, callback) {
+      var _this13 = this;
+
+      if (!this.isDestroyed) {
+        this.arraybuffer = arraybuffer;
+        this.backend.decodeArrayBuffer(arraybuffer, function (data) {
+          // Only use the decoded data if we haven't been destroyed or
+          // another decode started in the meantime
+          if (!_this13.isDestroyed && _this13.arraybuffer == arraybuffer) {
+            callback(data);
+            _this13.arraybuffer = null;
+          }
+        }, function () {
+          return _this13.fireEvent('error', 'Error decoding audiobuffer');
+        });
+      }
+    }
+    /**
+     * Load an array buffer using fetch and pass the result to a callback
+     *
+     * @param {string} url The URL of the file object
+     * @param {function} callback The function to call on complete
+     * @returns {util.fetchFile} fetch call
+     * @private
+     */
+
+  }, {
+    key: "getArrayBuffer",
+    value: function getArrayBuffer(url, callback) {
+      var _this14 = this;
+
+      var options = Object.assign({
+        url: url,
+        responseType: 'arraybuffer'
+      }, this.params.xhr);
+      var request = util.fetchFile(options);
+      this.currentRequest = request;
+      this.tmpEvents.push(request.on('progress', function (e) {
+        _this14.onProgress(e);
+      }), request.on('success', function (data) {
+        callback(data);
+        _this14.currentRequest = null;
+      }), request.on('error', function (e) {
+        _this14.fireEvent('error', e);
+
+        _this14.currentRequest = null;
+      }));
+      return request;
+    }
+    /**
+     * Called while the audio file is loading
+     *
+     * @private
+     * @param {Event} e Progress event
+     * @emits WaveSurfer#loading
+     */
+
+  }, {
+    key: "onProgress",
+    value: function onProgress(e) {
+      var percentComplete;
+
+      if (e.lengthComputable) {
+        percentComplete = e.loaded / e.total;
+      } else {
+        // Approximate progress with an asymptotic
+        // function, and assume downloads in the 1-3 MB range.
+        percentComplete = e.loaded / (e.loaded + 1000000);
+      }
+
+      this.fireEvent('loading', Math.round(percentComplete * 100), e.target);
+    }
+    /**
+     * Exports PCM data into a JSON array and optionally opens in a new window
+     * as valid JSON Blob instance.
+     *
+     * @param {number} length=1024 The scale in which to export the peaks
+     * @param {number} accuracy=10000
+     * @param {?boolean} noWindow Set to true to disable opening a new
+     * window with the JSON
+     * @param {number} start Start index
+     * @param {number} end End index
+     * @return {Promise} Promise that resolves with array of peaks
+     */
+
+  }, {
+    key: "exportPCM",
+    value: function exportPCM(length, accuracy, noWindow, start, end) {
+      length = length || 1024;
+      start = start || 0;
+      accuracy = accuracy || 10000;
+      noWindow = noWindow || false;
+      var peaks = this.backend.getPeaks(length, start, end);
+      var arr = [].map.call(peaks, function (val) {
+        return Math.round(val * accuracy) / accuracy;
+      });
+      return new Promise(function (resolve, reject) {
+        if (!noWindow) {
+          var blobJSON = new Blob([JSON.stringify(arr)], {
+            type: 'application/json;charset=utf-8'
+          });
+          var objURL = URL.createObjectURL(blobJSON);
+          window.open(objURL);
+          URL.revokeObjectURL(objURL);
+        }
+
+        resolve(arr);
+      });
+    }
+    /**
+     * Save waveform image as data URI.
+     *
+     * The default format is `'image/png'`. Other supported types are
+     * `'image/jpeg'` and `'image/webp'`.
+     *
+     * @param {string} format='image/png' A string indicating the image format.
+     * The default format type is `'image/png'`.
+     * @param {number} quality=1 A number between 0 and 1 indicating the image
+     * quality to use for image formats that use lossy compression such as
+     * `'image/jpeg'`` and `'image/webp'`.
+     * @param {string} type Image data type to return. Either 'dataURL' (default)
+     * or 'blob'.
+     * @return {string|string[]|Promise} When using `'dataURL'` type this returns
+     * a single data URL or an array of data URLs, one for each canvas. When using
+     * `'blob'` type this returns a `Promise` resolving with an array of `Blob`
+     * instances, one for each canvas.
+     */
+
+  }, {
+    key: "exportImage",
+    value: function exportImage(format, quality, type) {
+      if (!format) {
+        format = 'image/png';
+      }
+
+      if (!quality) {
+        quality = 1;
+      }
+
+      if (!type) {
+        type = 'dataURL';
+      }
+
+      return this.drawer.getImage(format, quality, type);
+    }
+    /**
+     * Cancel any fetch request currently in progress
+     */
+
+  }, {
+    key: "cancelAjax",
+    value: function cancelAjax() {
+      if (this.currentRequest && this.currentRequest.controller) {
+        // If the current request has a ProgressHandler, then its ReadableStream might need to be cancelled too
+        // See: Wavesurfer issue #2042
+        // See Firefox bug: https://bugzilla.mozilla.org/show_bug.cgi?id=1583815
+        if (this.currentRequest._reader) {
+          // Ignoring exceptions thrown by call to cancel()
+          this.currentRequest._reader.cancel().catch(function (err) {});
+        }
+
+        this.currentRequest.controller.abort();
+        this.currentRequest = null;
+      }
+    }
+    /**
+     * @private
+     */
+
+  }, {
+    key: "clearTmpEvents",
+    value: function clearTmpEvents() {
+      this.tmpEvents.forEach(function (e) {
+        return e.un();
+      });
+    }
+    /**
+     * Display empty waveform.
+     */
+
+  }, {
+    key: "empty",
+    value: function empty() {
+      if (!this.backend.isPaused()) {
+        this.stop();
+        this.backend.disconnectSource();
+      }
+
+      this.isReady = false;
+      this.cancelAjax();
+      this.clearTmpEvents(); // empty drawer
+
+      this.drawer.progress(0);
+      this.drawer.setWidth(0);
+      this.drawer.drawPeaks({
+        length: this.drawer.getWidth()
+      }, 0);
+    }
+    /**
+     * Remove events, elements and disconnect WebAudio nodes.
+     *
+     * @emits WaveSurfer#destroy
+     */
+
+  }, {
+    key: "destroy",
+    value: function destroy() {
+      this.destroyAllPlugins();
+      this.fireEvent('destroy');
+      this.cancelAjax();
+      this.clearTmpEvents();
+      this.unAll();
+
+      if (this.params.responsive !== false) {
+        window.removeEventListener('resize', this._onResize, true);
+        window.removeEventListener('orientationchange', this._onResize, true);
+      }
+
+      if (this.backend) {
+        this.backend.destroy(); // clears memory usage
+
+        this.backend = null;
+      }
+
+      if (this.drawer) {
+        this.drawer.destroy();
+      }
+
+      this.isDestroyed = true;
+      this.isReady = false;
+      this.arraybuffer = null;
+    }
+  }], [{
+    key: "create",
+    value:
+    /** @private */
+
+    /** @private */
+
+    /**
+     * Instantiate this class, call its `init` function and returns it
+     *
+     * @param {WavesurferParams} params The wavesurfer parameters
+     * @return {Object} WaveSurfer instance
+     * @example const wavesurfer = WaveSurfer.create(params);
+     */
+    function create(params) {
+      var wavesurfer = new WaveSurfer(params);
+      return wavesurfer.init();
+    }
+    /**
+     * The library version number is available as a static property of the
+     * WaveSurfer class
+     *
+     * @type {String}
+     * @example
+     * console.log('Using wavesurfer.js ' + WaveSurfer.VERSION);
+     */
+
+  }]);
+
+  return WaveSurfer;
+}(util.Observer);
+
+exports.default = WaveSurfer;
+WaveSurfer.VERSION = "5.2.0";
+WaveSurfer.util = util;
+module.exports = exports.default;
+
+/***/ }),
+
+/***/ "./src/webaudio.js":
+/*!*************************!*\
+  !*** ./src/webaudio.js ***!
+  \*************************/
+/***/ ((module, exports, __nested_webpack_require_180241__) => {
+
+"use strict";
+
+
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports.default = void 0;
+
+var util = _interopRequireWildcard(__nested_webpack_require_180241__(/*! ./util */ "./src/util/index.js"));
+
+function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function _getRequireWildcardCache(nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
+
+function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || _typeof(obj) !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } else if (call !== void 0) { throw new TypeError("Derived constructors may only return object or undefined"); } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+// using constants to prevent someone writing the string wrong
+var PLAYING = 'playing';
+var PAUSED = 'paused';
+var FINISHED = 'finished';
+/**
+ * WebAudio backend
+ *
+ * @extends {Observer}
+ */
+
+var WebAudio = /*#__PURE__*/function (_util$Observer) {
+  _inherits(WebAudio, _util$Observer);
+
+  var _super = _createSuper(WebAudio);
+
+  /**
+   * Construct the backend
+   *
+   * @param {WavesurferParams} params Wavesurfer parameters
+   */
+  function WebAudio(params) {
+    var _this$stateBehaviors, _this$states;
+
+    var _this;
+
+    _classCallCheck(this, WebAudio);
+
+    _this = _super.call(this);
+    /** @private */
+
+    _this.audioContext = null;
+    _this.offlineAudioContext = null;
+    _this.stateBehaviors = (_this$stateBehaviors = {}, _defineProperty(_this$stateBehaviors, PLAYING, {
+      init: function init() {
+        this.addOnAudioProcess();
+      },
+      getPlayedPercents: function getPlayedPercents() {
+        var duration = this.getDuration();
+        return this.getCurrentTime() / duration || 0;
+      },
+      getCurrentTime: function getCurrentTime() {
+        return this.startPosition + this.getPlayedTime();
+      }
+    }), _defineProperty(_this$stateBehaviors, PAUSED, {
+      init: function init() {
+        this.removeOnAudioProcess();
+      },
+      getPlayedPercents: function getPlayedPercents() {
+        var duration = this.getDuration();
+        return this.getCurrentTime() / duration || 0;
+      },
+      getCurrentTime: function getCurrentTime() {
+        return this.startPosition;
+      }
+    }), _defineProperty(_this$stateBehaviors, FINISHED, {
+      init: function init() {
+        this.removeOnAudioProcess();
+        this.fireEvent('finish');
+      },
+      getPlayedPercents: function getPlayedPercents() {
+        return 1;
+      },
+      getCurrentTime: function getCurrentTime() {
+        return this.getDuration();
+      }
+    }), _this$stateBehaviors);
+    _this.params = params;
+    /** ac: Audio Context instance */
+
+    _this.ac = params.audioContext || (_this.supportsWebAudio() ? _this.getAudioContext() : {});
+    /**@private */
+
+    _this.lastPlay = _this.ac.currentTime;
+    /** @private */
+
+    _this.startPosition = 0;
+    /** @private */
+
+    _this.scheduledPause = null;
+    /** @private */
+
+    _this.states = (_this$states = {}, _defineProperty(_this$states, PLAYING, Object.create(_this.stateBehaviors[PLAYING])), _defineProperty(_this$states, PAUSED, Object.create(_this.stateBehaviors[PAUSED])), _defineProperty(_this$states, FINISHED, Object.create(_this.stateBehaviors[FINISHED])), _this$states);
+    /** @private */
+
+    _this.buffer = null;
+    /** @private */
+
+    _this.filters = [];
+    /** gainNode: allows to control audio volume */
+
+    _this.gainNode = null;
+    /** @private */
+
+    _this.mergedPeaks = null;
+    /** @private */
+
+    _this.offlineAc = null;
+    /** @private */
+
+    _this.peaks = null;
+    /** @private */
+
+    _this.playbackRate = 1;
+    /** analyser: provides audio analysis information */
+
+    _this.analyser = null;
+    /** scriptNode: allows processing audio */
+
+    _this.scriptNode = null;
+    /** @private */
+
+    _this.source = null;
+    /** @private */
+
+    _this.splitPeaks = [];
+    /** @private */
+
+    _this.state = null;
+    /** @private */
+
+    _this.explicitDuration = params.duration;
+    /**
+     * Boolean indicating if the backend was destroyed.
+     */
+
+    _this.destroyed = false;
+    return _this;
+  }
+  /**
+   * Initialise the backend, called in `wavesurfer.createBackend()`
+   */
+
+
+  _createClass(WebAudio, [{
+    key: "supportsWebAudio",
+    value:
+    /** scriptBufferSize: size of the processing buffer */
+
+    /** audioContext: allows to process audio with WebAudio API */
+
+    /** @private */
+
+    /** @private */
+
+    /**
+     * Does the browser support this backend
+     *
+     * @return {boolean} Whether or not this browser supports this backend
+     */
+    function supportsWebAudio() {
+      return !!(window.AudioContext || window.webkitAudioContext);
+    }
+    /**
+     * Get the audio context used by this backend or create one
+     *
+     * @return {AudioContext} Existing audio context, or creates a new one
+     */
+
+  }, {
+    key: "getAudioContext",
+    value: function getAudioContext() {
+      if (!window.WaveSurferAudioContext) {
+        window.WaveSurferAudioContext = new (window.AudioContext || window.webkitAudioContext)();
+      }
+
+      return window.WaveSurferAudioContext;
+    }
+    /**
+     * Get the offline audio context used by this backend or create one
+     *
+     * @param {number} sampleRate The sample rate to use
+     * @return {OfflineAudioContext} Existing offline audio context, or creates
+     * a new one
+     */
+
+  }, {
+    key: "getOfflineAudioContext",
+    value: function getOfflineAudioContext(sampleRate) {
+      if (!window.WaveSurferOfflineAudioContext) {
+        window.WaveSurferOfflineAudioContext = new (window.OfflineAudioContext || window.webkitOfflineAudioContext)(1, 2, sampleRate);
+      }
+
+      return window.WaveSurferOfflineAudioContext;
+    }
+  }, {
+    key: "init",
+    value: function init() {
+      this.createVolumeNode();
+      this.createScriptNode();
+      this.createAnalyserNode();
+      this.setState(PAUSED);
+      this.setPlaybackRate(this.params.audioRate);
+      this.setLength(0);
+    }
+    /** @private */
+
+  }, {
+    key: "disconnectFilters",
+    value: function disconnectFilters() {
+      if (this.filters) {
+        this.filters.forEach(function (filter) {
+          filter && filter.disconnect();
+        });
+        this.filters = null; // Reconnect direct path
+
+        this.analyser.connect(this.gainNode);
+      }
+    }
+    /**
+     * @private
+     *
+     * @param {string} state The new state
+     */
+
+  }, {
+    key: "setState",
+    value: function setState(state) {
+      if (this.state !== this.states[state]) {
+        this.state = this.states[state];
+        this.state.init.call(this);
+      }
+    }
+    /**
+     * Unpacked `setFilters()`
+     *
+     * @param {...AudioNode} filters One or more filters to set
+     */
+
+  }, {
+    key: "setFilter",
+    value: function setFilter() {
+      for (var _len = arguments.length, filters = new Array(_len), _key = 0; _key < _len; _key++) {
+        filters[_key] = arguments[_key];
+      }
+
+      this.setFilters(filters);
+    }
+    /**
+     * Insert custom Web Audio nodes into the graph
+     *
+     * @param {AudioNode[]} filters Packed filters array
+     * @example
+     * const lowpass = wavesurfer.backend.ac.createBiquadFilter();
+     * wavesurfer.backend.setFilter(lowpass);
+     */
+
+  }, {
+    key: "setFilters",
+    value: function setFilters(filters) {
+      // Remove existing filters
+      this.disconnectFilters(); // Insert filters if filter array not empty
+
+      if (filters && filters.length) {
+        this.filters = filters; // Disconnect direct path before inserting filters
+
+        this.analyser.disconnect(); // Connect each filter in turn
+
+        filters.reduce(function (prev, curr) {
+          prev.connect(curr);
+          return curr;
+        }, this.analyser).connect(this.gainNode);
+      }
+    }
+    /** Create ScriptProcessorNode to process audio */
+
+  }, {
+    key: "createScriptNode",
+    value: function createScriptNode() {
+      if (this.params.audioScriptProcessor) {
+        this.scriptNode = this.params.audioScriptProcessor;
+      } else {
+        if (this.ac.createScriptProcessor) {
+          this.scriptNode = this.ac.createScriptProcessor(WebAudio.scriptBufferSize);
+        } else {
+          this.scriptNode = this.ac.createJavaScriptNode(WebAudio.scriptBufferSize);
+        }
+      }
+
+      this.scriptNode.connect(this.ac.destination);
+    }
+    /** @private */
+
+  }, {
+    key: "addOnAudioProcess",
+    value: function addOnAudioProcess() {
+      var _this2 = this;
+
+      this.scriptNode.onaudioprocess = function () {
+        var time = _this2.getCurrentTime();
+
+        if (time >= _this2.getDuration()) {
+          _this2.setState(FINISHED);
+
+          _this2.fireEvent('pause');
+        } else if (time >= _this2.scheduledPause) {
+          _this2.pause();
+        } else if (_this2.state === _this2.states[PLAYING]) {
+          _this2.fireEvent('audioprocess', time);
+        }
+      };
+    }
+    /** @private */
+
+  }, {
+    key: "removeOnAudioProcess",
+    value: function removeOnAudioProcess() {
+      this.scriptNode.onaudioprocess = null;
+    }
+    /** Create analyser node to perform audio analysis */
+
+  }, {
+    key: "createAnalyserNode",
+    value: function createAnalyserNode() {
+      this.analyser = this.ac.createAnalyser();
+      this.analyser.connect(this.gainNode);
+    }
+    /**
+     * Create the gain node needed to control the playback volume.
+     *
+     */
+
+  }, {
+    key: "createVolumeNode",
+    value: function createVolumeNode() {
+      // Create gain node using the AudioContext
+      if (this.ac.createGain) {
+        this.gainNode = this.ac.createGain();
+      } else {
+        this.gainNode = this.ac.createGainNode();
+      } // Add the gain node to the graph
+
+
+      this.gainNode.connect(this.ac.destination);
+    }
+    /**
+     * Set the sink id for the media player
+     *
+     * @param {string} deviceId String value representing audio device id.
+     * @returns {Promise} A Promise that resolves to `undefined` when there
+     * are no errors.
+     */
+
+  }, {
+    key: "setSinkId",
+    value: function setSinkId(deviceId) {
+      if (deviceId) {
+        /**
+         * The webaudio API doesn't currently support setting the device
+         * output. Here we create an HTMLAudioElement, connect the
+         * webaudio stream to that element and setSinkId there.
+         */
+        var audio = new window.Audio();
+
+        if (!audio.setSinkId) {
+          return Promise.reject(new Error('setSinkId is not supported in your browser'));
+        }
+
+        audio.autoplay = true;
+        var dest = this.ac.createMediaStreamDestination();
+        this.gainNode.disconnect();
+        this.gainNode.connect(dest);
+        audio.srcObject = dest.stream;
+        return audio.setSinkId(deviceId);
+      } else {
+        return Promise.reject(new Error('Invalid deviceId: ' + deviceId));
+      }
+    }
+    /**
+     * Set the audio volume
+     *
+     * @param {number} value A floating point value between 0 and 1.
+     */
+
+  }, {
+    key: "setVolume",
+    value: function setVolume(value) {
+      this.gainNode.gain.setValueAtTime(value, this.ac.currentTime);
+    }
+    /**
+     * Get the current volume
+     *
+     * @return {number} value A floating point value between 0 and 1.
+     */
+
+  }, {
+    key: "getVolume",
+    value: function getVolume() {
+      return this.gainNode.gain.value;
+    }
+    /**
+     * Decode an array buffer and pass data to a callback
+     *
+     * @private
+     * @param {ArrayBuffer} arraybuffer The array buffer to decode
+     * @param {function} callback The function to call on complete.
+     * @param {function} errback The function to call on error.
+     */
+
+  }, {
+    key: "decodeArrayBuffer",
+    value: function decodeArrayBuffer(arraybuffer, callback, errback) {
+      if (!this.offlineAc) {
+        this.offlineAc = this.getOfflineAudioContext(this.ac && this.ac.sampleRate ? this.ac.sampleRate : 44100);
+      }
+
+      if ('webkitAudioContext' in window) {
+        // Safari: no support for Promise-based decodeAudioData enabled
+        // Enable it in Safari using the Experimental Features > Modern WebAudio API option
+        this.offlineAc.decodeAudioData(arraybuffer, function (data) {
+          return callback(data);
+        }, errback);
+      } else {
+        this.offlineAc.decodeAudioData(arraybuffer).then(function (data) {
+          return callback(data);
+        }).catch(function (err) {
+          return errback(err);
+        });
+      }
+    }
+    /**
+     * Set pre-decoded peaks
+     *
+     * @param {number[]|Number.<Array[]>} peaks Peaks data
+     * @param {?number} duration Explicit duration
+     */
+
+  }, {
+    key: "setPeaks",
+    value: function setPeaks(peaks, duration) {
+      if (duration != null) {
+        this.explicitDuration = duration;
+      }
+
+      this.peaks = peaks;
+    }
+    /**
+     * Set the rendered length (different from the length of the audio)
+     *
+     * @param {number} length The rendered length
+     */
+
+  }, {
+    key: "setLength",
+    value: function setLength(length) {
+      // No resize, we can preserve the cached peaks.
+      if (this.mergedPeaks && length == 2 * this.mergedPeaks.length - 1 + 2) {
+        return;
+      }
+
+      this.splitPeaks = [];
+      this.mergedPeaks = []; // Set the last element of the sparse array so the peak arrays are
+      // appropriately sized for other calculations.
+
+      var channels = this.buffer ? this.buffer.numberOfChannels : 1;
+      var c;
+
+      for (c = 0; c < channels; c++) {
+        this.splitPeaks[c] = [];
+        this.splitPeaks[c][2 * (length - 1)] = 0;
+        this.splitPeaks[c][2 * (length - 1) + 1] = 0;
+      }
+
+      this.mergedPeaks[2 * (length - 1)] = 0;
+      this.mergedPeaks[2 * (length - 1) + 1] = 0;
+    }
+    /**
+     * Compute the max and min value of the waveform when broken into <length> subranges.
+     *
+     * @param {number} length How many subranges to break the waveform into.
+     * @param {number} first First sample in the required range.
+     * @param {number} last Last sample in the required range.
+     * @return {number[]|Number.<Array[]>} Array of 2*<length> peaks or array of arrays of
+     * peaks consisting of (max, min) values for each subrange.
+     */
+
+  }, {
+    key: "getPeaks",
+    value: function getPeaks(length, first, last) {
+      if (this.peaks) {
+        return this.peaks;
+      }
+
+      if (!this.buffer) {
+        return [];
+      }
+
+      first = first || 0;
+      last = last || length - 1;
+      this.setLength(length);
+
+      if (!this.buffer) {
+        return this.params.splitChannels ? this.splitPeaks : this.mergedPeaks;
+      }
+      /**
+       * The following snippet fixes a buffering data issue on the Safari
+       * browser which returned undefined It creates the missing buffer based
+       * on 1 channel, 4096 samples and the sampleRate from the current
+       * webaudio context 4096 samples seemed to be the best fit for rendering
+       * will review this code once a stable version of Safari TP is out
+       */
+
+
+      if (!this.buffer.length) {
+        var newBuffer = this.createBuffer(1, 4096, this.sampleRate);
+        this.buffer = newBuffer.buffer;
+      }
+
+      var sampleSize = this.buffer.length / length;
+      var sampleStep = ~~(sampleSize / 10) || 1;
+      var channels = this.buffer.numberOfChannels;
+      var c;
+
+      for (c = 0; c < channels; c++) {
+        var peaks = this.splitPeaks[c];
+        var chan = this.buffer.getChannelData(c);
+        var i = void 0;
+
+        for (i = first; i <= last; i++) {
+          var start = ~~(i * sampleSize);
+          var end = ~~(start + sampleSize);
+          /**
+           * Initialize the max and min to the first sample of this
+           * subrange, so that even if the samples are entirely
+           * on one side of zero, we still return the true max and
+           * min values in the subrange.
+           */
+
+          var min = chan[start];
+          var max = min;
+          var j = void 0;
+
+          for (j = start; j < end; j += sampleStep) {
+            var value = chan[j];
+
+            if (value > max) {
+              max = value;
+            }
+
+            if (value < min) {
+              min = value;
+            }
+          }
+
+          peaks[2 * i] = max;
+          peaks[2 * i + 1] = min;
+
+          if (c == 0 || max > this.mergedPeaks[2 * i]) {
+            this.mergedPeaks[2 * i] = max;
+          }
+
+          if (c == 0 || min < this.mergedPeaks[2 * i + 1]) {
+            this.mergedPeaks[2 * i + 1] = min;
+          }
+        }
+      }
+
+      return this.params.splitChannels ? this.splitPeaks : this.mergedPeaks;
+    }
+    /**
+     * Get the position from 0 to 1
+     *
+     * @return {number} Position
+     */
+
+  }, {
+    key: "getPlayedPercents",
+    value: function getPlayedPercents() {
+      return this.state.getPlayedPercents.call(this);
+    }
+    /** @private */
+
+  }, {
+    key: "disconnectSource",
+    value: function disconnectSource() {
+      if (this.source) {
+        this.source.disconnect();
+      }
+    }
+    /**
+     * Destroy all references with WebAudio, disconnecting audio nodes and closing Audio Context
+     */
+
+  }, {
+    key: "destroyWebAudio",
+    value: function destroyWebAudio() {
+      this.disconnectFilters();
+      this.disconnectSource();
+      this.gainNode.disconnect();
+      this.scriptNode.disconnect();
+      this.analyser.disconnect(); // close the audioContext if closeAudioContext option is set to true
+
+      if (this.params.closeAudioContext) {
+        // check if browser supports AudioContext.close()
+        if (typeof this.ac.close === 'function' && this.ac.state != 'closed') {
+          this.ac.close();
+        } // clear the reference to the audiocontext
+
+
+        this.ac = null; // clear the actual audiocontext, either passed as param or the
+        // global singleton
+
+        if (!this.params.audioContext) {
+          window.WaveSurferAudioContext = null;
+        } else {
+          this.params.audioContext = null;
+        } // clear the offlineAudioContext
+
+
+        window.WaveSurferOfflineAudioContext = null;
+      }
+    }
+    /**
+     * This is called when wavesurfer is destroyed
+     */
+
+  }, {
+    key: "destroy",
+    value: function destroy() {
+      if (!this.isPaused()) {
+        this.pause();
+      }
+
+      this.unAll();
+      this.buffer = null;
+      this.destroyed = true;
+      this.destroyWebAudio();
+    }
+    /**
+     * Loaded a decoded audio buffer
+     *
+     * @param {Object} buffer Decoded audio buffer to load
+     */
+
+  }, {
+    key: "load",
+    value: function load(buffer) {
+      this.startPosition = 0;
+      this.lastPlay = this.ac.currentTime;
+      this.buffer = buffer;
+      this.createSource();
+    }
+    /** @private */
+
+  }, {
+    key: "createSource",
+    value: function createSource() {
+      this.disconnectSource();
+      this.source = this.ac.createBufferSource(); // adjust for old browsers
+
+      this.source.start = this.source.start || this.source.noteGrainOn;
+      this.source.stop = this.source.stop || this.source.noteOff;
+      this.setPlaybackRate(this.playbackRate);
+      this.source.buffer = this.buffer;
+      this.source.connect(this.analyser);
+    }
+    /**
+     * @private
+     *
+     * some browsers require an explicit call to #resume before they will play back audio
+     */
+
+  }, {
+    key: "resumeAudioContext",
+    value: function resumeAudioContext() {
+      if (this.ac.state == 'suspended') {
+        this.ac.resume && this.ac.resume();
+      }
+    }
+    /**
+     * Used by `wavesurfer.isPlaying()` and `wavesurfer.playPause()`
+     *
+     * @return {boolean} Whether or not this backend is currently paused
+     */
+
+  }, {
+    key: "isPaused",
+    value: function isPaused() {
+      return this.state !== this.states[PLAYING];
+    }
+    /**
+     * Used by `wavesurfer.getDuration()`
+     *
+     * @return {number} Duration of loaded buffer
+     */
+
+  }, {
+    key: "getDuration",
+    value: function getDuration() {
+      if (this.explicitDuration) {
+        return this.explicitDuration;
+      }
+
+      if (!this.buffer) {
+        return 0;
+      }
+
+      return this.buffer.duration;
+    }
+    /**
+     * Used by `wavesurfer.seekTo()`
+     *
+     * @param {number} start Position to start at in seconds
+     * @param {number} end Position to end at in seconds
+     * @return {{start: number, end: number}} Object containing start and end
+     * positions
+     */
+
+  }, {
+    key: "seekTo",
+    value: function seekTo(start, end) {
+      if (!this.buffer) {
+        return;
+      }
+
+      this.scheduledPause = null;
+
+      if (start == null) {
+        start = this.getCurrentTime();
+
+        if (start >= this.getDuration()) {
+          start = 0;
+        }
+      }
+
+      if (end == null) {
+        end = this.getDuration();
+      }
+
+      this.startPosition = start;
+      this.lastPlay = this.ac.currentTime;
+
+      if (this.state === this.states[FINISHED]) {
+        this.setState(PAUSED);
+      }
+
+      return {
+        start: start,
+        end: end
+      };
+    }
+    /**
+     * Get the playback position in seconds
+     *
+     * @return {number} The playback position in seconds
+     */
+
+  }, {
+    key: "getPlayedTime",
+    value: function getPlayedTime() {
+      return (this.ac.currentTime - this.lastPlay) * this.playbackRate;
+    }
+    /**
+     * Plays the loaded audio region.
+     *
+     * @param {number} start Start offset in seconds, relative to the beginning
+     * of a clip.
+     * @param {number} end When to stop relative to the beginning of a clip.
+     */
+
+  }, {
+    key: "play",
+    value: function play(start, end) {
+      if (!this.buffer) {
+        return;
+      } // need to re-create source on each playback
+
+
+      this.createSource();
+      var adjustedTime = this.seekTo(start, end);
+      start = adjustedTime.start;
+      end = adjustedTime.end;
+      this.scheduledPause = end;
+      this.source.start(0, start);
+      this.resumeAudioContext();
+      this.setState(PLAYING);
+      this.fireEvent('play');
+    }
+    /**
+     * Pauses the loaded audio.
+     */
+
+  }, {
+    key: "pause",
+    value: function pause() {
+      this.scheduledPause = null;
+      this.startPosition += this.getPlayedTime();
+
+      try {
+        this.source && this.source.stop(0);
+      } catch (err) {// Calling stop can throw the following 2 errors:
+        // - RangeError (The value specified for when is negative.)
+        // - InvalidStateNode (The node has not been started by calling start().)
+        // We can safely ignore both errors, because:
+        // - The range is surely correct
+        // - The node might not have been started yet, in which case we just want to carry on without causing any trouble.
+      }
+
+      this.setState(PAUSED);
+      this.fireEvent('pause');
+    }
+    /**
+     * Returns the current time in seconds relative to the audio-clip's
+     * duration.
+     *
+     * @return {number} The current time in seconds
+     */
+
+  }, {
+    key: "getCurrentTime",
+    value: function getCurrentTime() {
+      return this.state.getCurrentTime.call(this);
+    }
+    /**
+     * Returns the current playback rate. (0=no playback, 1=normal playback)
+     *
+     * @return {number} The current playback rate
+     */
+
+  }, {
+    key: "getPlaybackRate",
+    value: function getPlaybackRate() {
+      return this.playbackRate;
+    }
+    /**
+     * Set the audio source playback rate.
+     *
+     * @param {number} value The playback rate to use
+     */
+
+  }, {
+    key: "setPlaybackRate",
+    value: function setPlaybackRate(value) {
+      this.playbackRate = value || 1;
+      this.source && this.source.playbackRate.setValueAtTime(this.playbackRate, this.ac.currentTime);
+    }
+    /**
+     * Set a point in seconds for playback to stop at.
+     *
+     * @param {number} end Position to end at
+     * @version 3.3.0
+     */
+
+  }, {
+    key: "setPlayEnd",
+    value: function setPlayEnd(end) {
+      this.scheduledPause = end;
+    }
+  }]);
+
+  return WebAudio;
+}(util.Observer);
+
+exports.default = WebAudio;
+WebAudio.scriptBufferSize = 256;
+module.exports = exports.default;
+
+/***/ }),
+
+/***/ "./node_modules/debounce/index.js":
+/*!****************************************!*\
+  !*** ./node_modules/debounce/index.js ***!
+  \****************************************/
+/***/ ((module) => {
+
+/**
+ * Returns a function, that, as long as it continues to be invoked, will not
+ * be triggered. The function will be called after it stops being called for
+ * N milliseconds. If `immediate` is passed, trigger the function on the
+ * leading edge, instead of the trailing. The function also has a property 'clear' 
+ * that is a function which will clear the timer to prevent previously scheduled executions. 
+ *
+ * @source underscore.js
+ * @see http://unscriptable.com/2009/03/20/debouncing-javascript-methods/
+ * @param {Function} function to wrap
+ * @param {Number} timeout in ms (`100`)
+ * @param {Boolean} whether to execute at the beginning (`false`)
+ * @api public
+ */
+function debounce(func, wait, immediate){
+  var timeout, args, context, timestamp, result;
+  if (null == wait) wait = 100;
+
+  function later() {
+    var last = Date.now() - timestamp;
+
+    if (last < wait && last >= 0) {
+      timeout = setTimeout(later, wait - last);
+    } else {
+      timeout = null;
+      if (!immediate) {
+        result = func.apply(context, args);
+        context = args = null;
+      }
+    }
+  };
+
+  var debounced = function(){
+    context = this;
+    args = arguments;
+    timestamp = Date.now();
+    var callNow = immediate && !timeout;
+    if (!timeout) timeout = setTimeout(later, wait);
+    if (callNow) {
+      result = func.apply(context, args);
+      context = args = null;
+    }
+
+    return result;
+  };
+
+  debounced.clear = function() {
+    if (timeout) {
+      clearTimeout(timeout);
+      timeout = null;
+    }
+  };
+  
+  debounced.flush = function() {
+    if (timeout) {
+      result = func.apply(context, args);
+      context = args = null;
+      
+      clearTimeout(timeout);
+      timeout = null;
+    }
+  };
+
+  return debounced;
+};
+
+// Adds compatibility for ES modules
+debounce.debounce = debounce;
+
+module.exports = debounce;
+
+
+/***/ })
+
+/******/ 	});
+/************************************************************************/
+/******/ 	// The module cache
+/******/ 	var __webpack_module_cache__ = {};
+/******/ 	
+/******/ 	// The require function
+/******/ 	function __nested_webpack_require_210487__(moduleId) {
+/******/ 		// Check if module is in cache
+/******/ 		var cachedModule = __webpack_module_cache__[moduleId];
+/******/ 		if (cachedModule !== undefined) {
+/******/ 			return cachedModule.exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = __webpack_module_cache__[moduleId] = {
+/******/ 			// no module.id needed
+/******/ 			// no module.loaded needed
+/******/ 			exports: {}
+/******/ 		};
+/******/ 	
+/******/ 		// Execute the module function
+/******/ 		__webpack_modules__[moduleId](module, module.exports, __nested_webpack_require_210487__);
+/******/ 	
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/ 	
+/************************************************************************/
+/******/ 	
+/******/ 	// startup
+/******/ 	// Load entry module and return exports
+/******/ 	// This entry module is referenced by other modules so it can't be inlined
+/******/ 	var __webpack_exports__ = __nested_webpack_require_210487__("./src/wavesurfer.js");
+/******/ 	
+/******/ 	return __webpack_exports__;
+/******/ })()
+;
+});
+//# sourceMappingURL=wavesurfer.js.map
 
 /***/ }),
 

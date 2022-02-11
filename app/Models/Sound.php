@@ -7,6 +7,7 @@ use Cviebrock\EloquentTaggable\Taggable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
+use Overtrue\LaravelLike\Traits\Likeable;
 
 
 /**
@@ -17,7 +18,7 @@ use Illuminate\Database\Eloquent\Builder;
 class Sound extends Model {
 
 
-	use HasFactory, Sluggable, Taggable;
+	use HasFactory, Sluggable, Taggable, Likeable;
 
 
 	/**

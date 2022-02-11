@@ -4,10 +4,10 @@ import { createApp, h } from "vue";
 import { createInertiaApp } from "@inertiajs/inertia-vue3";
 import { InertiaProgress } from "@inertiajs/progress";
 import FloatingVue from "floating-vue";
-import AudioVisual from "vue-audio-visual";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import "floating-vue/dist/style.css";
 import VueClipboard from "vue3-clipboard";
+import WaveSurferVue from "wavesurfer.js-vue";
 import Toast from "vue-toastification";
 // Import the CSS or use your own!
 import "vue-toastification/dist/index.css";
@@ -61,8 +61,8 @@ createInertiaApp({
         return createApp({ render: () => h(app, props) })
             .use(plugin)
             .mixin({ methods: { route } })
-            .use(AudioVisual)
             .component("font-awesome-icon", FontAwesomeIcon)
+            .use(WaveSurferVue)
             .use(FloatingVue)
             .use(VueClipboard, {
                 autoSetContainer: true,
