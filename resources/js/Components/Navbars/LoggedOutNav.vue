@@ -20,14 +20,14 @@
                             Home
                         </BreezeNavLink>
                         <BreezeNavLink
-                            :href="route('register')"
-                            :active="route().current('register')"
+                            :href="route('about')"
+                            :active="route().current('about')"
                         >
                             About
                         </BreezeNavLink>
                         <BreezeNavLink
-                            :href="route('register')"
-                            :active="route().current('register')"
+                            :href="route('contact')"
+                            :active="route().current('contact')"
                         >
                             Contact
                         </BreezeNavLink>

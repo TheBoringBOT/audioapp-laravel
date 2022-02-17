@@ -20,7 +20,10 @@ Route::get( '/', [ \App\Http\Controllers\SoundController::class, 'index' ] )->na
 
 // Sound item page
 Route::get( '/sound/{id}', [ \App\Http\Controllers\SoundController::class, 'show' ] )->name( 'sound.item' );
-
+// About page
+Route::inertia( '/about', 'Frontend/About' )->name( 'about' );
+// Contact page
+Route::inertia( '/contact', 'Frontend/Contact' )->name( 'contact' );
 
 Route::get( '/dashboard', [
 	\App\Http\Controllers\SoundController::class,
@@ -41,11 +44,22 @@ Route::post( '/dashboard/upload', [ \App\Http\Controllers\SoundController::class
 ] )->name( 'upload.store' );
 
 
+/* === Modifying data in Database routes  === */
+
 // toggle sound like
-Route::post( 'like/{id}', [ \App\Http\Controllers\SoundController::class, 'likeSound' ] )->middleware( [
+Route::post( '/like/{id}', [ \App\Http\Controllers\SoundController::class, 'likeSound' ] )->middleware( [
 	'auth',
 	'verified'
 ] )->name( 'like' );
 
+// Update sound plays
+Route::post( 'play/{id}', [ \App\Http\Controllers\SoundController::class, 'updatePlays' ] )->name( 'play' );
+
+// Search sounds
+
+Route::get( '/search', [ \App\Http\Controllers\SoundController::class, 'search' ] )->name( 'search' );
+
+// Download Sound
+Route::get( '/download/{id}', [ \App\Http\Controllers\SoundController::class, 'download' ] )->name( 'download' );
 
 require __DIR__ . '/auth.php';

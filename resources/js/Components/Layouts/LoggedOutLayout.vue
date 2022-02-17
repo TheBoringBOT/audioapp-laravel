@@ -5,9 +5,7 @@
             <LoggedOutNav />
 
             <!-- Page Content -->
-            <main
-                class="mx-auto flex-grow px-4 sm:px-6 lg:px-8 py-12 w-full max-w-7xl"
-            >
+            <main>
                 <slot />
             </main>
             <!-- Footer -->
