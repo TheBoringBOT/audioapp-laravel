@@ -1,12 +1,10 @@
 <template>
     <div class="py-3 grid gap-5 grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
         <AudioItem
-                @playedTrack="playedTrack"
-                v-for="(sound, key) in soundData"
-                :soundItem="sound"
-                :key="key"
-                :soundItemKey="key"
-                :currentUserData="currentUserData"
+            v-for="(sound, key) in soundData"
+            :soundItem="sound"
+            :key="key"
+            :soundItemKey="key"
         />
     </div>
 
@@ -17,7 +15,7 @@
 import AudioItem from "./SoundItem";
 
 export default {
-    props: ["soundData", "currentUserData"],
+    props: ["soundData"],
     data() {
         return {
             played: [],

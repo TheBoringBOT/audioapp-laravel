@@ -22,16 +22,20 @@
 
 <script>
 import PopularTags from "@/Components/PopularTags";
+import { useToast } from "vue-toastification";
 
 export default {
-    props: ["keyword", "currentUserData", "popularTags"],
+    props: ["keyword", "popularTags"],
     components: {
         PopularTags,
     },
 
     methods: {
         searchSounds() {
-            this.$inertia.get("search", { keyword: this.keyword });
+            const toast = useToast();
+            this.keyword === "" || this.keyword.length < 3
+                ? toast.info("enter words")
+                : this.$inertia.get("search", { keyword: this.keyword });
         },
     },
 };

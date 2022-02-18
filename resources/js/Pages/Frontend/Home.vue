@@ -7,10 +7,7 @@
         <ContentContainer>
             <SearchBar :popularTags="popularTags" v-bind:keyword="keyword"/>
             <div v-if="soundData.length">
-                <SoundGrid
-                        :currentUserData="currentUserData"
-                        :soundData="soundData"
-                />
+                <SoundGrid :soundData="soundData"/>
             </div>
             <div class="mt-10 flex flex-col items-center justify-center" v-else>
                 <span class="text-5xl">😢</span>
@@ -43,7 +40,7 @@ export default {
         SearchBar,
         ContentContainer,
     },
-    props: ["soundData", "keyword", "currentUserData", "popularTags"],
+    props: ["soundData", "keyword", "popularTags"],
     data() {
         return {
             seo: {

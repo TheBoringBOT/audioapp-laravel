@@ -698,6 +698,9 @@ select {
 .-mt-px {
   margin-top: -1px;
 }
+.mb-4 {
+  margin-bottom: 1rem;
+}
 .mr-3 {
   margin-right: 0.75rem;
 }
@@ -722,9 +725,6 @@ select {
 .mt-6 {
   margin-top: 1.5rem;
 }
-.mb-4 {
-  margin-bottom: 1rem;
-}
 .mt-1 {
   margin-top: 0.25rem;
 }
@@ -742,9 +742,6 @@ select {
 }
 .inline-block {
   display: inline-block;
-}
-.inline {
-  display: inline;
 }
 .flex {
   display: flex;
@@ -903,6 +900,9 @@ select {
 .flex-wrap {
   flex-wrap: wrap;
 }
+.items-start {
+  align-items: flex-start;
+}
 .items-center {
   align-items: center;
 }
@@ -1056,6 +1056,9 @@ select {
   --tw-bg-opacity: 1;
   background-color: rgb(31 41 55 / var(--tw-bg-opacity));
 }
+.bg-secondary-bg-hover {
+  background-color: rgba(255,255,255,0.08);
+}
 .bg-secondary-bg {
   background-color: rgba(255,255,255,0.05);
 }
@@ -1078,9 +1081,6 @@ select {
 .bg-indigo-600 {
   --tw-bg-opacity: 1;
   background-color: rgb(79 70 229 / var(--tw-bg-opacity));
-}
-.bg-secondary-bg-hover {
-  background-color: rgba(255,255,255,0.08);
 }
 .fill-secondary-clr {
   fill: #818181;
@@ -1160,8 +1160,11 @@ select {
 .pt-1 {
   padding-top: 0.25rem;
 }
-.pt-4 {
-  padding-top: 1rem;
+.pt-3 {
+  padding-top: 0.75rem;
+}
+.pb-4 {
+  padding-bottom: 1rem;
 }
 .pl-3 {
   padding-left: 0.75rem;
@@ -1178,6 +1181,9 @@ select {
 .pb-3 {
   padding-bottom: 0.75rem;
 }
+.pt-4 {
+  padding-top: 1rem;
+}
 .pb-1 {
   padding-bottom: 0.25rem;
 }
@@ -1192,12 +1198,6 @@ select {
 }
 .pl-1 {
   padding-left: 0.25rem;
-}
-.pt-3 {
-  padding-top: 0.75rem;
-}
-.pb-4 {
-  padding-bottom: 1rem;
 }
 .text-left {
   text-align: left;
@@ -1836,12 +1836,12 @@ select {
     margin-right: -2rem;
   }
 
-  .lg\:mt-0 {
-    margin-top: 0px;
-  }
-
   .lg\:mr-3 {
     margin-right: 0.75rem;
+  }
+
+  .lg\:mt-0 {
+    margin-top: 0px;
   }
 
   .lg\:flex-row {
@@ -1853,12 +1853,12 @@ select {
     padding-right: 2rem;
   }
 
-  .lg\:pb-0 {
-    padding-bottom: 0px;
-  }
-
   .lg\:pt-4 {
     padding-top: 1rem;
+  }
+
+  .lg\:pb-0 {
+    padding-bottom: 0px;
   }
 }
 @media (min-width: 1280px) {

@@ -7,7 +7,7 @@
             <Link
                 :href="`/search` + '?' + `keyword=${tag}`"
                 :class="
-                    currentTag.toLowerCase() === tag.toLowerCase()
+                    currentTag && currentTag.toLowerCase() === tag.toLowerCase()
                         ? 'bg-secondary-bg-hover text-brand-clr'
                         : 'text-primary-clr'
                 "

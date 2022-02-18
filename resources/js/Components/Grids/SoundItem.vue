@@ -54,11 +54,14 @@
                     </button>
 
                     <div
-                            class="text-primary-clr mx-4 flex items-center justify-center overflow-hidden"
+                            class="text-primary-clr mx-4 flex flex-col items-start justify-center overflow-hidden"
                     >
                         <Link :href="/sound/ + soundItem.id">
                             <span class="truncate">{{ soundItem.name }} </span>
                         </Link>
+                        <span class="text-secondary-clr text-xs"
+                        >By {{ soundItem.creator }}</span
+                        >
                     </div>
                 </div>
 
@@ -123,7 +126,7 @@ export default {
     components: {
         Link,
     },
-    props: ["soundItem", "soundItemKey", "currentUserData"],
+    props: ["soundItem", "soundItemKey"],
 
     //Destroy wavesurfer on unmount
     //TODO fade out sound before destroying
@@ -166,7 +169,7 @@ export default {
             playRecorded: false,
             playedTime: "0:00",
             count: 0,
-            userHasLiked: props.currentUserData.userLikedSound,
+            userHasLiked: props.soundItem.liked,
         };
     },
 
@@ -210,7 +213,6 @@ export default {
         // Wavesurfer controles
 
         playPause() {
-            this.$emit("playedTrack", this.soundItem.id);
             if (!this.isAudioPlaying) {
                 this.$refs["waveform" + this.soundItemKey].waveSurfer.play();
 
@@ -238,12 +240,8 @@ export default {
         },
         // Wavesurfer controls : End
         //toggle like for sound
-        toggleLike: _.debounce(function (id) {
-            // this.$inertia.post(`/like/${id}`, {
-            //     onSuccess: () => (this.userHasLiked = !this.userHasLiked),
-            // });
-
-            if (this.$page.props.auth.id) {
+        toggleLike(id) {
+            if (this.$page.props.auth) {
                 axios
                     .post("/like/" + id)
                     .then(() => {
@@ -255,7 +253,7 @@ export default {
             } else {
                 this.toast.info("Please login");
             }
-        }, 500),
+        },
 
         updatePlays(id) {
             // return "ran" + " " + id;

@@ -1,5 +1,5 @@
-<template>
-    <Head title="Dashboard"/>
+ <template>
+    <Head title="Dashboard" />
 
     <BreezeAuthenticatedLayout>
         <template #header>
@@ -9,7 +9,7 @@
         </template>
         <template #content>
             <div class="py-12">
-                <SoundGrid :soundData="soundData"/>
+                <AudioTable v-bind:audio="audio" />
             </div>
         </template>
     </BreezeAuthenticatedLayout>
@@ -17,18 +17,16 @@
 
 <script>
 import BreezeAuthenticatedLayout from "@/Components/Layouts/Authenticated.vue";
-import {Head} from "@inertiajs/inertia-vue3";
-import SoundsTable from "@/Components/Tables/DashboardTable";
-import SoundGrid from "@/Components/Grids/SoundGrid";
+import { Head } from "@inertiajs/inertia-vue3";
+import AudioTable from "@/Components/Tables/DashboardTable";
 
 export default {
     components: {
         BreezeAuthenticatedLayout,
         Head,
-        SoundsTable,
-        SoundGrid,
+        AudioTable,
     },
 
-    props: ["soundData"],
+    props: ["audio"],
 };
 </script>
