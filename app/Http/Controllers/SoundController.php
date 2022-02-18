@@ -18,6 +18,83 @@ use getID3;
 class SoundController extends Controller {
 
 
+	// Get all the sounds and add likes
+
+	public function getAllSounds() {
+		$soundData = Sound::all();
+		if ( Auth::check() ) {
+			$user = Auth::user();
+
+			$likes   = $user->likes()->get()->toArray();
+			$likeIds = array_map( function ( $ar ) { return $ar['likeable_id']; }, $likes );
+
+
+			// Checking if song is liked and adding new key value liked => true or false to sounds collection
+			$soundData->map( function ( $i ) use ( $likeIds, $user ) {
+				in_array( $i->id, $likeIds ) ? $i['liked'] = true : $i['liked'] = false;
+
+				// Added sound uploader username to each sound
+				$i['creator'] = User::find( $i->user_id )->name;
+			} );
+
+		}
+
+
+		return $soundData;
+	}
+
+	// Get all the sounds the user uploaded
+	public function getUserSounds() {
+
+
+		$user      = Auth::user();
+		$soundData = Sound::where( 'user_id', $user->id )->get();
+
+		$likes   = $user->likes()->get()->toArray();
+		$likeIds = array_map( function ( $ar ) { return $ar['likeable_id']; }, $likes );
+
+
+		// Checking if song is liked and adding new key value liked => true or false to sounds collection
+		$soundData->map( function ( $i ) use ( $likeIds ) {
+			in_array( $i->id, $likeIds ) ? $i['liked'] = true : $i['liked'] = false;
+			// Added sound uploader username to each sound
+			$i['creator'] = User::find( $i->user_id )->name;
+		} );
+
+
+		return $soundData;
+
+	}
+
+	// Get all sounds liked by user
+	public function getUserLikedSounds() {
+
+		$soundData = Sound::all();
+		if ( Auth::check() ) {
+			$user = Auth::user();
+
+			$likes   = $user->likes()->get()->toArray();
+			$likeIds = array_map( function ( $ar ) { return $ar['likeable_id']; }, $likes );
+
+			$soundData->map( function ( $key, $i ) use ( $likeIds, $soundData, $user ) {
+				if ( in_array( $key->id, $likeIds ) ) {
+					//					$soundData->filter( function ( $value, $key ) use ( $remove ) {
+					//						return $value['id'] != $remove;
+					//					} );
+					$soundData->forget( $i );
+				}
+				// Added sound uploader username to each sound
+				$i['creator'] = User::find( $i->user_id )->name;
+
+			} );
+		}
+
+
+		return $soundData;
+
+	}
+
+
 	//	/**
 	//	 * Display a listing of the resource.
 	//	 *
@@ -25,21 +102,14 @@ class SoundController extends Controller {
 	//	 */
 	public function index() {
 
-		$soundData = Sound::all();
-		$user      = User::find( 1 );
-		$likes     = $user->likes()->get()->toArray();
-		$likeIds   = array_map( function ( $ar ) { return $ar['likeable_id']; }, $likes );
-
 		$popularTags = Sound::popularTags( 5 );
 
-
 		return Inertia::render( 'Frontend/Home', [
-			'canLogin'        => Route::has( 'login' ),
-			'canRegister'     => Route::has( 'register' ), //			'laravelVersion' => Application::VERSION,
-			'phpVersion'      => PHP_VERSION,
-			'soundData'       => $soundData,
-			'currentUserData' => $likeIds,
-			'popularTags'     => array_keys( $popularTags )
+			'canLogin'    => Route::has( 'login' ),
+			'canRegister' => Route::has( 'register' ), //			'laravelVersion' => Application::VERSION,
+			'phpVersion'  => PHP_VERSION,
+			'soundData'   => $this->getAllSounds(),
+			'popularTags' => array_keys( $popularTags )
 		] );
 	}
 
@@ -51,17 +121,22 @@ class SoundController extends Controller {
 
 	public function dashboard() {
 
-		//TODO add liked soundData to soundData array
-
-
-		$soundData = Sound::all();
-
-
-		//		dd( $soundData );
-
 		return Inertia::render( 'Backend/Dashboard', [
+			'soundData' => $this->getuserSounds(),
 
-			'soundData' => $soundData,
+		] );
+	}
+
+	//	/**
+	//	 * Display a listing of the resource.
+	//	 *
+	//	 * @return \Illuminate\Http\Response
+	//	 */
+
+	public function userLikedSoundsPage() {
+
+		return Inertia::render( 'Backend/LikedSounds', [
+			'soundData' => $this->getUserLikedSounds(),
 
 		] );
 	}
@@ -73,7 +148,7 @@ class SoundController extends Controller {
 	//	 */
 	public function create() {
 
-		// Get all tags for used with soundData
+		// Get all tags used in list to choose when uploading
 		$allTags = Sound::allTags();
 
 		return Inertia::render( 'Backend/UploadSound', [ 'allTags' => $allTags ] );
@@ -177,18 +252,17 @@ class SoundController extends Controller {
 	public function show( $sound ) {
 
 
+		$user = User::find( auth()->user()->id );
+
+
 		$soundData = Sound::find( $sound );
 
 		$likes = $soundData->likers()->count();
 		// format numbers and push back into array
 		$soundData['sample_rate'] = number_format( ( $soundData['sample_rate'] / 1000 ), 1 ) . ' khz';
-		$currentUser              = User::find( Auth::id() );
-		$hasUserLike              = null;
-		$currentUserData          = [ 'userLikedSound' => null ];
-		if ( $currentUser ) {
-			$hasUserLike     = $currentUser->hasLiked( $sound );
-			$currentUserData = [ 'userLikedSound' => $hasUserLike ];
-		}
+		$soundData['creator']     = User::find( $soundData->user_id )->name;
+
+		$user && $user->hasLiked( $soundData ) ? $soundData['liked'] = true : $soundData['liked'] = false;
 
 
 		$tags = explode( ',', $soundData->tagList );
@@ -198,11 +272,10 @@ class SoundController extends Controller {
 			'canLogin'    => Route::has( 'login' ),
 			'canRegister' => Route::has( 'register' ),
 
-			'soundData'       => $soundData,
-			'tags'            => $tags,
-			'likes'           => $likes,
-			'hasUserLike'     => $hasUserLike,
-			'currentUserData' => $currentUserData,
+			'soundData' => $soundData,
+			'tags'      => $tags,
+			'likes'     => $likes,
+
 
 		] );
 	}
@@ -314,13 +387,6 @@ class SoundController extends Controller {
 
 	public function search( Request $request ) {
 
-
-		$user        = User::find( 1 );
-		$likes       = $user->likes()->get()->toArray();
-		$likeIds     = array_map( function ( $ar ) { return $ar['likeable_id']; }, $likes );
-		$popularTags = Sound::popularTags( 5 );
-
-
 		$search = $request->keyword;
 		// Check tags that match keyword
 		$tagsLikeKeyword = Tag::where( 'name', 'LIKE', "%{$search}%" )->pluck( 'name' )->toArray();
@@ -328,14 +394,36 @@ class SoundController extends Controller {
 		// Get any soundData with found tags
 		$soundWithTags = Sound::withAnyTags( $tagsToString )->pluck( 'id' )->toArray();
 		//Query soundData matching keyword or matching the soundData with found tags
-		$soundData = Sound::where( 'name', 'LIKE', "%{$search}%" )->OrWhereIn( 'id', $soundWithTags )->get()->toArray();
+		$soundData = Sound::where( 'name', 'LIKE', "%{$search}%" )->OrWhereIn( 'id', $soundWithTags )->get();
+
+
+		if ( Auth::check() ) {
+			$user = Auth::user();
+
+			$likes   = $user->likes()->get()->toArray();
+			$likeIds = array_map( function ( $ar ) { return $ar['likeable_id']; }, $likes );
+			// Checking if song is liked and adding new key value liked => true or false to sounds collection
+			$soundData->map( function ( $i ) use ( $likeIds ) {
+				in_array( $i->id, $likeIds ) ? $i['liked'] = true : $i['liked'] = false;
+				// Added sound uploader username to each sound
+				$i['creator'] = User::find( $i->user_id )->name;
+			}
+
+
+			);
+
+
+
+		}
+
+
+		$popularTags = Sound::popularTags( 5 );
 
 
 		return inertia( 'Frontend/Home', [
-			'soundData'       => $soundData,
-			'keyword'         => $search,
-			'currentUserData' => $likeIds,
-			'popularTags'     => array_keys( $popularTags ),
+			'soundData'   => $soundData,
+			'keyword'     => $search,
+			'popularTags' => array_keys( $popularTags ),
 
 		] );
 
