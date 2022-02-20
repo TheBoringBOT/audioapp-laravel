@@ -104,7 +104,7 @@ class SoundController extends Controller {
 
 		$popularTags = Sound::popularTags( 5 );
 
-		return Inertia::render( 'Frontend/Home', [
+		return Inertia::render( 'Frontend/Sounds', [
 			'canLogin'    => Route::has( 'login' ),
 			'canRegister' => Route::has( 'register' ), //			'laravelVersion' => Application::VERSION,
 			'phpVersion'  => PHP_VERSION,

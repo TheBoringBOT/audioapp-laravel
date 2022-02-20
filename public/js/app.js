@@ -33654,10 +33654,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Components_Layouts_LoggedOutLayout_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @/Components/Layouts/LoggedOutLayout.vue */ "./resources/js/Components/Layouts/LoggedOutLayout.vue");
 /* harmony import */ var _Components_Layouts_ContentContainer__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @/Components/Layouts/ContentContainer */ "./resources/js/Components/Layouts/ContentContainer.vue");
 /* harmony import */ var _inertiajs_inertia_vue3__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @inertiajs/inertia-vue3 */ "./node_modules/@inertiajs/inertia-vue3/dist/index.js");
-/* harmony import */ var _Components_SearchBar__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @/Components/SearchBar */ "./resources/js/Components/SearchBar.vue");
-/* harmony import */ var _Components_Grids_SoundGrid__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @/Components/Grids/SoundGrid */ "./resources/js/Components/Grids/SoundGrid.vue");
-
-
 
 
 
@@ -33666,11 +33662,9 @@ __webpack_require__.r(__webpack_exports__);
     Head: _inertiajs_inertia_vue3__WEBPACK_IMPORTED_MODULE_2__.Head,
     Link: _inertiajs_inertia_vue3__WEBPACK_IMPORTED_MODULE_2__.Link,
     LoggedOutLayout: _Components_Layouts_LoggedOutLayout_vue__WEBPACK_IMPORTED_MODULE_0__["default"],
-    SoundGrid: _Components_Grids_SoundGrid__WEBPACK_IMPORTED_MODULE_4__["default"],
-    SearchBar: _Components_SearchBar__WEBPACK_IMPORTED_MODULE_3__["default"],
     ContentContainer: _Components_Layouts_ContentContainer__WEBPACK_IMPORTED_MODULE_1__["default"]
   },
-  props: ["soundData", "keyword", "popularTags"],
+  props: ["keyword", "popularTags"],
   data: function data() {
     return {
       seo: {
@@ -33717,6 +33711,50 @@ __webpack_require__.r(__webpack_exports__);
       seo: {
         title: "sound" + "-" + props.soundData.name,
         description: props.soundData.description
+      }
+    };
+  },
+  methods: {}
+});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/Pages/Frontend/Sounds.vue?vue&type=script&lang=js":
+/*!****************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/Pages/Frontend/Sounds.vue?vue&type=script&lang=js ***!
+  \****************************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _Components_Layouts_LoggedOutLayout_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @/Components/Layouts/LoggedOutLayout.vue */ "./resources/js/Components/Layouts/LoggedOutLayout.vue");
+/* harmony import */ var _Components_Layouts_ContentContainer__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @/Components/Layouts/ContentContainer */ "./resources/js/Components/Layouts/ContentContainer.vue");
+/* harmony import */ var _inertiajs_inertia_vue3__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @inertiajs/inertia-vue3 */ "./node_modules/@inertiajs/inertia-vue3/dist/index.js");
+/* harmony import */ var _Components_SearchBar__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @/Components/SearchBar */ "./resources/js/Components/SearchBar.vue");
+/* harmony import */ var _Components_Grids_SoundGrid__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @/Components/Grids/SoundGrid */ "./resources/js/Components/Grids/SoundGrid.vue");
+
+
+
+
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  components: {
+    Head: _inertiajs_inertia_vue3__WEBPACK_IMPORTED_MODULE_2__.Head,
+    Link: _inertiajs_inertia_vue3__WEBPACK_IMPORTED_MODULE_2__.Link,
+    LoggedOutLayout: _Components_Layouts_LoggedOutLayout_vue__WEBPACK_IMPORTED_MODULE_0__["default"],
+    SoundGrid: _Components_Grids_SoundGrid__WEBPACK_IMPORTED_MODULE_4__["default"],
+    SearchBar: _Components_SearchBar__WEBPACK_IMPORTED_MODULE_3__["default"],
+    ContentContainer: _Components_Layouts_ContentContainer__WEBPACK_IMPORTED_MODULE_1__["default"]
+  },
+  props: ["soundData", "keyword", "popularTags"],
+  data: function data() {
+    return {
+      seo: {
+        title: "Discover Amazing free sounds",
+        description: "Find sounds to use in your productions."
       }
     };
   },
@@ -36317,34 +36355,55 @@ __webpack_require__.r(__webpack_exports__);
 
 var _hoisted_1 = ["content"];
 var _hoisted_2 = {
-  key: 0
+  "class": "relative"
 };
 var _hoisted_3 = {
-  key: 1,
-  "class": "mt-10 flex flex-col items-center justify-center"
+  "class": "md:grid lg:grid-flow-row-dense md:grid-cols-2 md:gap-12"
+};
+var _hoisted_4 = {
+  "class": "lg:col-start-1 flex flex-col h-100 items-start grow justify-center"
 };
 
-var _hoisted_4 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", {
-  "class": "text-5xl"
-}, "😢", -1
+var _hoisted_5 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h1", {
+  "class": "lg:text-6xl font-extrabold text-primary-clr text-4xl"
+}, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" High Quality Sounds "), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("br"), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)("& FX ")], -1
 /* HOISTED */
 );
 
-var _hoisted_5 = {
-  "class": "font-semibold text-primary-clr text-"
-};
+var _hoisted_6 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" Discover Now ");
 
-var _hoisted_6 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" We found no sounds matching ");
+var _hoisted_7 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+  "class": "mt-10 relative col-span-full lg:mt-0 lg:col-start-2 justify-end"
+}, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("img", {
+  src: "https://www.tailwind-kit.com/images/object/8.jpg",
+  alt: "illustration",
+  "class": "relative ml-auto shadow-lg rounded w-auto"
+})], -1
+/* HOISTED */
+);
 
-var _hoisted_7 = {
-  "class": "rounded font-bold text-lg p-1 text-primary-bg bg-brand-clr"
-};
+var _hoisted_8 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+  "class": "mt-20 px-6 py-6 bg-secondary-bg rounded-lg md:py-12 md:px-12 lg:py-16 lg:px-16 xl:flex xl:items-center"
+}, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+  "class": "xl:w-0 xl:flex-1"
+}, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h2", {
+  "class": "text-2xl leading-8 font-extrabold tracking-tight text-white sm:text-3xl sm:leading-9"
+}, " Receive alerts about new sounds or news about this site. "), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", {
+  "class": "mt-3 max-w-3xl text-lg leading-6 text-secondary-clr"
+}, " We use push notifications. You can choose between several modes and define your own alert threshold. ")]), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+  "class": "mt-8 sm:w-full sm:max-w-md xl:mt-0 xl:ml-8"
+}, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+  "class": "mt-3 rounded-md shadow sm:mt-0 sm:ml-3 sm:flex-shrink-0"
+}, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
+  "class": "w-full flex items-center justify-center px-5 py-3 border border-transparent text-base leading-6 font-medium rounded-md text-white border-2 border-brand-clr text-brand-clr hover:bg-brand-clr hover:text-primary-bg transition duration-150 ease-in-out"
+}, " Notify me ")])])], -1
+/* HOISTED */
+);
+
 function render(_ctx, _cache, $props, $setup, $data, $options) {
   var _component_Head = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("Head");
 
-  var _component_SearchBar = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("SearchBar");
-
-  var _component_SoundGrid = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("SoundGrid");
+  var _component_Link = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("Link");
 
   var _component_ContentContainer = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("ContentContainer");
 
@@ -36364,22 +36423,23 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     _: 1
     /* STABLE */
 
-  }), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_LoggedOutLayout, null, {
+  }), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_LoggedOutLayout, {
+    "class": "bg-white"
+  }, {
     "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
       return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_ContentContainer, null, {
         "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
-          return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_SearchBar, {
-            popularTags: $props.popularTags,
-            keyword: $props.keyword
-          }, null, 8
-          /* PROPS */
-          , ["popularTags", "keyword"]), $props.soundData.length ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_2, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_SoundGrid, {
-            soundData: $props.soundData
-          }, null, 8
-          /* PROPS */
-          , ["soundData"])])) : ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_3, [_hoisted_4, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h1", _hoisted_5, [_hoisted_6, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", _hoisted_7, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($props.keyword), 1
-          /* TEXT */
-          )])]))];
+          return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_2, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_3, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_4, [_hoisted_5, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_Link, {
+            "class": "mt-6 font-semibold text-primary-bg px-7 py-3 bg-brand-clr hover:bg-brand-clr-hover hover:border-0 rounded",
+            href: "/sounds"
+          }, {
+            "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
+              return [_hoisted_6];
+            }),
+            _: 1
+            /* STABLE */
+
+          })]), _hoisted_7])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Notify "), _hoisted_8];
         }),
         _: 1
         /* STABLE */
@@ -36617,6 +36677,100 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
             }),
             "class": "text-base w-full block font-semibold text-primary-bg px-6 py-2 bg-brand-clr hover:bg-brand-clr-hover hover:border-0 rounded"
           }, " Download Sound ")])])])])];
+        }),
+        _: 1
+        /* STABLE */
+
+      })];
+    }),
+    _: 1
+    /* STABLE */
+
+  })], 64
+  /* STABLE_FRAGMENT */
+  );
+}
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/Pages/Frontend/Sounds.vue?vue&type=template&id=d0cf9e30":
+/*!********************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/Pages/Frontend/Sounds.vue?vue&type=template&id=d0cf9e30 ***!
+  \********************************************************************************************************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "render": () => (/* binding */ render)
+/* harmony export */ });
+/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm-bundler.js");
+
+var _hoisted_1 = ["content"];
+var _hoisted_2 = {
+  key: 0
+};
+var _hoisted_3 = {
+  key: 1,
+  "class": "mt-10 flex flex-col items-center justify-center"
+};
+
+var _hoisted_4 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", {
+  "class": "text-5xl"
+}, "😢", -1
+/* HOISTED */
+);
+
+var _hoisted_5 = {
+  "class": "font-semibold text-primary-clr text-"
+};
+
+var _hoisted_6 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" We found no sounds matching ");
+
+var _hoisted_7 = {
+  "class": "rounded font-bold text-lg p-1 text-primary-bg bg-brand-clr"
+};
+function render(_ctx, _cache, $props, $setup, $data, $options) {
+  var _component_Head = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("Head");
+
+  var _component_SearchBar = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("SearchBar");
+
+  var _component_SoundGrid = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("SoundGrid");
+
+  var _component_ContentContainer = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("ContentContainer");
+
+  var _component_LoggedOutLayout = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("LoggedOutLayout");
+
+  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_Head, null, {
+    "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
+      return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("title", null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($data.seo.title), 1
+      /* TEXT */
+      ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("meta", {
+        name: "description",
+        content: $data.seo.description
+      }, null, 8
+      /* PROPS */
+      , _hoisted_1)];
+    }),
+    _: 1
+    /* STABLE */
+
+  }), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_LoggedOutLayout, null, {
+    "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
+      return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_ContentContainer, null, {
+        "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
+          return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_SearchBar, {
+            popularTags: $props.popularTags,
+            keyword: $props.keyword
+          }, null, 8
+          /* PROPS */
+          , ["popularTags", "keyword"]), $props.soundData.length ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_2, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_SoundGrid, {
+            soundData: $props.soundData
+          }, null, 8
+          /* PROPS */
+          , ["soundData"])])) : ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_3, [_hoisted_4, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h1", _hoisted_5, [_hoisted_6, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", _hoisted_7, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($props.keyword), 1
+          /* TEXT */
+          )])]))];
         }),
         _: 1
         /* STABLE */
@@ -64043,6 +64197,34 @@ if (false) {}
 
 /***/ }),
 
+/***/ "./resources/js/Pages/Frontend/Sounds.vue":
+/*!************************************************!*\
+  !*** ./resources/js/Pages/Frontend/Sounds.vue ***!
+  \************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _Sounds_vue_vue_type_template_id_d0cf9e30__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Sounds.vue?vue&type=template&id=d0cf9e30 */ "./resources/js/Pages/Frontend/Sounds.vue?vue&type=template&id=d0cf9e30");
+/* harmony import */ var _Sounds_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Sounds.vue?vue&type=script&lang=js */ "./resources/js/Pages/Frontend/Sounds.vue?vue&type=script&lang=js");
+/* harmony import */ var _Users_GarethRichards_Desktop_projects_audio_app_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
+
+
+
+
+;
+const __exports__ = /*#__PURE__*/(0,_Users_GarethRichards_Desktop_projects_audio_app_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__["default"])(_Sounds_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_Sounds_vue_vue_type_template_id_d0cf9e30__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/Pages/Frontend/Sounds.vue"]])
+/* hot reload */
+if (false) {}
+
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (__exports__);
+
+/***/ }),
+
 /***/ "./resources/js/Pages/Welcome.vue":
 /*!****************************************!*\
   !*** ./resources/js/Pages/Welcome.vue ***!
@@ -64598,6 +64780,22 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (/* reexport safe */ _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_SoundItem_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_0__["default"])
 /* harmony export */ });
 /* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_SoundItem_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!../../../../node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./SoundItem.vue?vue&type=script&lang=js */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/Pages/Frontend/SoundItem.vue?vue&type=script&lang=js");
+ 
+
+/***/ }),
+
+/***/ "./resources/js/Pages/Frontend/Sounds.vue?vue&type=script&lang=js":
+/*!************************************************************************!*\
+  !*** ./resources/js/Pages/Frontend/Sounds.vue?vue&type=script&lang=js ***!
+  \************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* reexport safe */ _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_Sounds_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_0__["default"])
+/* harmony export */ });
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_Sounds_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!../../../../node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./Sounds.vue?vue&type=script&lang=js */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/Pages/Frontend/Sounds.vue?vue&type=script&lang=js");
  
 
 /***/ }),
@@ -65158,6 +65356,22 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "render": () => (/* reexport safe */ _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_dist_templateLoader_js_ruleSet_1_rules_2_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_SoundItem_vue_vue_type_template_id_f3c87064__WEBPACK_IMPORTED_MODULE_0__.render)
 /* harmony export */ });
 /* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_dist_templateLoader_js_ruleSet_1_rules_2_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_SoundItem_vue_vue_type_template_id_f3c87064__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!../../../../node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!../../../../node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./SoundItem.vue?vue&type=template&id=f3c87064 */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/Pages/Frontend/SoundItem.vue?vue&type=template&id=f3c87064");
+
+
+/***/ }),
+
+/***/ "./resources/js/Pages/Frontend/Sounds.vue?vue&type=template&id=d0cf9e30":
+/*!******************************************************************************!*\
+  !*** ./resources/js/Pages/Frontend/Sounds.vue?vue&type=template&id=d0cf9e30 ***!
+  \******************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "render": () => (/* reexport safe */ _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_dist_templateLoader_js_ruleSet_1_rules_2_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_Sounds_vue_vue_type_template_id_d0cf9e30__WEBPACK_IMPORTED_MODULE_0__.render)
+/* harmony export */ });
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_dist_templateLoader_js_ruleSet_1_rules_2_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_Sounds_vue_vue_type_template_id_d0cf9e30__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!../../../../node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!../../../../node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./Sounds.vue?vue&type=template&id=d0cf9e30 */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/Pages/Frontend/Sounds.vue?vue&type=template&id=d0cf9e30");
 
 
 /***/ }),
@@ -73050,6 +73264,7 @@ var map = {
 	"./Frontend/Contact.vue": "./resources/js/Pages/Frontend/Contact.vue",
 	"./Frontend/Home.vue": "./resources/js/Pages/Frontend/Home.vue",
 	"./Frontend/SoundItem.vue": "./resources/js/Pages/Frontend/SoundItem.vue",
+	"./Frontend/Sounds.vue": "./resources/js/Pages/Frontend/Sounds.vue",
 	"./Welcome.vue": "./resources/js/Pages/Welcome.vue"
 };
 

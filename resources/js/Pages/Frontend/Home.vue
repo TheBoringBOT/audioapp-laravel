@@ -1,23 +1,69 @@
 <template>
     <Head>
         <title>{{ seo.title }}</title>
-        <meta name="description" :content="seo.description"/>
+        <meta name="description" :content="seo.description" />
     </Head>
-    <LoggedOutLayout>
+    <LoggedOutLayout class="bg-white">
         <ContentContainer>
-            <SearchBar :popularTags="popularTags" v-bind:keyword="keyword"/>
-            <div v-if="soundData.length">
-                <SoundGrid :soundData="soundData"/>
-            </div>
-            <div class="mt-10 flex flex-col items-center justify-center" v-else>
-                <span class="text-5xl">😢</span>
-                <h1 class="font-semibold text-primary-clr text-">
-                    We found no sounds matching
-                    <span
-                            class="rounded font-bold text-lg p-1 text-primary-bg bg-brand-clr"
-                    >{{ keyword }}</span
+            <div class="relative">
+                <div
+                    class="md:grid lg:grid-flow-row-dense md:grid-cols-2 md:gap-12"
+                >
+                    <div
+                        class="lg:col-start-1 flex flex-col h-100 items-start grow justify-center"
                     >
-                </h1>
+                        <h1
+                            class="lg:text-6xl font-extrabold text-primary-clr text-4xl"
+                        >
+                            High Quality Sounds <br />& FX
+                        </h1>
+                        <Link
+                            class="mt-6 font-semibold text-primary-bg px-7 py-3 bg-brand-clr hover:bg-brand-clr-hover hover:border-0 rounded"
+                            href="/sounds"
+                        >
+                            Discover Now
+                        </Link>
+                    </div>
+                    <div
+                        class="mt-10 relative col-span-full lg:mt-0 lg:col-start-2 justify-end"
+                    >
+                        <img
+                            src="https://www.tailwind-kit.com/images/object/8.jpg"
+                            alt="illustration"
+                            class="relative ml-auto shadow-lg rounded w-auto"
+                        />
+                    </div>
+                </div>
+            </div>
+
+            <!-- Notify -->
+            <div
+                class="mt-20 px-6 py-6 bg-secondary-bg rounded-lg md:py-12 md:px-12 lg:py-16 lg:px-16 xl:flex xl:items-center"
+            >
+                <div class="xl:w-0 xl:flex-1">
+                    <h2
+                        class="text-2xl leading-8 font-extrabold tracking-tight text-white sm:text-3xl sm:leading-9"
+                    >
+                        Receive alerts about new sounds or news about this site.
+                    </h2>
+                    <p
+                        class="mt-3 max-w-3xl text-lg leading-6 text-secondary-clr"
+                    >
+                        We use push notifications. You can choose between
+                        several modes and define your own alert threshold.
+                    </p>
+                </div>
+                <div class="mt-8 sm:w-full sm:max-w-md xl:mt-0 xl:ml-8">
+                    <div
+                        class="mt-3 rounded-md shadow sm:mt-0 sm:ml-3 sm:flex-shrink-0"
+                    >
+                        <button
+                            class="w-full flex items-center justify-center px-5 py-3 border border-transparent text-base leading-6 font-medium rounded-md text-white border-2 border-brand-clr text-brand-clr hover:bg-brand-clr hover:text-primary-bg transition duration-150 ease-in-out"
+                        >
+                            Notify me
+                        </button>
+                    </div>
+                </div>
             </div>
         </ContentContainer>
     </LoggedOutLayout>
@@ -26,21 +72,17 @@
 <script>
 import LoggedOutLayout from "@/Components/Layouts/LoggedOutLayout.vue";
 import ContentContainer from "@/Components/Layouts/ContentContainer";
-import {Head, Link} from "@inertiajs/inertia-vue3";
-
-import SearchBar from "@/Components/SearchBar";
-import SoundGrid from "@/Components/Grids/SoundGrid";
+import { Head, Link } from "@inertiajs/inertia-vue3";
 
 export default {
     components: {
         Head,
         Link,
         LoggedOutLayout,
-        SoundGrid,
-        SearchBar,
+
         ContentContainer,
     },
-    props: ["soundData", "keyword", "popularTags"],
+    props: ["keyword", "popularTags"],
     data() {
         return {
             seo: {
