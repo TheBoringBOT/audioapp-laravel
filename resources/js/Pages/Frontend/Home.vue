@@ -25,7 +25,7 @@
                         </Link>
                     </div>
                     <div
-                        class="mt-10 relative col-span-full lg:mt-0 md:col-start-2 justify-end md:ml-[5vw] min-h-[70vh] bg-cover bg-no-repeat bg-[url('/images/home.jpg')]"
+                        class="mt-10 relative col-span-full lg:mt-0 md:col-start-2 justify-end md:ml-[5vw] min-h-[580px] h-[70vh] bg-cover bg-no-repeat bg-[url('/images/home.jpg')]"
                     ></div>
                 </div>
             </div>

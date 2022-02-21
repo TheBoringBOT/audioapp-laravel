@@ -36396,7 +36396,7 @@ var _hoisted_5 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementV
 var _hoisted_6 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" Discover Now ");
 
 var _hoisted_7 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
-  "class": "mt-10 relative col-span-full lg:mt-0 md:col-start-2 justify-end md:ml-[5vw] min-h-[70vh] bg-cover bg-no-repeat bg-[url('/images/home.jpg')]"
+  "class": "mt-10 relative col-span-full lg:mt-0 md:col-start-2 justify-end md:ml-[5vw] min-h-[580px] h-[70vh] bg-cover bg-no-repeat bg-[url('/images/home.jpg')]"
 }, null, -1
 /* HOISTED */
 );

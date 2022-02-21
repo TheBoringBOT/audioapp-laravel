@@ -791,11 +791,23 @@ select {
 .h-12 {
   height: 3rem;
 }
+.h-\[70vh\] {
+  height: 70vh;
+}
 .min-h-screen {
   min-height: 100vh;
 }
 .min-h-\[70vh\] {
   min-height: 70vh;
+}
+.min-h-\[500px\] {
+  min-height: 500px;
+}
+.min-h-\[650px\] {
+  min-height: 650px;
+}
+.min-h-\[580px\] {
+  min-height: 580px;
 }
 .w-5 {
   width: 1.25rem;
