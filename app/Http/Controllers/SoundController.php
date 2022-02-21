@@ -37,6 +37,11 @@ class SoundController extends Controller {
 				$i['creator'] = User::find( $i->user_id )->name;
 			} );
 
+		} else {
+			$soundData->map( function ( $i ) {
+				// Added sound uploader username to each sound
+				$i['creator'] = User::find( $i->user_id )->name;
+			} );
 		}
 
 
@@ -252,17 +257,16 @@ class SoundController extends Controller {
 	public function show( $sound ) {
 
 
-		$user = User::find( auth()->user()->id );
-
-
 		$soundData = Sound::find( $sound );
 
 		$likes = $soundData->likers()->count();
 		// format numbers and push back into array
 		$soundData['sample_rate'] = number_format( ( $soundData['sample_rate'] / 1000 ), 1 ) . ' khz';
 		$soundData['creator']     = User::find( $soundData->user_id )->name;
-
-		$user && $user->hasLiked( $soundData ) ? $soundData['liked'] = true : $soundData['liked'] = false;
+		if ( Auth::check() ) {
+			$user = User::find( auth()->user()->id );
+			$user && $user->hasLiked( $soundData ) ? $soundData['liked'] = true : $soundData['liked'] = false;
+		}
 
 
 		$tags = explode( ',', $soundData->tagList );
@@ -414,13 +418,19 @@ class SoundController extends Controller {
 
 
 
+		} else {
+			// Checking if song is liked and adding new key value liked => true or false to sounds collection
+			$soundData->map( function ( $i ) {
+
+				$i['creator'] = User::find( $i->user_id )->name;
+			} );
 		}
 
 
 		$popularTags = Sound::popularTags( 5 );
 
 
-		return inertia( 'Frontend/Home', [
+		return inertia( 'Frontend/Sounds', [
 			'soundData'   => $soundData,
 			'keyword'     => $search,
 			'popularTags' => array_keys( $popularTags ),

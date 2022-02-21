@@ -20,16 +20,16 @@
                             Home
                         </BreezeNavLink>
                         <BreezeNavLink
+                            :href="route('sounds')"
+                            :active="route().current('sounds')"
+                        >
+                            Sounds
+                        </BreezeNavLink>
+                        <BreezeNavLink
                             :href="route('about')"
                             :active="route().current('about')"
                         >
                             About
-                        </BreezeNavLink>
-                        <BreezeNavLink
-                            :href="route('contact')"
-                            :active="route().current('contact')"
-                        >
-                            Contact
                         </BreezeNavLink>
                     </div>
                 </div>

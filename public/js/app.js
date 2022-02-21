@@ -32617,10 +32617,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var wavesurfer_js_dist_plugin_wavesurfer_cursor__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! wavesurfer.js/dist/plugin/wavesurfer.cursor */ "./node_modules/wavesurfer.js/dist/plugin/wavesurfer.cursor.js");
 /* harmony import */ var wavesurfer_js_dist_plugin_wavesurfer_cursor__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(wavesurfer_js_dist_plugin_wavesurfer_cursor__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var _inertiajs_inertia_vue3__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @inertiajs/inertia-vue3 */ "./node_modules/@inertiajs/inertia-vue3/dist/index.js");
-/* harmony import */ var lodash__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! lodash */ "./node_modules/lodash/lodash.js");
-/* harmony import */ var lodash__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(lodash__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var _Helpers__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @/Helpers */ "./resources/js/Helpers.js");
-
+/* harmony import */ var _Helpers__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @/Helpers */ "./resources/js/Helpers.js");
 
 
 
@@ -32628,7 +32625,6 @@ __webpack_require__.r(__webpack_exports__);
  //Todo  - ScriptProcessorNode is deprecated. Use AudioWorkletNode instead -- wait for wavesurfer update
 //Todo fix to only play one instance at a time  - probably need to pass emit to parent and target non current ref
 //Todo fix record plays
-//Todo fix upvote sound
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   components: {
@@ -32682,7 +32678,7 @@ __webpack_require__.r(__webpack_exports__);
       t.seekPlay(t.soundItemKey);
     });
     wavesurferRef.on("audioprocess", function () {
-      t.playedTime = (0,_Helpers__WEBPACK_IMPORTED_MODULE_5__.formatTime)(wavesurferRef.backend.getCurrentTime());
+      t.playedTime = (0,_Helpers__WEBPACK_IMPORTED_MODULE_4__.formatTime)(wavesurferRef.backend.getCurrentTime());
     });
     wavesurferRef.on("finish", function () {
       t.resetWaveSurfer();
@@ -32739,11 +32735,13 @@ __webpack_require__.r(__webpack_exports__);
     toggleLike: function toggleLike(id) {
       var _this = this;
 
-      if (this.$page.props.auth) {
+      if (this.$page.props.auth.user) {
         axios.post("/like/" + id).then(function () {
           _this.userHasLiked = !_this.userHasLiked;
         })["catch"](function (error) {
-          _this.toast.error("Error, please try again");
+          console.log(error);
+
+          _this.toast.error(error);
         });
       } else {
         this.toast.info("Please login");
@@ -33654,6 +33652,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Components_Layouts_LoggedOutLayout_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @/Components/Layouts/LoggedOutLayout.vue */ "./resources/js/Components/Layouts/LoggedOutLayout.vue");
 /* harmony import */ var _Components_Layouts_ContentContainer__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @/Components/Layouts/ContentContainer */ "./resources/js/Components/Layouts/ContentContainer.vue");
 /* harmony import */ var _inertiajs_inertia_vue3__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @inertiajs/inertia-vue3 */ "./node_modules/@inertiajs/inertia-vue3/dist/index.js");
+/* harmony import */ var vue_toastification__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! vue-toastification */ "./node_modules/vue-toastification/dist/index.mjs");
+
 
 
 
@@ -33673,7 +33673,13 @@ __webpack_require__.r(__webpack_exports__);
       }
     };
   },
-  methods: {}
+  setup: function setup() {
+    // create toast notifications function
+    var toast = (0,vue_toastification__WEBPACK_IMPORTED_MODULE_3__.useToast)();
+    return {
+      toast: toast
+    };
+  }
 });
 
 /***/ }),
@@ -33692,7 +33698,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Components_Layouts_LoggedOutLayout_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @/Components/Layouts/LoggedOutLayout.vue */ "./resources/js/Components/Layouts/LoggedOutLayout.vue");
 /* harmony import */ var _Components_Layouts_ContentContainer__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @/Components/Layouts/ContentContainer */ "./resources/js/Components/Layouts/ContentContainer.vue");
 /* harmony import */ var _inertiajs_inertia_vue3__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @inertiajs/inertia-vue3 */ "./node_modules/@inertiajs/inertia-vue3/dist/index.js");
-/* harmony import */ var _Components_Grids_SoundItem__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @/Components/Grids/SoundItem */ "./resources/js/Components/Grids/SoundItem.vue");
+/* harmony import */ var vue_toastification__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! vue-toastification */ "./node_modules/vue-toastification/dist/index.mjs");
+/* harmony import */ var _Components_Grids_SoundItem__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @/Components/Grids/SoundItem */ "./resources/js/Components/Grids/SoundItem.vue");
+
 
 
 
@@ -33703,7 +33711,7 @@ __webpack_require__.r(__webpack_exports__);
     Link: _inertiajs_inertia_vue3__WEBPACK_IMPORTED_MODULE_2__.Link,
     LoggedOutLayout: _Components_Layouts_LoggedOutLayout_vue__WEBPACK_IMPORTED_MODULE_0__["default"],
     ContentContainer: _Components_Layouts_ContentContainer__WEBPACK_IMPORTED_MODULE_1__["default"],
-    SoundItem: _Components_Grids_SoundItem__WEBPACK_IMPORTED_MODULE_3__["default"]
+    SoundItem: _Components_Grids_SoundItem__WEBPACK_IMPORTED_MODULE_4__["default"]
   },
   props: ["soundData", "tags", "likes", "currentUserData"],
   data: function data(props) {
@@ -33714,7 +33722,22 @@ __webpack_require__.r(__webpack_exports__);
       }
     };
   },
-  methods: {}
+  setup: function setup() {
+    var toast = (0,vue_toastification__WEBPACK_IMPORTED_MODULE_3__.useToast)();
+    return {
+      toast: toast
+    };
+  },
+  methods: {
+    download: function download(id, user) {
+      //must pass sound id +  $page.props.auth
+      if (user) {
+        window.location = "/download/" + id;
+      } else {
+        this.toast.info("Please login");
+      }
+    }
+  }
 });
 
 /***/ }),
@@ -34701,9 +34724,9 @@ var _hoisted_6 = {
 
 var _hoisted_7 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" Home ");
 
-var _hoisted_8 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" About ");
+var _hoisted_8 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" Sounds ");
 
-var _hoisted_9 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" Contact ");
+var _hoisted_9 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" About ");
 
 var _hoisted_10 = {
   "class": "hidden md:flex md:items-center md:ml-6"
@@ -34788,8 +34811,8 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
   }, 8
   /* PROPS */
   , ["href", "active"]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_BreezeNavLink, {
-    href: _ctx.route('about'),
-    active: _ctx.route().current('about')
+    href: _ctx.route('sounds'),
+    active: _ctx.route().current('sounds')
   }, {
     "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
       return [_hoisted_8];
@@ -34800,8 +34823,8 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
   }, 8
   /* PROPS */
   , ["href", "active"]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_BreezeNavLink, {
-    href: _ctx.route('contact'),
-    active: _ctx.route().current('contact')
+    href: _ctx.route('about'),
+    active: _ctx.route().current('about')
   }, {
     "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
       return [_hoisted_9];
@@ -36373,34 +36396,34 @@ var _hoisted_5 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementV
 var _hoisted_6 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" Discover Now ");
 
 var _hoisted_7 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
-  "class": "mt-10 relative col-span-full lg:mt-0 lg:col-start-2 justify-end"
-}, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("img", {
-  src: "https://www.tailwind-kit.com/images/object/8.jpg",
-  alt: "illustration",
-  "class": "relative ml-auto shadow-lg rounded w-auto"
-})], -1
+  "class": "mt-10 relative col-span-full lg:mt-0 md:col-start-2 justify-end md:ml-[5vw] min-h-[70vh] bg-cover bg-no-repeat bg-[url('/images/home.jpg')]"
+}, null, -1
 /* HOISTED */
 );
 
-var _hoisted_8 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+var _hoisted_8 = {
   "class": "mt-20 px-6 py-6 bg-secondary-bg rounded-lg md:py-12 md:px-12 lg:py-16 lg:px-16 xl:flex xl:items-center"
-}, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+};
+
+var _hoisted_9 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
   "class": "xl:w-0 xl:flex-1"
 }, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h2", {
   "class": "text-2xl leading-8 font-extrabold tracking-tight text-white sm:text-3xl sm:leading-9"
 }, " Receive alerts about new sounds or news about this site. "), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", {
   "class": "mt-3 max-w-3xl text-lg leading-6 text-secondary-clr"
-}, " We use push notifications. You can choose between several modes and define your own alert threshold. ")]), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
-  "class": "mt-8 sm:w-full sm:max-w-md xl:mt-0 xl:ml-8"
-}, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
-  "class": "mt-3 rounded-md shadow sm:mt-0 sm:ml-3 sm:flex-shrink-0"
-}, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
-  "class": "w-full flex items-center justify-center px-5 py-3 border border-transparent text-base leading-6 font-medium rounded-md text-white border-2 border-brand-clr text-brand-clr hover:bg-brand-clr hover:text-primary-bg transition duration-150 ease-in-out"
-}, " Notify me ")])])], -1
+}, " We use push notifications. You can choose between several modes and define your own alert threshold. ")], -1
 /* HOISTED */
 );
 
+var _hoisted_10 = {
+  "class": "mt-8 sm:w-full sm:max-w-md xl:mt-0 xl:ml-8"
+};
+var _hoisted_11 = {
+  "class": "mt-3 rounded-md shadow sm:mt-0 sm:ml-3 sm:flex-shrink-0"
+};
 function render(_ctx, _cache, $props, $setup, $data, $options) {
+  var _this = this;
+
   var _component_Head = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("Head");
 
   var _component_Link = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("Link");
@@ -36439,7 +36462,12 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
             _: 1
             /* STABLE */
 
-          })]), _hoisted_7])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Notify "), _hoisted_8];
+          })]), _hoisted_7])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Notify "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_8, [_hoisted_9, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_10, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_11, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
+            onClick: _cache[0] || (_cache[0] = function () {
+              return _this.toast.info('Not working in demo app');
+            }),
+            "class": "w-full flex items-center justify-center px-5 py-3 border border-transparent text-base leading-6 font-medium rounded-md text-white border-2 border-brand-clr text-brand-clr hover:bg-brand-clr hover:text-primary-bg transition duration-150 ease-in-out"
+          }, " Notify me ")])])])];
         }),
         _: 1
         /* STABLE */
@@ -36589,7 +36617,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
 
   var _component_LoggedOutLayout = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("LoggedOutLayout");
 
-  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("<Head :title=\"seo.title\" :description=\"seo.description\" />"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_Head, null, {
+  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_Head, null, {
     "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
       return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("title", null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($data.seo.title), 1
       /* TEXT */
@@ -36673,7 +36701,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
           /* TEXT */
           )])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_30, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
             onClick: _cache[0] || (_cache[0] = function ($event) {
-              return _ctx.download($props.soundData.id, _ctx.$page.props.auth);
+              return $options.download($props.soundData.id, _ctx.$page.props.auth.user);
             }),
             "class": "text-base w-full block font-semibold text-primary-bg px-6 py-2 bg-brand-clr hover:bg-brand-clr-hover hover:border-0 rounded"
           }, " Download Sound ")])])])])];

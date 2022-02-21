@@ -25,14 +25,8 @@
                         </Link>
                     </div>
                     <div
-                        class="mt-10 relative col-span-full lg:mt-0 lg:col-start-2 justify-end"
-                    >
-                        <img
-                            src="https://www.tailwind-kit.com/images/object/8.jpg"
-                            alt="illustration"
-                            class="relative ml-auto shadow-lg rounded w-auto"
-                        />
-                    </div>
+                        class="mt-10 relative col-span-full lg:mt-0 md:col-start-2 justify-end md:ml-[5vw] min-h-[70vh] bg-cover bg-no-repeat bg-[url('/images/home.jpg')]"
+                    ></div>
                 </div>
             </div>
 
@@ -58,6 +52,9 @@
                         class="mt-3 rounded-md shadow sm:mt-0 sm:ml-3 sm:flex-shrink-0"
                     >
                         <button
+                            @click="
+                                () => this.toast.info('Not working in demo app')
+                            "
                             class="w-full flex items-center justify-center px-5 py-3 border border-transparent text-base leading-6 font-medium rounded-md text-white border-2 border-brand-clr text-brand-clr hover:bg-brand-clr hover:text-primary-bg transition duration-150 ease-in-out"
                         >
                             Notify me
@@ -73,6 +70,7 @@
 import LoggedOutLayout from "@/Components/Layouts/LoggedOutLayout.vue";
 import ContentContainer from "@/Components/Layouts/ContentContainer";
 import { Head, Link } from "@inertiajs/inertia-vue3";
+import { useToast } from "vue-toastification";
 
 export default {
     components: {
@@ -92,6 +90,10 @@ export default {
         };
     },
 
-    methods: {},
+    setup() {
+        // create toast notifications function
+        const toast = useToast();
+        return { toast };
+    },
 };
 </script>

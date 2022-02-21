@@ -112,7 +112,6 @@ import {copyText} from "vue3-clipboard";
 import {useToast} from "vue-toastification";
 import Cursor from "wavesurfer.js/dist/plugin/wavesurfer.cursor";
 import {Link} from "@inertiajs/inertia-vue3";
-import _ from "lodash";
 
 import {formatTime} from "@/Helpers";
 
@@ -121,7 +120,7 @@ import {formatTime} from "@/Helpers";
 //Todo fix to only play one instance at a time  - probably need to pass emit to parent and target non current ref
 
 //Todo fix record plays
-//Todo fix upvote sound
+
 export default {
     components: {
         Link,
@@ -241,14 +240,15 @@ export default {
         // Wavesurfer controls : End
         //toggle like for sound
         toggleLike(id) {
-            if (this.$page.props.auth) {
+            if (this.$page.props.auth.user) {
                 axios
                     .post("/like/" + id)
                     .then(() => {
                         this.userHasLiked = !this.userHasLiked;
                     })
                     .catch((error) => {
-                        this.toast.error("Error, please try again");
+                        console.log(error);
+                        this.toast.error(error);
                     });
             } else {
                 this.toast.info("Please login");
