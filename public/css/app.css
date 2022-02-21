@@ -1038,6 +1038,9 @@ select {
 .border-b {
   border-bottom-width: 1px;
 }
+.border-t-2 {
+  border-top-width: 2px;
+}
 .border-dashed {
   border-style: dashed;
 }
@@ -1070,6 +1073,10 @@ select {
 .border-brand-clr {
   --tw-border-opacity: 1;
   border-color: rgb(255 202 0 / var(--tw-border-opacity));
+}
+.border-secondary-clr {
+  --tw-border-opacity: 1;
+  border-color: rgb(129 129 129 / var(--tw-border-opacity));
 }
 .bg-white {
   --tw-bg-opacity: 1;
@@ -1112,6 +1119,10 @@ select {
 .bg-indigo-600 {
   --tw-bg-opacity: 1;
   background-color: rgb(79 70 229 / var(--tw-bg-opacity));
+}
+.bg-secondary-clr {
+  --tw-bg-opacity: 1;
+  background-color: rgb(129 129 129 / var(--tw-bg-opacity));
 }
 .bg-\[url\(\'\/images\/home\.jpg\'\)\] {
   background-image: url('/images/home.jpg');
@@ -1524,6 +1535,10 @@ select {
   --tw-border-opacity: 1;
   border-color: rgb(209 213 219 / var(--tw-border-opacity));
 }
+.hover\:border-brand-clr:hover {
+  --tw-border-opacity: 1;
+  border-color: rgb(255 202 0 / var(--tw-border-opacity));
+}
 .hover\:bg-gray-700:hover {
   --tw-bg-opacity: 1;
   background-color: rgb(55 65 81 / var(--tw-bg-opacity));
@@ -1550,6 +1565,9 @@ select {
 .hover\:bg-brand-clr:hover {
   --tw-bg-opacity: 1;
   background-color: rgb(255 202 0 / var(--tw-bg-opacity));
+}
+.hover\:bg-secondary-bg:hover {
+  background-color: rgba(255,255,255,0.05);
 }
 .hover\:fill-primary-clr:hover {
   fill: #ffffff;
@@ -1625,6 +1643,10 @@ select {
   --tw-border-opacity: 1;
   border-color: rgb(99 102 241 / var(--tw-border-opacity));
 }
+.focus\:border-brand-clr:focus {
+  --tw-border-opacity: 1;
+  border-color: rgb(255 202 0 / var(--tw-border-opacity));
+}
 .focus\:bg-gray-100:focus {
   --tw-bg-opacity: 1;
   background-color: rgb(243 244 246 / var(--tw-bg-opacity));
@@ -1636,6 +1658,9 @@ select {
 .focus\:bg-gray-50:focus {
   --tw-bg-opacity: 1;
   background-color: rgb(249 250 251 / var(--tw-bg-opacity));
+}
+.focus\:bg-secondary-bg:focus {
+  background-color: rgba(255,255,255,0.05);
 }
 .focus\:text-gray-700:focus {
   --tw-text-opacity: 1;
@@ -1652,6 +1677,10 @@ select {
 .focus\:text-gray-500:focus {
   --tw-text-opacity: 1;
   color: rgb(107 114 128 / var(--tw-text-opacity));
+}
+.focus\:text-brand-clr:focus {
+  --tw-text-opacity: 1;
+  color: rgb(255 202 0 / var(--tw-text-opacity));
 }
 .focus\:outline-none:focus {
   outline: 2px solid transparent;
@@ -1966,6 +1995,10 @@ select {
 
   .lg\:mt-0 {
     margin-top: 0px;
+  }
+
+  .lg\:hidden {
+    display: none;
   }
 
   .lg\:grid-flow-row-dense {

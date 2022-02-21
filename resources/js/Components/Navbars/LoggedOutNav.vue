@@ -6,13 +6,13 @@
                 <div class="flex">
                     <!-- Logo -->
                     <div class="shrink-0 flex items-center">
-                        <Link :href="route('dashboard')">
+                        <Link :href="route('home')">
                             <BreezeApplicationLogo class="block h-9 w-auto" />
                         </Link>
                     </div>
 
                     <!-- Navigation Links -->
-                    <div class="hidden space-x-5 sm:-my-px sm:ml-10 sm:flex">
+                    <div class="hidden space-x-5 sm:-my-px sm:ml-10 md:flex">
                         <BreezeNavLink
                             :href="route('home')"
                             :active="route().current('home')"
@@ -42,14 +42,15 @@
                     >
                         Login
                     </BreezeNavLink>
-                    <BreezeNavLink>
-                        <button
+                    <BreezeNavLink
+                        :href="route('register')"
+                        :active="route().current('register')"
+                    >
+                        <span
                             class="font-semibold text-primary-bg px-6 py-2 bg-brand-clr hover:bg-brand-clr-hover hover:border-0 rounded"
-                            :href="route('register')"
-                            :active="route().current('register')"
                         >
-                            Register
-                        </button>
+                            Sign up free</span
+                        >
                     </BreezeNavLink>
                 </div>
 
@@ -99,42 +100,67 @@
                 block: showingNavigationDropdown,
                 hidden: !showingNavigationDropdown,
             }"
-            class="sm:hidden"
+            class="md:hidden pl-3 border-t-2 border-secondary-bg"
         >
             <div class="pt-2 pb-3 space-y-1">
                 <BreezeResponsiveNavLink
-                    :href="route('dashboard')"
-                    :active="route().current('dashboard')"
+                    :href="route('home')"
+                    :active="route().current('home')"
                 >
-                    Dashboard
+                    Home
                 </BreezeResponsiveNavLink>
             </div>
             <div class="pt-2 pb-3 space-y-1">
                 <BreezeResponsiveNavLink
-                    :href="route('upload')"
-                    :active="route().current('upload')"
+                    :href="route('sounds')"
+                    :active="route().current('sounds')"
                 >
-                    Upload
+                    Sounds
+                </BreezeResponsiveNavLink>
+            </div>
+            <div class="pt-2 pb-3 space-y-1">
+                <BreezeResponsiveNavLink
+                    :href="route('about')"
+                    :active="route().current('about')"
+                >
+                    About
+                </BreezeResponsiveNavLink>
+            </div>
+            <div class="pt-2 pb-3 space-y-1">
+                <BreezeResponsiveNavLink
+                    :href="route('login')"
+                    :active="route().current('login')"
+                >
+                    Login
+                </BreezeResponsiveNavLink>
+            </div>
+
+            <div class="pt-2 pb-3 space-y-1">
+                <BreezeResponsiveNavLink
+                    :href="route('register')"
+                    :active="route().current('register')"
+                >
+                    Sign up free
                 </BreezeResponsiveNavLink>
             </div>
 
             <!-- Responsive Settings Options -->
-            <div class="pt-4 pb-1 border-t border-gray-200">
-                <div class="px-4">
-                    <div class="font-medium text-base text-gray-800"></div>
-                    <div class="font-medium text-sm text-gray-500"></div>
-                </div>
+            <!--<div class="pt-4 pb-1 border-t border-gray-200">-->
+            <!--<div class="px-4">-->
+            <!--<div class="font-medium text-base text-gray-800"></div>-->
+            <!--<div class="font-medium text-sm text-gray-500"></div>-->
+            <!--</div>-->
 
-                <div class="mt-3 space-y-1">
-                    <BreezeResponsiveNavLink
-                        :href="route('logout')"
-                        method="post"
-                        as="button"
-                    >
-                        Log Out
-                    </BreezeResponsiveNavLink>
-                </div>
-            </div>
+            <!--<div class="mt-3 space-y-1">-->
+            <!--<BreezeResponsiveNavLink-->
+            <!--:href="route('logout')"-->
+            <!--method="post"-->
+            <!--as="button"-->
+            <!--&gt;-->
+            <!--Log Out-->
+            <!--</BreezeResponsiveNavLink>-->
+            <!--</div>-->
+            <!--</div>-->
         </div>
     </nav>
 </template>
