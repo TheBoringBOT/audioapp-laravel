@@ -78,6 +78,12 @@
                                     soundData.sample_rate
                                 }}</span>
                             </div>
+                            <div class="flex justify-between">
+                                <span>File Size:</span>
+                                <span class="text-secondary-clr">{{
+                                    formatSize(soundData.file_size)
+                                }}</span>
+                            </div>
 
                             <div class="flex justify-between">
                                 <span>Likes:</span>
@@ -124,6 +130,7 @@ import ContentContainer from "@/Components/Layouts/ContentContainer";
 import { Head, Link } from "@inertiajs/inertia-vue3";
 import { useToast } from "vue-toastification";
 import SoundItem from "@/Components/Grids/SoundItem";
+import { formatSize } from "@/Helpers";
 
 export default {
     components: {
@@ -158,6 +165,7 @@ export default {
                 this.toast.info("Please login");
             }
         },
+        formatSize,
     },
 };
 </script>
