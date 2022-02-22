@@ -45,6 +45,7 @@ class Sound extends Model {
 		'bit_depth',
 		'bit_rate',
 		'sample_rate',
+		'downloads',
 		'file_url'
 	];
 
