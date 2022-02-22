@@ -33052,7 +33052,7 @@ __webpack_require__.r(__webpack_exports__);
   methods: {
     searchSounds: function searchSounds() {
       var toast = (0,vue_toastification__WEBPACK_IMPORTED_MODULE_1__.useToast)();
-      this.keyword === "" || this.keyword.length < 3 ? toast.info("enter words") : this.$inertia.get("search", {
+      this.keyword === "" || this.keyword.length < 1 ? toast.info("enter Search query") : this.$inertia.get("search", {
         keyword: this.keyword
       });
     }
