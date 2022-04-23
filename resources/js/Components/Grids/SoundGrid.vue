@@ -7,13 +7,12 @@
             :soundItemKey="key"
         />
     </div>
-
-    <h1 class="text-white">{{ played }}</h1>
 </template>
 
 <script>
 import AudioItem from "./SoundItem";
 
+//TODO: fix count plays function
 export default {
     props: ["soundData"],
     data() {
