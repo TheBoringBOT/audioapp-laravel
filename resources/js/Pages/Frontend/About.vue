@@ -3,7 +3,7 @@
         <title>{{ seo.title }}</title>
         <meta name="description" :content="seo.description" />
     </Head>
-    <LoggedOutLayout>
+    <GuestAndUserFrontendLayout>
         <ContentContainer>
             <div
                 class="site-main__wrap mx-auto max-w-screen-2xl flex-grow flex flex-col"
@@ -72,16 +72,18 @@
                 </div>
             </div>
         </ContentContainer>
-    </LoggedOutLayout>
+    </GuestAndUserFrontendLayout>
 </template>
 
 <script>
 import LoggedOutLayout from "@/Components/Layouts/LoggedOutLayout.vue";
 import { Head, Link } from "@inertiajs/inertia-vue3";
 import ContentContainer from "@/Components/Layouts/ContentContainer";
+import GuestAndUserFrontendLayout from "@/Components/Layouts/GuestAndUserFrontendLayout";
 
 export default {
     components: {
+        GuestAndUserFrontendLayout,
         Head,
         Link,
         LoggedOutLayout,
