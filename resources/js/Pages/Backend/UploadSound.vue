@@ -1,14 +1,14 @@
 <template>
-    <BreezeAuthenticatedLayout>
+    <GuestAndUserBackendLayout>
         <template #header>
             <h2 class="font-semibold text-xl leading-tight">Upload Sound</h2>
         </template>
         <template #content>
             <div class="text-primary bg-primary-bg">
                 <div class="md:grid md:grid-cols-3 md:gap-6">
-                    <div class="md:col-span-1 border-r pr-2 border-[#222]">
+                    <div class="md:col-span-1 md:border-r pr-2 border-[#222]">
                         <div class="sm:px-0">
-                            <p class="mt-1 text-sm text-primary-clr">
+                            <p class="pt-5 text-lg text-primary-clr">
                                 Upload your sound with the required data and the
                                 rest will be taken from the audio Metadata.
                             </p>
@@ -23,10 +23,10 @@
                             <div
                                 class="shadow sm:rounded-md sm:overflow-hidden"
                             >
-                                <div class="px-4 py-5 space-y-6 sm:p-6">
+                                <div class="py-5 space-y-6">
                                     <!--Name -->
-                                    <div class="grid grid-cols-3 gap-6">
-                                        <div class="col-span-3 sm:col-span-2">
+                                    <div>
+                                        <div>
                                             <label
                                                 for="name"
                                                 class="block text-sm font-medium text-primary-clr"
@@ -34,7 +34,7 @@
                                                 Name
                                             </label>
                                             <div
-                                                class="mt-1 flex rounded-md shadow-sm"
+                                                class="mt-1 flex flex-col rounded-md shadow-sm"
                                             >
                                                 <input
                                                     v-model="form.name"
@@ -44,14 +44,17 @@
                                                     autocomplete="off"
                                                     class="focus:ring-brand-clr text-xl font-semibold focus:border-brand-clr flex-1 block w-full rounded-none rounded-r-md sm:text-sm border-secondary-bg bg-secondary-bg"
                                                 />
-                                                <div v-if="errors.name">
+                                                <div
+                                                    class="py-5 text-red-500"
+                                                    v-if="errors.name"
+                                                >
                                                     {{ errors.name }}
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="grid grid-cols-3 gap-6">
-                                        <div class="col-span-3 sm:col-span-2">
+                                    <div>
+                                        <div>
                                             <label
                                                 for="description"
                                                 class="block text-sm font-medium text-primary-clr"
@@ -59,7 +62,7 @@
                                                 Description
                                             </label>
                                             <div
-                                                class="mt-1 flex rounded-md shadow-sm"
+                                                class="mt-1 flex flex-col rounded-md shadow-sm"
                                             >
                                                 <textarea
                                                     id="description"
@@ -70,7 +73,10 @@
                                                     class="shadow-sm focus:ring-brand-clr focus:border-brand-clr font-semibold text-xl mt-1 block w-full sm:text-sm border border-gray-300 rounded-md border-secondary-bg bg-secondary-bg"
                                                 />
 
-                                                <div v-if="errors.description">
+                                                <div
+                                                    class="py-5 text-red-500"
+                                                    v-if="errors.description"
+                                                >
                                                     {{ errors.description }}
                                                 </div>
                                             </div>
@@ -80,7 +86,7 @@
                                     <div>
                                         <label
                                             for="multiselect"
-                                            class="block text-sm font-medium text-primary-clr"
+                                            class="mb-1 block text-sm font-medium text-primary-clr"
                                         >
                                             Tags
                                         </label>
@@ -125,7 +131,7 @@
                                                     />
                                                 </svg>
                                                 <div
-                                                    class="flex text-sm text-secondary-clr"
+                                                    class="flex flex-col text-sm text-secondary-clr"
                                                 >
                                                     <label
                                                         for="file-upload"
@@ -146,6 +152,7 @@
                                                         />
                                                     </label>
                                                     <div
+                                                        class="py-5 text-red-500"
                                                         v-if="errors.sound_file"
                                                     >
                                                         {{ errors.sound_file }}
@@ -162,10 +169,10 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="px-4 py-3 text-right sm:px-6">
+                                <div class="py-3 text-right">
                                     <button
                                         type="submit"
-                                        class="inline-flex w-full justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-primary-bg bg-brand-clr hover:bg-brand-clr-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-clr"
+                                        class="inline-flex w-full justify-center py-5 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-primary-bg bg-brand-clr hover:bg-brand-clr-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-clr"
                                     >
                                         Upload
                                     </button>
@@ -182,23 +189,23 @@
                 </div>
             </div>
         </template>
-    </BreezeAuthenticatedLayout>
+    </GuestAndUserBackendLayout>
 </template>
 
 <script>
-import BreezeAuthenticatedLayout from "../../Components/Layouts/Authenticated";
 import { useForm, Head } from "@inertiajs/inertia-vue3";
 import Multiselect from "@vueform/multiselect";
+import GuestAndUserBackendLayout from "@/Components/Layouts/GuestAndUserBackendLayout";
 
 export default {
     components: {
-        BreezeAuthenticatedLayout,
+        GuestAndUserBackendLayout,
+
         Head,
         Multiselect,
     },
     props: ["errors", "allTags"],
 
-    t: "dd",
     data(props) {
         return {
             tagsSelector: {
