@@ -1,4 +1,4 @@
- <template>
+<template>
     <Head title="Dashboard" />
 
     <BreezeAuthenticatedLayout>
@@ -16,7 +16,6 @@
 </template>
 
 <script>
-import BreezeAuthenticatedLayout from "@/Components/Layouts/Authenticated.vue";
 import { Head } from "@inertiajs/inertia-vue3";
 import AudioTable from "@/Components/Tables/DashboardTable";
 

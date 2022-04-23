@@ -4,7 +4,7 @@
         <meta name="description" :content="seo.description" />
     </Head>
 
-    <LoggedOutLayout class="text-primary-clr">
+    <GuestAndUserFrontendLayout class="text-primary-clr">
         <ContentContainer>
             <nav class="rounded-md w-full">
                 <ol class="list-reset flex">
@@ -121,11 +121,11 @@
                 </div>
             </div>
         </ContentContainer>
-    </LoggedOutLayout>
+    </GuestAndUserFrontendLayout>
 </template>
 
 <script>
-import LoggedOutLayout from "@/Components/Layouts/LoggedOutLayout.vue";
+import GuestAndUserFrontendLayout from "@/Components/Layouts/GuestAndUserFrontendLayout.vue";
 import ContentContainer from "@/Components/Layouts/ContentContainer";
 import { Head, Link } from "@inertiajs/inertia-vue3";
 import { useToast } from "vue-toastification";
@@ -136,7 +136,7 @@ export default {
     components: {
         Head,
         Link,
-        LoggedOutLayout,
+        GuestAndUserFrontendLayout,
         ContentContainer,
         SoundItem,
     },

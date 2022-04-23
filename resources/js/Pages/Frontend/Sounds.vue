@@ -3,7 +3,7 @@
         <title>{{ seo.title }}</title>
         <meta name="description" :content="seo.description" />
     </Head>
-    <LoggedOutLayout>
+    <GuestAndUserFrontendLayout>
         <ContentContainer>
             <SearchBar :popularTags="popularTags" v-bind:keyword="keyword" />
             <div v-if="soundData.length">
@@ -20,11 +20,11 @@
                 </h1>
             </div>
         </ContentContainer>
-    </LoggedOutLayout>
+    </GuestAndUserFrontendLayout>
 </template>
 
 <script>
-import LoggedOutLayout from "@/Components/Layouts/LoggedOutLayout.vue";
+import GuestAndUserFrontendLayout from "@/Components/Layouts/GuestAndUserFrontendLayout.vue";
 import ContentContainer from "@/Components/Layouts/ContentContainer";
 import { Head, Link } from "@inertiajs/inertia-vue3";
 
@@ -35,7 +35,7 @@ export default {
     components: {
         Head,
         Link,
-        LoggedOutLayout,
+        GuestAndUserFrontendLayout,
         SoundGrid,
         SearchBar,
         ContentContainer,

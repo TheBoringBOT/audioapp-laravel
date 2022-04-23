@@ -1,12 +1,7 @@
 <template>
     <Head title="Home" />
     <LoggedOutLayout>
-        <ContentContainer>
-            <div class="flex justify-center text-primary-clr">
-                <h2 class="text-primary-clr">About</h2>
-                <p class="text-secondary-clr">abouyt cool</p>
-            </div>
-        </ContentContainer>
+        <ContentContainer> </ContentContainer>
     </LoggedOutLayout>
 </template>
 
