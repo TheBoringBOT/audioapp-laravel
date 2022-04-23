@@ -1,15 +1,13 @@
 <template>
-    <Head title="Dashboard"/>
+    <Head title="Dashboard" />
 
     <BreezeAuthenticatedLayout>
         <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                Dashboard
-            </h2>
+            <h2 class="font-semibold text-xl leading-tight">Dashboard</h2>
         </template>
         <template #content>
             <div class="py-12">
-                <SoundGrid :soundData="soundData"/>
+                <SoundGrid :soundData="soundData" />
             </div>
         </template>
     </BreezeAuthenticatedLayout>
@@ -17,7 +15,7 @@
 
 <script>
 import BreezeAuthenticatedLayout from "@/Components/Layouts/Authenticated.vue";
-import {Head} from "@inertiajs/inertia-vue3";
+import { Head } from "@inertiajs/inertia-vue3";
 import SoundsTable from "@/Components/Tables/DashboardTable";
 import SoundGrid from "@/Components/Grids/SoundGrid";
 

@@ -1,9 +1,7 @@
 <template>
     <BreezeAuthenticatedLayout>
         <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                Upload Sound
-            </h2>
+            <h2 class="font-semibold text-xl leading-tight">Upload Sound</h2>
         </template>
         <template #content>
             <div class="text-primary bg-primary-bg">
@@ -18,33 +16,33 @@
                     </div>
                     <div class="mt-5 md:mt-0 md:col-span-2">
                         <form
-                                @submit.prevent="submit"
-                                method="POST"
-                                enctype="multipart/form-data"
+                            @submit.prevent="submit"
+                            method="POST"
+                            enctype="multipart/form-data"
                         >
                             <div
-                                    class="shadow sm:rounded-md sm:overflow-hidden"
+                                class="shadow sm:rounded-md sm:overflow-hidden"
                             >
                                 <div class="px-4 py-5 space-y-6 sm:p-6">
                                     <!--Name -->
                                     <div class="grid grid-cols-3 gap-6">
                                         <div class="col-span-3 sm:col-span-2">
                                             <label
-                                                    for="name"
-                                                    class="block text-sm font-medium text-primary-clr"
+                                                for="name"
+                                                class="block text-sm font-medium text-primary-clr"
                                             >
                                                 Name
                                             </label>
                                             <div
-                                                    class="mt-1 flex rounded-md shadow-sm"
+                                                class="mt-1 flex rounded-md shadow-sm"
                                             >
                                                 <input
-                                                        v-model="form.name"
-                                                        type="text"
-                                                        id="name"
-                                                        name="name"
-                                                        autocomplete="off"
-                                                        class="focus:ring-brand-clr text-xl font-semibold focus:border-brand-clr flex-1 block w-full rounded-none rounded-r-md sm:text-sm border-secondary-bg bg-secondary-bg"
+                                                    v-model="form.name"
+                                                    type="text"
+                                                    id="name"
+                                                    name="name"
+                                                    autocomplete="off"
+                                                    class="focus:ring-brand-clr text-xl font-semibold focus:border-brand-clr flex-1 block w-full rounded-none rounded-r-md sm:text-sm border-secondary-bg bg-secondary-bg"
                                                 />
                                                 <div v-if="errors.name">
                                                     {{ errors.name }}
@@ -55,21 +53,21 @@
                                     <div class="grid grid-cols-3 gap-6">
                                         <div class="col-span-3 sm:col-span-2">
                                             <label
-                                                    for="description"
-                                                    class="block text-sm font-medium text-primary-clr"
+                                                for="description"
+                                                class="block text-sm font-medium text-primary-clr"
                                             >
                                                 Description
                                             </label>
                                             <div
-                                                    class="mt-1 flex rounded-md shadow-sm"
+                                                class="mt-1 flex rounded-md shadow-sm"
                                             >
                                                 <textarea
-                                                        id="description"
-                                                        v-model="form.description"
-                                                        name="description"
-                                                        rows="2"
-                                                        maxlength="200"
-                                                        class="shadow-sm focus:ring-brand-clr focus:border-brand-clr font-semibold text-xl mt-1 block w-full sm:text-sm border border-gray-300 rounded-md border-secondary-bg bg-secondary-bg"
+                                                    id="description"
+                                                    v-model="form.description"
+                                                    name="description"
+                                                    rows="2"
+                                                    maxlength="200"
+                                                    class="shadow-sm focus:ring-brand-clr focus:border-brand-clr font-semibold text-xl mt-1 block w-full sm:text-sm border border-gray-300 rounded-md border-secondary-bg bg-secondary-bg"
                                                 />
 
                                                 <div v-if="errors.description">
@@ -81,74 +79,74 @@
 
                                     <div>
                                         <label
-                                                for="multiselect"
-                                                class="block text-sm font-medium text-primary-clr"
+                                            for="multiselect"
+                                            class="block text-sm font-medium text-primary-clr"
                                         >
                                             Tags
                                         </label>
                                         <!--v-model="tagsSelector.value"-->
                                         <Multiselect
-                                                id="multiselect"
-                                                class="multiselect-style"
-                                                placeholder="Choose or create tag"
-                                                :classes="{
+                                            id="multiselect"
+                                            class="multiselect-style"
+                                            placeholder="Choose or create tag"
+                                            :classes="{
                                                 tagsSearch:
                                                     'w-full absolute inset-0 outline-none focus:ring-0 appearance-none box-border border-0 text-base font-sans bg-secondary-bg rounded',
                                                 tagsSearchWrapper:
                                                     'p-0,m-0,focus:border-brand-clr,focus:ring-0',
                                             }"
-                                                v-model="form.tags"
-                                                v-bind="tagsSelector"
+                                            v-model="form.tags"
+                                            v-bind="tagsSelector"
                                         ></Multiselect>
                                     </div>
 
                                     <div>
                                         <label
-                                                class="block text-sm font-medium text-primary-clr"
+                                            class="block text-sm font-medium text-primary-clr"
                                         >
                                             Add Wav or MP3 file
                                         </label>
                                         <div
-                                                class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md"
+                                            class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md"
                                         >
                                             <div class="space-y-1 text-center">
                                                 <svg
-                                                        class="mx-auto h-12 w-12 text-gray-400"
-                                                        stroke="currentColor"
-                                                        fill="none"
-                                                        viewBox="0 0 48 48"
-                                                        aria-hidden="true"
+                                                    class="mx-auto h-12 w-12 text-gray-400"
+                                                    stroke="currentColor"
+                                                    fill="none"
+                                                    viewBox="0 0 48 48"
+                                                    aria-hidden="true"
                                                 >
                                                     <path
-                                                            d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02"
-                                                            stroke-width="2"
-                                                            stroke-linecap="round"
-                                                            stroke-linejoin="round"
+                                                        d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02"
+                                                        stroke-width="2"
+                                                        stroke-linecap="round"
+                                                        stroke-linejoin="round"
                                                     />
                                                 </svg>
                                                 <div
-                                                        class="flex text-sm text-secondary-clr"
+                                                    class="flex text-sm text-secondary-clr"
                                                 >
                                                     <label
-                                                            for="file-upload"
-                                                            class="text-2xl relative cursor-pointer bg-secondary-bg text-primary rounded-md font-medium text-primary-clr hover:text-secondary-clr focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 p-2 focus-within:ring-secondary-clr"
+                                                        for="file-upload"
+                                                        class="text-2xl relative cursor-pointer bg-secondary-bg text-primary rounded-md font-medium text-primary-clr hover:text-secondary-clr focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 p-2 focus-within:ring-secondary-clr"
                                                     >
                                                         <span
-                                                        >Upload a file</span
+                                                            >Upload a file</span
                                                         >
                                                         <input
-                                                                @input="
+                                                            @input="
                                                                 form.sound_file =
                                                                     $event.target.files[0]
                                                             "
-                                                                id="file-upload"
-                                                                name="file-upload"
-                                                                type="file"
-                                                                class="sr-only"
+                                                            id="file-upload"
+                                                            name="file-upload"
+                                                            type="file"
+                                                            class="sr-only"
                                                         />
                                                     </label>
                                                     <div
-                                                            v-if="errors.sound_file"
+                                                        v-if="errors.sound_file"
                                                     >
                                                         {{ errors.sound_file }}
                                                     </div>
@@ -156,7 +154,7 @@
                                                     <p class="pl-1"></p>
                                                 </div>
                                                 <p
-                                                        class="text-xs text-secondary-clr"
+                                                    class="text-xs text-secondary-clr"
                                                 >
                                                     MP3, Wav up to 10MB
                                                 </p>
@@ -166,8 +164,8 @@
                                 </div>
                                 <div class="px-4 py-3 text-right sm:px-6">
                                     <button
-                                            type="submit"
-                                            class="inline-flex w-full justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-primary-bg bg-brand-clr hover:bg-brand-clr-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-clr"
+                                        type="submit"
+                                        class="inline-flex w-full justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-primary-bg bg-brand-clr hover:bg-brand-clr-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-clr"
                                     >
                                         Upload
                                     </button>
@@ -180,7 +178,7 @@
 
             <div class="hidden sm:block" aria-hidden="true">
                 <div class="py-5">
-                    <div class="border-t border-[#222]"/>
+                    <div class="border-t border-[#222]" />
                 </div>
             </div>
         </template>
@@ -189,7 +187,7 @@
 
 <script>
 import BreezeAuthenticatedLayout from "../../Components/Layouts/Authenticated";
-import {useForm, Head} from "@inertiajs/inertia-vue3";
+import { useForm, Head } from "@inertiajs/inertia-vue3";
 import Multiselect from "@vueform/multiselect";
 
 export default {
@@ -226,7 +224,7 @@ export default {
             form.post("/dashboard/upload");
         }
 
-        return {form, submit};
+        return { form, submit };
     },
 };
 </script>
