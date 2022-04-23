@@ -91,12 +91,12 @@
                                     likes
                                 }}</span>
                             </div>
-                            <div class="flex justify-between">
-                                <span>Plays:</span>
-                                <span class="text-secondary-clr">{{
-                                    soundData.plays
-                                }}</span>
-                            </div>
+                            <!--<div class="flex justify-between">-->
+                            <!--<span>Plays:</span>-->
+                            <!--<span class="text-secondary-clr">{{-->
+                            <!--soundData.plays-->
+                            <!--}}</span>-->
+                            <!--</div>-->
                             <div class="flex justify-between">
                                 <span>Downloads:</span>
                                 <span class="text-secondary-clr">{{
