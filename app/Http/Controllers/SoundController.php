@@ -176,7 +176,7 @@ class SoundController extends Controller {
 		$request->validate( [
 			'name'        => 'required |string|min:1|max:100',
 			'description' => 'required |string|min:1|max:200',
-			'sound_file'  => 'required |file|mimes:audio/mp3,wav',
+			'sound_file'  => 'required |file|mimes:audio/mpeg,wav',
 
 		] );
 
@@ -222,7 +222,7 @@ class SoundController extends Controller {
 
 		}
 
-		// Create Screenplay in DB
+		// Create Sound in DB
 		$soundData = Sound::create( [
 			'user_id'          => $userId,
 			'name'             => $request->get( 'name' ),
