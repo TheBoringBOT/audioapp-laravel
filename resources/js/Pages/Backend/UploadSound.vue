@@ -189,6 +189,7 @@
 import { useForm, Head } from "@inertiajs/inertia-vue3";
 import Multiselect from "@vueform/multiselect";
 import GuestAndUserBackendLayout from "@/Components/Layouts/GuestAndUserBackendLayout";
+import { useToast } from "vue-toastification";
 
 export default {
     components: {
@@ -205,7 +206,7 @@ export default {
                 mode: "tags",
                 value: [""],
                 closeOnSelect: false,
-                options: props.allTags,
+                options: props.allTags ? props.allTags : null,
                 searchable: true,
                 createOption: true,
             },
@@ -213,6 +214,9 @@ export default {
     },
 
     setup() {
+        // create toast notifications function
+        const toast = useToast();
+
         const form = useForm({
             name: null,
             description: null,
@@ -222,10 +226,16 @@ export default {
 
         function submit() {
             console.table(form);
-            form.post("/dashboard/upload");
+
+            form.post("/dashboard/upload", {
+                preserveScroll: true,
+                onSuccess: () => (
+                    form.reset(), this.toast.info("Upload was successful")
+                ),
+            });
         }
 
-        return { form, submit };
+        return { form, submit, toast };
     },
 };
 </script>
