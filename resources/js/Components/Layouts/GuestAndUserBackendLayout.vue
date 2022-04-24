@@ -15,6 +15,9 @@
 
             <!-- Page Content -->
             <main>
+                <div v-if="$page.props.flash.message" class="alert">
+                    {{ $page.props.flash.message }}
+                </div>
                 <div
                     class="mx-auto flex-grow px-4 sm:px-6 lg:px-8 w-full max-w-7xl"
                 >
@@ -31,6 +34,9 @@
 import Footer from "@/Components/Footers/Footer";
 import LoggedOutNav from "@/Components/Navbars/LoggedOutNav";
 import LoggedInNav from "@/Components/Navbars/LoggedInNav";
+import { computed } from "vue";
+import { usePage } from "@inertiajs/inertia-vue3";
+import { useToast } from "vue-toastification";
 
 export default {
     components: {
@@ -39,10 +45,20 @@ export default {
         LoggedInNav,
     },
 
+    created() {
+        this.message && this.toast.info(this.message);
+    },
+
     data() {
         return {
             showingNavigationDropdown: false,
         };
+    },
+    setup() {
+        const message = computed(() => usePage().props.value.flash.message);
+        // create toast notifications function
+        const toast = useToast();
+        return { toast, message };
     },
 };
 </script>
