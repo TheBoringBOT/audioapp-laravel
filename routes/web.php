@@ -34,7 +34,7 @@ Route::get( '/dashboard', [
 
 
 //Upload Sound page
-Route::get( '/dashboard/upload', [ \App\Http\Controllers\SoundController::class, 'create' ] )->middleware( [
+Route::get( '/upload', [ \App\Http\Controllers\SoundController::class, 'create' ] )->middleware( [
 	'auth',
 	'verified'
 ] )->name( 'upload' );
