@@ -1,13 +1,13 @@
 <template>
     <div>
-        <!-- Navbar -->
-        <LoggedInNav v-if="$page.props.auth.user" />
-        <LoggedOutNav v-else />
-        <div class="min-h-screen flex-col flex bg-primary-bg">
+        <div class="min-h-screen flex-col flex bg-primary-bg pt-[64px]">
+            <!-- Navbar -->
+            <LoggedInNav v-if="$page.props.auth.user" />
+            <LoggedOutNav v-else />
             <!-- Page Heading -->
             <header class="bg-secondary-bg-hover shadow" v-if="$slots.header">
                 <div
-                    class="max-w-7xl mx-auto py-6 px-4 sm:px-6 text-primary-clr"
+                    class="max-w-7xl mx-auto py-6 px-4 lg:px-8 text-primary-clr"
                 >
                     <slot name="header" />
                 </div>
@@ -21,6 +21,8 @@
                     <slot name="content" />
                 </div>
             </main>
+            <!-- Footer -->
+            <Footer />
         </div>
     </div>
 </template>

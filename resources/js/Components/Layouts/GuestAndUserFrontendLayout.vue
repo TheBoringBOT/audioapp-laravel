@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div class="min-h-screen flex-col flex bg-primary-bg">
+        <div class="min-h-screen flex-col flex bg-primary-bg pt-[64px]">
             <!-- Navbar -->
             <LoggedInNav v-if="$page.props.auth.user" />
             <LoggedOutNav v-else />

@@ -1,5 +1,7 @@
 <template>
-    <nav class="bg-secondary-bg text-primary-clr border-b border-secondary-bg">
+    <nav
+        class="fixed top-0 left-0 right-0 w-full z-10 bg-nav-bg text-primary-clr border-b border-secondary-bg"
+    >
         <!-- Primary Navigation Menu -->
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16">
