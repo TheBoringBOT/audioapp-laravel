@@ -13,6 +13,7 @@ use Inertia\Inertia;
 use Illuminate\Support\Facades\Storage;
 use \Cviebrock\EloquentSluggable\Services\SlugService;
 use getID3;
+use Illuminate\Support\Facades\Redirect;
 
 
 class SoundController extends Controller {
@@ -156,6 +157,9 @@ class SoundController extends Controller {
 		// Get all tags used in list to choose when uploading
 		$allTags = Sound::allTags();
 
+	                           //  dd($allTags);
+
+
 		return Inertia::render( 'Backend/UploadSound', [ 'allTags' => $allTags ] );
 	}
 
@@ -168,7 +172,7 @@ class SoundController extends Controller {
 	 */
 	public function store( Request $request ) {
 
-
+//		                                   dd($request->tags);
 		// Get user id
 		$userId = auth()->user()->id;
 
@@ -243,6 +247,7 @@ class SoundController extends Controller {
 		// Add tags for uploaded sound
 		$soundData->tag( $request->tags );
 
+		return Redirect::route('upload');
 
 
 	}
