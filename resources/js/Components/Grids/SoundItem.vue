@@ -1,4 +1,5 @@
 <template>
+    <div>
     <div
         :class="isAudioPlaying === true ? 'bg-secondary-bg' : ''"
         class="border border-secondary-bg rounded relative flex-col hover:bg-secondary-bg-hover transition duration-150 ease-in-out"
@@ -105,6 +106,7 @@
             </div>
         </div>
     </div>
+
 </template>
 
 <script>
