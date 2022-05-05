@@ -10,6 +10,19 @@ module.exports = {
 
     theme: {
         extend: {
+            keyframes: {
+                wiggle: {
+                    "0%": {
+                        transform: "translateY(20px)",
+                    },
+                    "100%": {
+                        transform: "translateY(0px)",
+                    },
+                },
+            },
+            animation: {
+                wiggle: "wiggle  ease-in-out ",
+            },
             fontFamily: {
                 sans: ["Nunito", ...defaultTheme.fontFamily.sans],
             },
