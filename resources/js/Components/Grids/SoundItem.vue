@@ -1,112 +1,118 @@
 <template>
     <div>
-    <div
-        :class="isAudioPlaying === true ? 'bg-secondary-bg' : ''"
-        class="border border-secondary-bg rounded relative flex-col hover:bg-secondary-bg-hover transition duration-150 ease-in-out"
-    >
-        <div class="z-10 absolute top-0 right-0 p-3 flex">
-            <span
-                class="bg-secondary-bg backdrop-blur-sm text-primary-clr font-semibold text-xs mr-2 p-1 px-3 rounded-full"
-                ref="duration"
-                >{{ playedTime }}&nbsp;/&nbsp;{{
-                    soundItem.duration_string
-                }}</span
-            >
-            <!-- Info -->
-            <Link
-                :href="/sound/ + soundItem.id"
-                v-tooltip="'Show Info'"
-                class="bg-secondary-bg backdrop-blur-sm text-primary-clr w-6 h-6 font-semibold text-xs flex justify-center items-center rounded-full hover:bg-secondary-bg-hover"
-            >
-                <font-awesome-icon icon="info" />
-            </Link>
-        </div>
-        <!-- Waveform -->
+        <div
+            :class="isAudioPlaying === true ? 'bg-secondary-bg' : ''"
+            class="border border-secondary-bg rounded relative flex-col hover:bg-secondary-bg-hover transition duration-150 ease-in-out"
+        >
+            <div class="z-10 absolute top-0 right-0 p-3 flex">
+                <span
+                    class="bg-secondary-bg backdrop-blur-sm text-primary-clr font-semibold text-xs mr-2 p-1 px-3 rounded-full"
+                    ref="duration"
+                    >{{ playedTime }}&nbsp;/&nbsp;{{
+                        soundItem.duration_string
+                    }}</span
+                >
+                <!-- Info -->
+                <Link
+                    :href="/sound/ + soundItem.id"
+                    v-tooltip="'Show Info'"
+                    class="bg-secondary-bg backdrop-blur-sm text-primary-clr w-6 h-6 font-semibold text-xs flex justify-center items-center rounded-full hover:bg-secondary-bg-hover"
+                >
+                    <font-awesome-icon icon="info" />
+                </Link>
+            </div>
+            <!-- Waveform -->
 
-        <div class="relative h-24 hover:cursor-pointer">
-            <wavesurfer
-                :data-playing="isAudioPlaying === true ? '1' : '0'"
-                :ref="'waveform' + soundItemKey"
-                :src="soundItem.file_url"
-                :options="options"
-            />
-        </div>
+            <div class="relative h-24 hover:cursor-pointer">
+                <wavesurfer
+                    :data-playing="isAudioPlaying === true ? '1' : '0'"
+                    :ref="'waveform' + soundItemKey"
+                    :src="soundItem.file_url"
+                    :options="options"
+                />
+            </div>
 
-        <!-- bottom section -->
-        <div class="p-3 bg-secondary-bg backdrop-blur-sm">
-            <div
-                class="flex flex-wrap overflow-hidden text-brand-clr text-lg justify-between"
-            >
-                <div class="flex w-7/12 justify-start">
-                    <!-- play/pause buttons -->
+            <!-- bottom section -->
+            <div class="p-3 bg-secondary-bg backdrop-blur-sm">
+                <div
+                    class="flex flex-wrap overflow-hidden text-brand-clr text-lg justify-between"
+                >
+                    <div class="flex w-7/12 justify-start">
+                        <!-- play/pause buttons -->
 
-                    <!-- Play -->
-                    <button
-                        @click="[playPause(), count++]"
-                        class="text-5xl flex justify-center items-center rounded-full hover:text-brand-clr-hover"
-                    >
-                        <font-awesome-icon
-                            :icon="
-                                isAudioPlaying === true
-                                    ? 'circle-pause'
-                                    : 'circle-play'
-                            "
-                        />
-                    </button>
-
-                    <div
-                        class="text-primary-clr mx-4 flex flex-col items-start justify-center overflow-hidden"
-                    >
-                        <Link :href="/sound/ + soundItem.id">
-                            <span class="truncate">{{ soundItem.name }} </span>
-                        </Link>
-                        <span class="text-secondary-clr text-xs"
-                            >By {{ soundItem.creator }}</span
+                        <!-- Play -->
+                        <button
+                            @click="[playPause(), count++]"
+                            class="text-5xl flex justify-center items-center rounded-full hover:text-brand-clr-hover"
                         >
+                            <font-awesome-icon
+                                :icon="
+                                    isAudioPlaying === true
+                                        ? 'circle-pause'
+                                        : 'circle-play'
+                                "
+                            />
+                        </button>
+
+                        <div
+                            class="text-primary-clr mx-4 flex flex-col items-start justify-center overflow-hidden"
+                        >
+                            <Link :href="/sound/ + soundItem.id">
+                                <span class="truncate"
+                                    >{{ soundItem.name }}
+                                </span>
+                            </Link>
+                            <span class="text-secondary-clr text-xs"
+                                >By {{ soundItem.creator }}</span
+                            >
+                        </div>
                     </div>
-                </div>
 
-                <!-- right action button -->
-                <div class="flex items-center w-5/12 justify-end pr-3">
-                    <div
-                        class="text-secondary-clr rounded-full w-50 whitespace-nowrap"
-                    >
-                        <!-- Like -->
-                        <button
-                            :class="
-                                userHasLiked === true
-                                    ? 'text-brand-clr hover:text-brand-clr-hover'
-                                    : 'hover:text-primary-clr'
-                            "
-                            @click="toggleLike(soundItem.id)"
-                            v-tooltip="'Like'"
-                            class="transition duration-150"
+                    <!-- right action button -->
+                    <div class="flex items-center w-5/12 justify-end pr-3">
+                        <div
+                            class="text-secondary-clr rounded-full w-50 whitespace-nowrap"
                         >
-                            <font-awesome-icon icon="thumbs-up" />
-                        </button>
-                        <!-- Share -->
-                        <button
-                            @click="doCopy(soundUrl + soundItem.id)"
-                            class="ml-4 hover:text-primary-clr"
-                            v-tooltip="'Copy Link'"
-                            :showTriggers="(triggers) => [...triggers, 'click']"
-                        >
-                            <font-awesome-icon icon="link" />
-                        </button>
-                        <!-- Download -->
-                        <a
-                            @click="download(soundItem.id, $page.props.auth)"
-                            v-tooltip="'Download'"
-                            class="ml-4 hover:text-primary-clr"
-                        >
-                            <font-awesome-icon icon="arrow-down" />
-                        </a>
+                            <!-- Like -->
+                            <button
+                                :class="
+                                    userHasLiked === true
+                                        ? 'text-brand-clr hover:text-brand-clr-hover'
+                                        : 'hover:text-primary-clr'
+                                "
+                                @click="toggleLike(soundItem.id)"
+                                v-tooltip="'Like'"
+                                class="transition duration-150"
+                            >
+                                <font-awesome-icon icon="thumbs-up" />
+                            </button>
+                            <!-- Share -->
+                            <button
+                                @click="doCopy(soundUrl + soundItem.id)"
+                                class="ml-4 hover:text-primary-clr"
+                                v-tooltip="'Copy Link'"
+                                :showTriggers="
+                                    (triggers) => [...triggers, 'click']
+                                "
+                            >
+                                <font-awesome-icon icon="link" />
+                            </button>
+                            <!-- Download -->
+                            <a
+                                @click="
+                                    download(soundItem.id, $page.props.auth)
+                                "
+                                v-tooltip="'Download'"
+                                class="ml-4 hover:text-primary-clr"
+                            >
+                                <font-awesome-icon icon="arrow-down" />
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
 </template>
 
 <script>
