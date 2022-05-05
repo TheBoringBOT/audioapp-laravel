@@ -114,7 +114,8 @@ class SoundController extends Controller {
 			'canLogin'    => Route::has( 'login' ),
 			'canRegister' => Route::has( 'register' ), //			'laravelVersion' => Application::VERSION,
 			'phpVersion'  => PHP_VERSION,
-			'soundData'   => $this->getAllSounds(),
+			'soundData'   => Sound::all()->take(9)
+			,
 			'popularTags' => array_keys( $popularTags )
 		] );
 	}
@@ -157,7 +158,7 @@ class SoundController extends Controller {
 		// Get all tags used in list to choose when uploading
 		$allTags = Sound::allTags();
 
-	                           //  dd($allTags);
+		//  dd($allTags);
 
 
 		return Inertia::render( 'Backend/UploadSound', [ 'allTags' => $allTags ] );
@@ -172,7 +173,7 @@ class SoundController extends Controller {
 	 */
 	public function store( Request $request ) {
 
-//		                                   dd($request->tags);
+		//		                                   dd($request->tags);
 		// Get user id
 		$userId = auth()->user()->id;
 
@@ -247,7 +248,7 @@ class SoundController extends Controller {
 		// Add tags for uploaded sound
 		$soundData->tag( $request->tags );
 
-		return Redirect::route('upload');
+		return Redirect::route( 'upload' );
 
 
 	}
