@@ -7,6 +7,9 @@
         <ContentContainer>
             <SearchBar :popularTags="popularTags" v-bind:keyword="keyword" />
             <div v-if="soundData.length">
+                <h1 class="text-md md:text-lg font-semibold text-secondary-clr">
+                    Recently added sounds
+                </h1>
                 <SoundGrid :soundData="soundData" />
             </div>
             <div class="mt-10 flex flex-col items-center justify-center" v-else>
