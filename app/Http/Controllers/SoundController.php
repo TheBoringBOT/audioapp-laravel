@@ -556,5 +556,34 @@ class SoundController extends Controller {
 
 	}
 
+	// get author page
+	public function author( $authorId ) {
+
+		$author      = User::find( $authorId );
+		$popularTags = Sound::popularTags( 5 );
+		$sounds      = Sound::all()->where( 'user_id', $author->id );
+		$authorName  = $author->name;
+
+
+		$sounds->each( function ( $item ) {
+			$item->push( [ 'creator' => 'fuck' ] );
+		} );
+
+		$sounds->map( function ( $i ) use ( $authorName ) {
+			// Added sound uploader username to each sound
+			$i['creator'] = $authorName;
+		} );
+
+
+		return Inertia::render( 'Frontend/Author', [
+			'canLogin'    => Route::has( 'login' ),
+			'canRegister' => Route::has( 'register' ), //			'laravelVersion' => Application::VERSION,
+			'phpVersion'  => PHP_VERSION,
+			'soundData'   => $sounds,
+			'author'      => $author,
+			'popularTags' => array_keys( $popularTags )
+		] );
+	}
+
 
 }

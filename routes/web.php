@@ -22,6 +22,8 @@ Route::get( '/sounds', [ \App\Http\Controllers\SoundController::class, 'index' ]
 
 // Sound item page
 Route::get( '/sound/{id}', [ \App\Http\Controllers\SoundController::class, 'show' ] )->name( 'sound.item' );
+// Author page
+Route::get( '/author/{id}', [ \App\Http\Controllers\SoundController::class, 'author' ] )->name( 'author' );
 // About page
 Route::inertia( '/about', 'Frontend/About' )->name( 'about' );
 // Contact page
