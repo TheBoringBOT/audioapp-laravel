@@ -8,9 +8,11 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Overtrue\LaravelLike\Traits\Liker;
+use Cviebrock\EloquentSluggable\Sluggable;
+
 
 class User extends Authenticatable {
-	use HasApiTokens, HasFactory, Notifiable, Liker;
+	use HasApiTokens, HasFactory, Notifiable, Liker, sluggable;
 
 	/**
 	 * The attributes that are mass assignable.
@@ -19,6 +21,8 @@ class User extends Authenticatable {
 	 */
 	protected $fillable = [
 		'name',
+		'description',
+		'avatar',
 		'email',
 		'password',
 	];
@@ -41,4 +45,19 @@ class User extends Authenticatable {
 	protected $casts = [
 		'email_verified_at' => 'datetime',
 	];
+
+	use Sluggable;
+
+	/**
+	 * Return the sluggable configuration array for this model.
+	 *
+	 * @return array
+	 */
+	public function sluggable(): array {
+		return [
+			'slug' => [
+				'source' => 'title'
+			]
+		];
+	}
 }
