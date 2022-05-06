@@ -30,6 +30,7 @@ module.exports = {
                 "primary-bg": "#101010",
                 "primary-bg-hover": "#18181c",
                 "secondary-bg": "rgba(255,255,255,0.05)",
+                "author-bg": "#161616",
                 "nav-bg": "#1c1c1c",
                 "secondary-bg-hover": "rgba(255,255,255,0.08)",
                 "brand-clr": "#ffca00",
