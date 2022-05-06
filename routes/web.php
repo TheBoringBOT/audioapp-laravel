@@ -65,3 +65,22 @@ Route::get( '/search', [ \App\Http\Controllers\SoundController::class, 'search' 
 Route::get( '/download/{id}', [ \App\Http\Controllers\SoundController::class, 'download' ] )->name( 'download' );
 
 require __DIR__ . '/auth.php';
+
+
+//Edit Sound
+Route::get( 'edit/{id}', [ \App\Http\Controllers\SoundController::class, 'edit' ] )->middleware( [
+	'auth',
+	'verified'
+] )->name( 'edit' );
+
+//Update Sound
+Route::put( 'edit/{id}', [ \App\Http\Controllers\SoundController::class, 'update' ] )->middleware( [
+	'auth',
+	'verified'
+] )->name( 'edit.update' );
+
+// Delete Sound
+Route::get( 'delete/{id}', [ \App\Http\Controllers\SoundController::class, 'destroy' ] )->middleware( [
+	'auth',
+	'verified'
+] )->name( 'delete' );
