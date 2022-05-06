@@ -111,10 +111,26 @@ class SoundController extends Controller {
 
 		$popularTags = Sound::popularTags( 5 );
 		$sounds      = Sound::all()->take( 9 );
-		$sounds->map( function ( $i ) {
-			// Added sound uploader username to each sound
-			$i['creator'] = User::find( $i->user_id )->name;
-		} );
+		if ( Auth::check() ) {
+			$user    = Auth::user();
+			$likes   = $user->likes()->get()->toArray();
+			$likeIds = array_map( function ( $ar ) { return $ar['likeable_id']; }, $likes );
+			// Checking if song is liked and adding new key value liked => true or false to sounds collection
+			$sounds->map( function ( $i ) use ( $likeIds ) {
+				in_array( $i->id, $likeIds ) ? $i['liked'] = true : $i['liked'] = false;
+				// Added sound uploader username to each sound
+				$i['creator'] = User::find( $i->user_id )->name;
+			}
+
+			);
+
+		} else {
+			// Checking if song is liked and adding new key value liked => true or false to sounds collection
+			$sounds->map( function ( $i ) {
+
+				$i['creator'] = User::find( $i->user_id )->name;
+			} );
+		}
 
 		return Inertia::render( 'Frontend/Sounds', [
 			'canLogin'    => Route::has( 'login' ),
