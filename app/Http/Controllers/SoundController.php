@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Storage;
 use \Cviebrock\EloquentSluggable\Services\SlugService;
 use getID3;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\DB;
 
 
 class SoundController extends Controller {
@@ -109,13 +110,17 @@ class SoundController extends Controller {
 	public function index() {
 
 		$popularTags = Sound::popularTags( 5 );
+		$sounds      = Sound::all()->take( 9 );
+		$sounds->map( function ( $i ) {
+			// Added sound uploader username to each sound
+			$i['creator'] = User::find( $i->user_id )->name;
+		} );
 
 		return Inertia::render( 'Frontend/Sounds', [
 			'canLogin'    => Route::has( 'login' ),
 			'canRegister' => Route::has( 'register' ), //			'laravelVersion' => Application::VERSION,
 			'phpVersion'  => PHP_VERSION,
-			'soundData'   => Sound::all()->take(9)
-			,
+			'soundData'   => $sounds,
 			'popularTags' => array_keys( $popularTags )
 		] );
 	}
@@ -297,31 +302,137 @@ class SoundController extends Controller {
 	 *
 	 * @return \Illuminate\Http\Response
 	 */
-	public function edit( Sound $song ) {
-		//
+	public function edit( $sound ) {
+
+
+		$s = Sound::find( $sound );
+
+		//get tags
+		$tags      = explode( ',', $s->tagList );
+		$tagsGroup = DB::table( 'taggable_tags' )->whereIn( 'name', $tags )->get()->map( function ( $tag ) {
+			return [
+				'value' => $tag->tag_id,
+				'label' => $tag->name,
+			];
+		} )->toArray();
+
+
+		//		dd( $tagsGroup );
+
+		return Inertia::render( 'Backend/EditSound', [
+			'sound'   => [
+				'id'          => $s->id,
+				'name'        => $s->name,
+				'description' => $s->description,
+
+			],
+			'tags'    => $tagsGroup,
+			'allTags' => Sound::allTags()
+		] );
+
+
+
+
 	}
 
+
 	/**
-	 * Update the specified resource in storage.
+	 * Remove the specified resource from storage.
 	 *
-	 * @param  \Illuminate\Http\Request $request
 	 * @param  \App\Models\Sound $sound
 	 *
 	 * @return \Illuminate\Http\Response
 	 */
 	public function update( Request $request, Sound $sound ) {
-		//
-	}
 
-	/**
-	 * Remove the specified resource from storage.
-	 *
-	 * @param  \App\Models\Sound $song
-	 *
-	 * @return \Illuminate\Http\Response
-	 */
-	public function destroy( Sound $song ) {
-		//
+
+		// Get user id
+		$userId = auth()->user()->id;
+		// Validation
+		$request->validate( [
+			'name'        => 'required|string|min:1|max:100',
+			'description' => 'required|string|min:1|max:200',
+			'sound_file'  => 'file|mimes:audio/mpeg,wav',
+
+		] );
+
+		// Create slug for assets using the name from request
+		$slug = SlugService::createSlug( Sound::class, 'slug', $request->name );
+
+
+		// Upload sound file
+		if ( $request->hasFile( 'sound_file' ) ) {
+
+			$audioFile = $request->sound_file;
+
+			// Initialize id3 engine
+			// Initialize id3 engine
+			$id3       = new getID3();
+			$audioData = $id3->analyze( $audioFile );
+
+
+			$bit_depth        = $audioData['audio']['bits_per_sample'];
+			$duration_seconds = $audioData['playtime_seconds'];
+			$duration_string  = $audioData['playtime_string'];
+			$bit_rate         = $audioData['audio']['bitrate'];
+			$sample_rate      = $audioData['audio']['sample_rate'];
+			$file_size        = $audioData['filesize'];
+
+			// Folder location for soundData under user id
+			$sound_location = 'uploads/' . $userId . '/sounds';
+
+			// Check if folder exists, make if not
+			if ( ! file_exists( $sound_location ) ) {
+				Storage::makeDirectory( $sound_location );
+
+			}
+
+			// This will return "mp3" not the file name
+			$audioType     = $audioFile->getClientOriginalExtension();
+			$audioFileName = uniqid() . '_' . $slug . '.' . $audioType;
+
+			$audioFile->move( $sound_location, $audioFileName );
+			$file_url = '/' . $sound_location . '/' . $audioFileName;
+
+
+
+		}
+
+
+		$s = Sound::findOrFail( $request->id );
+
+
+		if ( $request->hasFile( 'sound_file' ) ) {
+			// Create Sound in DB
+			$s->update( [
+				'user_id'          => $userId,
+				'name'             => $request->get( 'name' ),
+				'description'      => $request->get( 'description' ),
+				'slug'             => $slug,
+				'duration_seconds' => $duration_seconds,
+				'duration_string'  => $duration_string,
+				'file_size'        => $file_size,
+				'bit_depth'        => $bit_depth,
+				'bit_rate'         => $bit_rate,
+				'sample_rate'      => $sample_rate,
+				'file_url'         => $file_url,
+
+
+			] );
+		} else {
+			$s->update( [
+				'user_id'     => $userId,
+				'name'        => $request->get( 'name' ),
+				'description' => $request->get( 'description' ),
+				'slug'        => $slug,
+			] );
+		}
+		// retag the sound
+		$s->retag( $request->tags );
+
+		return Redirect::route( 'dashboard' );
+
+
 	}
 
 
