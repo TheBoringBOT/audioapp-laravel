@@ -1,31 +1,41 @@
 <template>
-    <Head title="Dashboard" />
+    <Head title="Dashboard"/>
 
-    <BreezeAuthenticatedLayout>
+    <GuestAndUserBackendLayout>
         <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                Dashboard
-            </h2>
+            <h2 class="font-semibold text-xl leading-tight">My Favorites</h2>
         </template>
         <template #content>
-            <div class="py-12">
-                <AudioTable v-bind:audio="audio" />
+            <div class="py-12 max-w-7xl w-full">
+                <SoundGrid
+                        v-if="soundData.length !== 0"
+                        :soundData="soundData"
+                />
+                <div
+                        v-else
+                        class="text-center text-xl text-white font-semibold"
+                >
+                    <span>You currently like no sounds.</span>
+                </div>
             </div>
         </template>
-    </BreezeAuthenticatedLayout>
+    </GuestAndUserBackendLayout>
 </template>
 
 <script>
-import { Head } from "@inertiajs/inertia-vue3";
-import AudioTable from "@/Components/Tables/DashboardTable";
+import GuestAndUserBackendLayout from "@/Components/Layouts/GuestAndUserBackendLayout.vue";
+import {Head} from "@inertiajs/inertia-vue3";
+import SoundsTable from "@/Components/Tables/DashboardTable";
+import SoundGrid from "@/Components/Grids/SoundGrid";
 
 export default {
     components: {
-        BreezeAuthenticatedLayout,
+        GuestAndUserBackendLayout,
         Head,
-        AudioTable,
+        SoundsTable,
+        SoundGrid,
     },
 
-    props: ["audio"],
+    props: ["soundData"],
 };
 </script>

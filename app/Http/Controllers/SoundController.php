@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Sound;
 use App\Models\Tag;
 use Cviebrock\EloquentTaggable\Taggable;
-use  Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -16,20 +16,18 @@ use getID3;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\DB;
 
-
 class SoundController extends Controller {
 
-
 	// Get all the sounds and add likes
-
 	public function getAllSounds() {
 		$soundData = Sound::all();
 		if ( Auth::check() ) {
 			$user = Auth::user();
 
 			$likes   = $user->likes()->get()->toArray();
-			$likeIds = array_map( function ( $ar ) { return $ar['likeable_id']; }, $likes );
-
+			$likeIds = array_map( function ( $ar ) {
+				return $ar['likeable_id'];
+			}, $likes );
 
 			// Checking if song is liked and adding new key value liked => true or false to sounds collection
 			$soundData->map( function ( $i ) use ( $likeIds, $user ) {
@@ -46,20 +44,19 @@ class SoundController extends Controller {
 			} );
 		}
 
-
 		return $soundData;
 	}
 
 	// Get all the sounds the user uploaded
 	public function getUserSounds( $args ) {
 
-
 		$user      = Auth::user();
 		$soundData = Sound::where( 'user_id', $user->id )->get();
 
 		$likes   = $user->likes()->get()->toArray();
-		$likeIds = array_map( function ( $ar ) { return $ar['likeable_id']; }, $likes );
-
+		$likeIds = array_map( function ( $ar ) {
+			return $ar['likeable_id'];
+		}, $likes );
 
 		// Checking if song is liked and adding new key value liked => true or false to sounds collection
 		$soundData->map( function ( $i ) use ( $likeIds, $args ) {
@@ -71,30 +68,35 @@ class SoundController extends Controller {
 			}
 		} );
 
-
 		return $soundData;
 
 	}
 
 	// Get all sounds liked by user
-	public function getUserLikedSounds() {
+	public function getUserLikedSounds( $args ) {
 
 		$soundData = Sound::all();
+
 		if ( Auth::check() ) {
-			$user = Auth::user();
-
+			$user    = Auth::user();
 			$likes   = $user->likes()->get()->toArray();
-			$likeIds = array_map( function ( $ar ) { return $ar['likeable_id']; }, $likes );
+			$likeIds = array_map( function ( $ar ) {
+				return $ar['likeable_id'];
+			}, $likes );
+			$soundData->map( function ( $key, $i ) use ( $likeIds, $soundData, $args ) {
 
-			$soundData->map( function ( $key, $i ) use ( $likeIds, $soundData, $user ) {
-				if ( in_array( $key->id, $likeIds ) ) {
-					//					$soundData->filter( function ( $value, $key ) use ( $remove ) {
-					//						return $value['id'] != $remove;
-					//					} );
+				if ( ! in_array( $key->id, $likeIds ) ) {
 					$soundData->forget( $i );
+				} else {
+					in_array( $key->id, $likeIds ) ? $key['liked'] = true : $key['liked'] = false;
+					// this argument is to assist removing un-favorite from dom on user favorites page
+					if ( $args === 'favorites' ) {
+						$key['favoritesPage'] = true;
+					}
+
+					// Added sound uploader username to each sound
+					$key['creator'] = User::findOrFail( $key->user_id )->name;
 				}
-				// Added sound uploader username to each sound
-				$i['creator'] = User::find( $i->user_id )->name;
 
 			} );
 		}
@@ -103,7 +105,6 @@ class SoundController extends Controller {
 		return $soundData;
 
 	}
-
 
 	//	/**
 	//	 * Display a listing of the resource.
@@ -117,15 +118,15 @@ class SoundController extends Controller {
 		if ( Auth::check() ) {
 			$user    = Auth::user();
 			$likes   = $user->likes()->get()->toArray();
-			$likeIds = array_map( function ( $ar ) { return $ar['likeable_id']; }, $likes );
+			$likeIds = array_map( function ( $ar ) {
+				return $ar['likeable_id'];
+			}, $likes );
 			// Checking if song is liked and adding new key value liked => true or false to sounds collection
 			$sounds->map( function ( $i ) use ( $likeIds ) {
 				in_array( $i->id, $likeIds ) ? $i['liked'] = true : $i['liked'] = false;
 				// Added sound uploader username to each sound
 				$i['creator'] = User::find( $i->user_id )->name;
-			}
-
-			);
+			} );
 
 		} else {
 			// Checking if song is liked and adding new key value liked => true or false to sounds collection
@@ -149,10 +150,8 @@ class SoundController extends Controller {
 	//	 *
 	//	 * @return \Illuminate\Http\Response
 	//	 */
-
 	public function dashboard() {
 		$s = $this->getuserSounds( 'dashboard' );
-
 
 		return Inertia::render( 'Backend/Dashboard', [
 			'soundData' => $s,
@@ -160,19 +159,7 @@ class SoundController extends Controller {
 		] );
 	}
 
-	//	/**
-	//	 * Display a listing of the resource.
-	//	 *
-	//	 * @return \Illuminate\Http\Response
-	//	 */
 
-	public function userLikedSoundsPage() {
-
-		return Inertia::render( 'Backend/LikedSounds', [
-			'soundData' => $this->getUserLikedSounds(),
-
-		] );
-	}
 
 	//	/**
 	//	 * Display a listing of the resource.
@@ -181,12 +168,11 @@ class SoundController extends Controller {
 	//	 */
 	public function create() {
 
-		// Get all tags used in list to choose when uploading
-		$allTags = Sound::allTags();
+		// get all the tags used or unused
+		$tagService = app( \Cviebrock\EloquentTaggable\Services\TagService::class );
+		$allTags    = $tagService->getAllTagsArray();
 
-		//  dd($allTags);
-
-
+		//		dd( $allTags );
 		return Inertia::render( 'Backend/UploadSound', [ 'allTags' => $allTags ] );
 	}
 
@@ -214,7 +200,6 @@ class SoundController extends Controller {
 		// Create slug for assets using the name from request
 		$slug = SlugService::createSlug( Sound::class, 'slug', $request->name );
 
-
 		// Upload sound file
 		if ( $request->hasFile( 'sound_file' ) ) {
 
@@ -224,7 +209,6 @@ class SoundController extends Controller {
 			// Initialize id3 engine
 			$id3       = new getID3();
 			$audioData = $id3->analyze( $audioFile );
-
 
 			$bit_depth        = $audioData['audio']['bits_per_sample'];
 			$duration_seconds = $audioData['playtime_seconds'];
@@ -248,8 +232,6 @@ class SoundController extends Controller {
 
 			$audioFile->move( $sound_location, $audioFileName );
 			$file_url = '/' . $sound_location . '/' . $audioFileName;
-
-
 
 		}
 
@@ -267,15 +249,12 @@ class SoundController extends Controller {
 			'sample_rate'      => $sample_rate,
 			'file_url'         => $file_url,
 
-
 		] );
-
 
 		// Add tags for uploaded sound
 		$soundData->tag( $request->tags );
 
 		return Redirect::route( 'upload' );
-
 
 	}
 
@@ -288,7 +267,6 @@ class SoundController extends Controller {
 	 */
 	public function show( $sound ) {
 
-
 		$soundData = Sound::find( $sound );
 
 		$likes = $soundData->likers()->count();
@@ -300,9 +278,7 @@ class SoundController extends Controller {
 			$user && $user->hasLiked( $soundData ) ? $soundData['liked'] = true : $soundData['liked'] = false;
 		}
 
-
 		$tags = explode( ',', $soundData->tagList );
-
 
 		return Inertia::render( 'Frontend/SoundItem', [
 			'canLogin'    => Route::has( 'login' ),
@@ -311,7 +287,6 @@ class SoundController extends Controller {
 			'soundData' => $soundData,
 			'tags'      => $tags,
 			'likes'     => $likes,
-
 
 		] );
 	}
@@ -325,21 +300,15 @@ class SoundController extends Controller {
 	 */
 	public function edit( $sound ) {
 
-
 		$s = Sound::find( $sound );
 
 		//get tags
 		$tags      = explode( ',', $s->tagList );
 		$tagsGroup = DB::table( 'taggable_tags' )->whereIn( 'name', $tags )->get()->map( function ( $tag ) {
-			return [
-				'value' => $tag->tag_id,
-				'label' => $tag->name,
-			];
+			return [ 'value' => $tag->tag_id, 'label' => $tag->name, ];
 		} )->toArray();
 
-
 		//		dd( $tagsGroup );
-
 		return Inertia::render( 'Backend/EditSound', [
 			'sound'   => [
 				'id'          => $s->id,
@@ -351,11 +320,7 @@ class SoundController extends Controller {
 			'allTags' => Sound::allTags()
 		] );
 
-
-
-
 	}
-
 
 	/**
 	 * Remove the specified resource from storage.
@@ -365,7 +330,6 @@ class SoundController extends Controller {
 	 * @return \Illuminate\Http\Response
 	 */
 	public function update( Request $request, Sound $sound ) {
-
 
 		// Get user id
 		$userId = auth()->user()->id;
@@ -380,7 +344,6 @@ class SoundController extends Controller {
 		// Create slug for assets using the name from request
 		$slug = SlugService::createSlug( Sound::class, 'slug', $request->name );
 
-
 		// Upload sound file
 		if ( $request->hasFile( 'sound_file' ) ) {
 
@@ -390,7 +353,6 @@ class SoundController extends Controller {
 			// Initialize id3 engine
 			$id3       = new getID3();
 			$audioData = $id3->analyze( $audioFile );
-
 
 			$bit_depth        = $audioData['audio']['bits_per_sample'];
 			$duration_seconds = $audioData['playtime_seconds'];
@@ -415,13 +377,9 @@ class SoundController extends Controller {
 			$audioFile->move( $sound_location, $audioFileName );
 			$file_url = '/' . $sound_location . '/' . $audioFileName;
 
-
-
 		}
 
-
 		$s = Sound::findOrFail( $request->id );
-
 
 		if ( $request->hasFile( 'sound_file' ) ) {
 			// Create Sound in DB
@@ -438,7 +396,6 @@ class SoundController extends Controller {
 				'sample_rate'      => $sample_rate,
 				'file_url'         => $file_url,
 
-
 			] );
 		} else {
 			$s->update( [
@@ -453,9 +410,7 @@ class SoundController extends Controller {
 
 		return Redirect::route( 'dashboard' );
 
-
 	}
-
 
 	/**
 	 * record likes of soundData
@@ -466,14 +421,12 @@ class SoundController extends Controller {
 	 */
 	public function likeSound( $sound ) {
 
-
 		$user = User::find( Auth::id() );
 
 		$thisSound = Sound::find( $sound );
 		$response  = $user->toggleLike( $thisSound );
 
 		return response()->json( [ 'success' => $response ] );
-
 
 	}
 
@@ -485,7 +438,6 @@ class SoundController extends Controller {
 	 * //     * @return \Illuminate\Http\Response
 	 */
 	public function updatePlays( $sound ) {
-
 
 		$thisSound         = Sound::find( $sound );
 		$currentPlaysCount = $thisSound['plays'];
@@ -506,16 +458,13 @@ class SoundController extends Controller {
 
 	public function download( $sound ) {
 
-
 		$s = Sound::find( $sound );
 		// add download coutn to database
 		$s->increment( 'downloads', 1 );
 
 		$filepath = public_path( $s['file_url'] );
 
-
 		return response()->download( $filepath );
-
 
 	}
 
@@ -538,23 +487,19 @@ class SoundController extends Controller {
 		//Query soundData matching keyword or matching the soundData with found tags
 		$soundData = Sound::where( 'name', 'LIKE', "%{$search}%" )->OrWhereIn( 'id', $soundWithTags )->get();
 
-
 		if ( Auth::check() ) {
 			$user = Auth::user();
 
 			$likes   = $user->likes()->get()->toArray();
-			$likeIds = array_map( function ( $ar ) { return $ar['likeable_id']; }, $likes );
+			$likeIds = array_map( function ( $ar ) {
+				return $ar['likeable_id'];
+			}, $likes );
 			// Checking if song is liked and adding new key value liked => true or false to sounds collection
 			$soundData->map( function ( $i ) use ( $likeIds ) {
 				in_array( $i->id, $likeIds ) ? $i['liked'] = true : $i['liked'] = false;
 				// Added sound uploader username to each sound
 				$i['creator'] = User::find( $i->user_id )->name;
-			}
-
-
-			);
-
-
+			} );
 
 		} else {
 			// Checking if song is liked and adding new key value liked => true or false to sounds collection
@@ -564,9 +509,7 @@ class SoundController extends Controller {
 			} );
 		}
 
-
 		$popularTags = Sound::popularTags( 5 );
-
 
 		return inertia( 'Frontend/Sounds', [
 			'soundData'   => $soundData,
@@ -585,7 +528,6 @@ class SoundController extends Controller {
 		$sounds      = Sound::all()->where( 'user_id', $author->id );
 		$authorName  = $author->name;
 
-
 		$sounds->each( function ( $item ) {
 			$item->push( [ 'creator' => 'fuck' ] );
 		} );
@@ -594,7 +536,6 @@ class SoundController extends Controller {
 			// Added sound uploader username to each sound
 			$i['creator'] = $authorName;
 		} );
-
 
 		return Inertia::render( 'Frontend/Author', [
 			'canLogin'    => Route::has( 'login' ),
@@ -606,12 +547,25 @@ class SoundController extends Controller {
 		] );
 	}
 
+	// User favorite sounds page
+	public function likedSounds() {
+
+		// adding argument 'favorites' to enable removing unliked element from dom
+		$soundData = $this->getUserLikedSounds( 'favorites' );
+
+
+		return Inertia::render( 'Backend/LikedSounds', [ 'soundData' => $soundData ] );
+	}
+
 	// delete sound
 	public function destroy( $sound ) {
 
 		try {
-			$soundData         = Sound::find( $sound );
-			$deleteTaggedSound = DB::table( 'taggable_taggables' )->where( 'taggable_id', $soundData->id )->delete();
+			//find sound in DB
+			$soundData = Sound::find( $sound );
+			// remove the tags on the sound
+			$deleteTaggedSound = $soundData->detag();
+			// if tags removed success now delete the sound
 			if ( $deleteTaggedSound ) {
 				$response = $soundData->delete();
 			}
@@ -624,9 +578,7 @@ class SoundController extends Controller {
 
 		return response()->json( [ 'success' => $response ] );
 
-
-
 	}
 
-
 }
+

@@ -71,12 +71,14 @@
 
                     <!-- right action button -->
                     <div class="flex items-center w-5/12 justify-end pr-3">
-                        <div v-if="soundItem.edit" class="text-secondary-clr rounded-full w-50 whitespace-nowrap">
+                        <div v-if="soundItem.edit"
+                             class="text-secondary-clr rounded-full w-50 whitespace-nowrap space-x-3">
 
 
-                            <Link :href="/edit/ + soundItem.id"><span>Edit</span> </Link>
+                            <Link class="hover:bg-blue-500 bg-secondary-bg px-3 py-1 text-sm  text-white rounded-full"
+                                  :href="/edit/ + soundItem.id"><span>Edit</span> </Link>
                             <button @click="deleteSound({item:soundItem.id, index:soundItemKey})"
-                                    class="bg-red-500 text-white rounded-full"><span>Delete</span></button>
+                                    class="hover:bg-red-500  bg-secondary-bg hover:text-white px-3 py-1 text-sm  text-secondary-clr rounded-full"><span>Delete</span></button>
 
                         </div>
 
@@ -90,7 +92,7 @@
                                         ? 'text-brand-clr hover:text-brand-clr-hover'
                                         : 'hover:text-primary-clr'
                                 "
-                                    @click="toggleLike(soundItem.id)"
+                                    @click="toggleLike(soundItem.id, soundItem.favoritesPage)"
                                     v-tooltip="'Like'"
                                     class="transition duration-150"
                             >
@@ -126,6 +128,7 @@
 </template>
 
 <script>
+    import { Inertia } from '@inertiajs/inertia'
     import {computed} from 'vue';
     import {copyText} from "vue3-clipboard";
     import {useToast} from "vue-toastification";
@@ -264,11 +267,14 @@
             },
             // Wavesurfer controls : End
             //toggle like for sound
-            toggleLike(id) {
+            toggleLike(id,favoritesPage) {
                 if (this.$page.props.auth.user) {
                     axios
                         .post("/like/" + id)
                         .then(() => {
+                            if(favoritesPage === true){
+                           return  Inertia.reload({ only: ['soundData'] })
+                            }
                             this.userHasLiked = !this.userHasLiked;
                         })
                         .catch((error) => {
@@ -294,7 +300,7 @@
                 }
             },
             deleteSound(itemToDelete) {
-                                         console.table(itemToDelete);
+                console.table(itemToDelete);
                 this.$emit('deleteSound', itemToDelete)
             }
 
