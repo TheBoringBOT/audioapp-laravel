@@ -32,11 +32,13 @@
                                 </h1>
 
                                 <p class="text-xl md:text-2xl">
-                                    This audio application was built as a proof
-                                    of concept for a royalty free audio company.
+                                    This audio application is built using
+                                    Laravel, Vue3, Inertia & MySQL.
                                     <br />
-                                    It's now open source and possible to use for
-                                    your own purpose. <br />
+                                    <br />
+                                    Feel free to clone the repo on github and
+                                    use for your projects. <br />
+                                    If you find some value then give it a ⭐️<br />
                                     <br />
                                     It's a great starting point to build your
                                     own audio sharing website or store.
