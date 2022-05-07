@@ -9,24 +9,24 @@
 
         <div class="flex flex-col z-2 relative bg-author-bg">
             <ContentContainer>
-                <div class="py-10">
+                <div class="py-5">
                     <!-- image -->
                     <div class="flex items-center justify-center relative">
-                        <div
-                            class="rounded-full bg-secondary-bg w-32 h-32 md:w-48 md:h-48 block mb-2 md:mb-12 overflow-visible relative"
+                        <figure
+                            class="rounded-full bg-secondary-bg w-28 h-28 md:w-32 md:h-32 block mb-2 md:mb-4 overflow-visible relative"
                         >
                             <img
                                 :src="author.avatar"
-                                alt=""
+                                alt="author.name"
                                 class="rounded-full flex items-center justify-center w-full h-full relative z-[1]"
                             />
                             <!--blur image-->
                             <img
                                 :src="author.avatar"
-                                alt=""
-                                class="rounded-full w-full h-full blur-xl absolute top-1/4 left-1/2 transform -translate-x-1/2 -translate-y-1/4 opacity-50"
+                                alt="author.name"
+                                class="pulse rounded-full w-full h-full blur-xl absolute top-1/4 left-1/2 transform -translate-x-1/2 -translate-y-1/4 opacity-50"
                             />
-                        </div>
+                        </figure>
                     </div>
                     <!-- text-->
                     <div
@@ -39,7 +39,7 @@
                             {{ author.name }}
                         </h1>
                         <p
-                            class="font-medium text-secondary-clr text-xl mt-2 md:mt-5 max-w-[600px] text-center"
+                            class="font-medium text-secondary-clr md:text-lg mt-2 md:mt-2 max-w-[600px] text-center"
                         >
                             {{ author.description }}
                         </p>
@@ -85,3 +85,37 @@ export default {
     methods: {},
 };
 </script>
+
+<style scoped>
+@-webkit-keyframes pulse {
+    0% {
+        -webkit-transform: scale(1);
+    }
+    50% {
+        -webkit-transform: scale(1.05);
+    }
+    100% {
+        -webkit-transform: scale(1);
+    }
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+.pulse {
+    -webkit-animation-name: pulse;
+    animation-name: pulse;
+    animation: pulse 4s infinite;
+    left: 0;
+    top: 0;
+}
+</style>
