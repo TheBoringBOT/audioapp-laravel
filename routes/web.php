@@ -82,7 +82,7 @@ Route::put( 'edit/{id}', [ \App\Http\Controllers\SoundController::class, 'update
 ] )->name( 'edit.update' );
 
 // Delete Sound
-Route::get( 'delete/{id}', [ \App\Http\Controllers\SoundController::class, 'destroy' ] )->middleware( [
+Route::post( 'delete/{id}', [ \App\Http\Controllers\SoundController::class, 'destroy' ] )->middleware( [
 	'auth',
 	'verified'
 ] )->name( 'delete' );

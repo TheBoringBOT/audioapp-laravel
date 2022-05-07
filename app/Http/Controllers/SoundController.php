@@ -51,7 +51,7 @@ class SoundController extends Controller {
 	}
 
 	// Get all the sounds the user uploaded
-	public function getUserSounds() {
+	public function getUserSounds( $args ) {
 
 
 		$user      = Auth::user();
@@ -62,10 +62,13 @@ class SoundController extends Controller {
 
 
 		// Checking if song is liked and adding new key value liked => true or false to sounds collection
-		$soundData->map( function ( $i ) use ( $likeIds ) {
+		$soundData->map( function ( $i ) use ( $likeIds, $args ) {
 			in_array( $i->id, $likeIds ) ? $i['liked'] = true : $i['liked'] = false;
 			// Added sound uploader username to each sound
 			$i['creator'] = User::find( $i->user_id )->name;
+			if ( $args === 'dashboard' ) {
+				$i['edit'] = true;
+			}
 		} );
 
 
@@ -148,9 +151,11 @@ class SoundController extends Controller {
 	//	 */
 
 	public function dashboard() {
+		$s = $this->getuserSounds( 'dashboard' );
+
 
 		return Inertia::render( 'Backend/Dashboard', [
-			'soundData' => $this->getuserSounds(),
+			'soundData' => $s,
 
 		] );
 	}
@@ -599,6 +604,28 @@ class SoundController extends Controller {
 			'author'      => $author,
 			'popularTags' => array_keys( $popularTags )
 		] );
+	}
+
+	// delete sound
+	public function destroy( $sound ) {
+
+		try {
+			$soundData         = Sound::find( $sound );
+			$deleteTaggedSound = DB::table( 'taggable_taggables' )->where( 'taggable_id', $soundData->id )->delete();
+			if ( $deleteTaggedSound ) {
+				$response = $soundData->delete();
+			}
+
+		} //catch exception
+		catch ( Exception $e ) {
+
+			return response()->json( [ 'error' => $e->getMessage() ] );
+		}
+
+		return response()->json( [ 'success' => $response ] );
+
+
+
 	}
 
 

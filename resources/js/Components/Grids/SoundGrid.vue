@@ -1,16 +1,17 @@
 <template>
     <StaggeredFade
-        :duration="100"
-        tag="div"
-        class="py-3 grid gap-5 grid-cols-1 md:grid-cols-2 xl:grid-cols-3"
+            :duration="100"
+            tag="div"
+            class="py-3 grid gap-5 grid-cols-1 md:grid-cols-2 xl:grid-cols-3"
     >
         <AudioItem
-            class="transition-transform duration-300 translate-y-24"
-            v-for="(sound, key) in soundData"
-            :soundItem="sound"
-            :data-index="key"
-            :key="key"
-            :soundItemKey="key"
+                @deleteSound="deleteSound"
+                class="transition-transform duration-300 translate-y-24"
+                v-for="(sound, key) in soundData"
+                :soundItem="sound"
+                :data-index="key"
+                :key="key"
+                :soundItemKey="key"
         />
     </StaggeredFade>
 </template>
@@ -33,6 +34,21 @@ export default {
         StaggeredFade,
     },
     methods: {
+        deleteSound(itemToDelete) {
+            console.table(itemToDelete);
+
+            if (confirm("Do you really want to delete?")) {
+                axios
+                    .post("/delete/" + itemToDelete.item)
+                    .then(() => {
+                        this.soundData.splice(itemToDelete.index, 1);
+                        this.toast.info("Sound Deleted");
+                    })
+                    .catch((error) => {
+                        this.toast.error(error);
+                    });
+            }
+        },
         playedTrack(value) {
             if (this.played.indexOf(value) === -1) {
                 this.played.push(value);

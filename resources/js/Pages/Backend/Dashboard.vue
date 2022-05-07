@@ -7,7 +7,7 @@
         </template>
         <template #content>
             <div class="py-12 max-w-7xl w-full">
-                <SoundGrid :soundData="soundData" />
+                <SoundGrid :soundData="soundData" editSound="fish" />
             </div>
         </template>
     </GuestAndUserBackendLayout>

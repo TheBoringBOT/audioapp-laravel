@@ -1,5 +1,6 @@
 <template>
     <div>
+
         <div
                 :class="isAudioPlaying === true ? 'bg-secondary-bg' : ''"
                 class="border border-secondary-bg rounded relative flex-col hover:bg-secondary-bg-hover transition duration-150 ease-in-out"
@@ -70,8 +71,17 @@
 
                     <!-- right action button -->
                     <div class="flex items-center w-5/12 justify-end pr-3">
+                        <div v-if="soundItem.edit" class="text-secondary-clr rounded-full w-50 whitespace-nowrap">
+
+
+                            <Link :href="/edit/ + soundItem.id"><span>Edit</span> </Link>
+                            <button @click="deleteSound({item:soundItem.id, index:soundItemKey})"
+                                    class="bg-red-500 text-white rounded-full"><span>Delete</span></button>
+
+                        </div>
+
                         <div
-                                class="text-secondary-clr rounded-full w-50 whitespace-nowrap"
+                                v-else class="text-secondary-clr rounded-full w-50 whitespace-nowrap"
                         >
                             <!-- Like -->
                             <button
@@ -136,6 +146,7 @@
             Link,
         },
         props: ["soundItem", "soundItemKey"],
+        emits: ['deleteSound'],
 
         //Destroy wavesurfer on unmount
         //TODO fade out sound before destroying
@@ -183,6 +194,7 @@
         },
 
         mounted() {
+
             //binding this
             const t = this;
             const wavesurferRef = this.$refs["waveform" + t.soundItemKey]
@@ -222,6 +234,7 @@
 
         methods: {
             // Wavesurfer controles
+
 
             playPause() {
                 if (!this.isAudioPlaying) {
@@ -280,6 +293,13 @@
                     this.toast.info("Please login");
                 }
             },
-        },
-    };
+            deleteSound(itemToDelete) {
+                                         console.table(itemToDelete);
+                this.$emit('deleteSound', itemToDelete)
+            }
+
+        }
+        ,
+    }
+    ;
 </script>
