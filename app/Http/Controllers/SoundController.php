@@ -113,7 +113,7 @@ class SoundController extends Controller {
 	//	 */
 	public function index() {
 
-		$popularTags = Sound::popularTags( 5 );
+		$popularTags = Sound::popularTags( 4 );
 		$sounds      = Sound::all()->take( 9 );
 		if ( Auth::check() ) {
 			$user    = Auth::user();
@@ -509,7 +509,7 @@ class SoundController extends Controller {
 			} );
 		}
 
-		$popularTags = Sound::popularTags( 5 );
+		$popularTags = Sound::popularTags( 4 );
 
 		return inertia( 'Frontend/Sounds', [
 			'soundData'   => $soundData,
@@ -523,10 +523,10 @@ class SoundController extends Controller {
 	// get author page
 	public function author( $authorId ) {
 
-		$author      = User::find( $authorId );
-		$popularTags = Sound::popularTags( 5 );
-		$sounds      = Sound::all()->where( 'user_id', $author->id );
-		$authorName  = $author->name;
+		$author = User::find( $authorId );
+
+		$sounds     = Sound::all()->where( 'user_id', $author->id );
+		$authorName = $author->name;
 
 		$sounds->each( function ( $item ) {
 			$item->push( [ 'creator' => 'fuck' ] );
@@ -543,7 +543,7 @@ class SoundController extends Controller {
 			'phpVersion'  => PHP_VERSION,
 			'soundData'   => $sounds,
 			'author'      => $author,
-			'popularTags' => array_keys( $popularTags )
+
 		] );
 	}
 
