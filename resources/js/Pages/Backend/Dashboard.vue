@@ -7,7 +7,12 @@
         </template>
         <template #content>
             <div class="py-12 max-w-7xl w-full">
-                <SoundGrid :soundData="soundData" editSound="fish" />
+                <h2
+                    class="font-semibold text-lg leading-tight text-left text-secondary-clr"
+                >
+                    My Sounds
+                </h2>
+                <SoundGrid :soundData="soundData" />
             </div>
         </template>
     </GuestAndUserBackendLayout>
