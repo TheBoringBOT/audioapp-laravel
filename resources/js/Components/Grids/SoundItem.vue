@@ -110,15 +110,15 @@
                                 <font-awesome-icon icon="link"/>
                             </button>
                             <!-- Download -->
-                            <a
+                            <button
                                     @click="
                                     download(soundItem.id, user)
                                 "
                                     v-tooltip="'Download'"
-                                    class="ml-4 hover:text-primary-clr"
+                                    class=" cursor-pointer ml-4 hover:text-primary-clr"
                             >
                                 <font-awesome-icon icon="arrow-down"/>
-                            </a>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -128,7 +128,7 @@
 </template>
 
 <script>
-    import { Inertia } from '@inertiajs/inertia'
+    import {Inertia} from '@inertiajs/inertia'
     import {computed} from 'vue';
     import {copyText} from "vue3-clipboard";
     import {useToast} from "vue-toastification";
@@ -267,13 +267,13 @@
             },
             // Wavesurfer controls : End
             //toggle like for sound
-            toggleLike(id,favoritesPage) {
+            toggleLike(id, favoritesPage) {
                 if (this.$page.props.auth.user) {
                     axios
                         .post("/like/" + id)
                         .then(() => {
-                            if(favoritesPage === true){
-                           return  Inertia.reload({ only: ['soundData'] })
+                            if (favoritesPage === true) {
+                                return Inertia.reload({only: ['soundData']})
                             }
                             this.userHasLiked = !this.userHasLiked;
                         })
@@ -292,7 +292,7 @@
             },
             download(id, user) {
 
-                if (user.id !== '') {
+                if (user && user.id !== null) {
 
                     window.location = "/download/" + id;
                 } else {
