@@ -17,7 +17,7 @@ class CreateSoundsTable extends Migration {
 			$table->string( 'name' );
 			$table->text( 'description' );
 			$table->string( 'slug' );
-			$table->time( 'duration_seconds' );
+			$table->integer( 'duration_seconds' );
 			$table->string( 'duration_string' );
 			$table->string( 'file_size' );
 			$table->tinyInteger( 'bit_depth' );
