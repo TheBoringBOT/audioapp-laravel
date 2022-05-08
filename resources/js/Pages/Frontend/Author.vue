@@ -1,7 +1,7 @@
 <template>
     <Head>
         <title>{{ seo.title }}</title>
-        <meta name="description" :content="seo.description"/>
+        <meta name="description" :content="seo.description" />
     </Head>
 
     <GuestAndUserFrontendLayout>
@@ -13,35 +13,33 @@
                     <!-- image -->
                     <div class="flex items-center justify-center relative">
                         <figure
-                                class="rounded-full bg-secondary-bg w-28 h-28 md:w-32 md:h-32 block mb-2 md:mb-4 overflow-visible relative"
+                            class="rounded-full bg-secondary-bg w-28 h-28 md:w-32 md:h-32 block mb-2 md:mb-4 overflow-visible relative"
                         >
                             <img
-                                    @load="loadImage"
-                                    :src="author.avatar"
-                                    alt="author.name"
-                                    class="opacity-0 transition-all rounded-full flex items-center justify-center w-full h-full relative z-[1]"
+                                @load="loadImage"
+                                :src="author.avatar"
+                                alt="author.name"
+                                class="opacity-0 transition-all rounded-full flex items-center justify-center w-full h-full relative z-[1]"
                             />
                             <!--blur image-->
                             <img
-                                    @load="loadImage"
-                                    :src="author.avatar"
-                                    alt="author.name"
-                                    class="opacity-0 transition-all pulse rounded-full w-full h-full blur-xl absolute top-1/4 left-1/2 transform -translate-x-1/2 -translate-y-1/4 opacity-50"
+                                @load="loadImage"
+                                :src="author.avatar"
+                                alt="author.name"
+                                class="opacity-0 transition-all pulse rounded-full w-full h-full blur-xl absolute top-1/4 left-1/2 transform -translate-x-1/2 -translate-y-1/4 opacity-50"
                             />
                         </figure>
                     </div>
                     <!-- text-->
-                    <div
-                            class="flex flex-col items-center justify-center space-x-5"
-                    >
+                    <div class="flex flex-col items-center justify-center">
                         <span class="text-brand-clr font-medium">Author</span>
                         <h1
-                                class="font-semibold text-white text-4xl md:text-5xl"
+                            class="font-semibold text-white text-4xl md:text-5xl"
                         >
                             {{ author.name }}
                         </h1>
                         <p
-                                class="font-medium text-secondary-clr md:text-lg mt-2 md:mt-2 max-w-[600px] text-center"
+                            class="font-medium text-secondary-clr md:text-lg mt-2 md:mt-2 max-w-[600px] text-center"
                         >
                             {{ author.description }}
                         </p>
@@ -52,7 +50,7 @@
 
         <ContentContainer class="pt-5">
             <div class="mb-16">
-                <SoundGrid :soundData="soundData"/>
+                <SoundGrid :soundData="soundData" />
             </div>
         </ContentContainer>
     </GuestAndUserFrontendLayout>
@@ -61,7 +59,7 @@
 <script>
 import GuestAndUserFrontendLayout from "@/Components/Layouts/GuestAndUserFrontendLayout.vue";
 import ContentContainer from "@/Components/Layouts/ContentContainer";
-import {Head, Link} from "@inertiajs/inertia-vue3";
+import { Head, Link } from "@inertiajs/inertia-vue3";
 
 import SoundGrid from "@/Components/Grids/SoundGrid";
 
