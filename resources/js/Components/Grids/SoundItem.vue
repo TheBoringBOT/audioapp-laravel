@@ -56,14 +56,15 @@
                         </button>
 
                         <div
-                                class="text-primary-clr mx-4 flex flex-col items-start justify-center overflow-hidden"
+                                class="text-primary-clr mx-4 flex flex-col items-start justify-center  "
                         >
-                            <Link :href="/sound/ + soundItem.id">
-                                <span class="truncate"
+                            <Link :href="/sound/ + soundItem.id" class="truncate w-full">
+                                <span class=" transition-all hover:text-brand-clr"
                                 >{{ soundItem.name }}
                                 </span>
                             </link>
-                            <Link :href="/author/ + soundItem.user_id" class="text-secondary-clr text-xs"
+                            <Link :href="/author/ + soundItem.user_id"
+                                  class="text-secondary-clr transition-all hover:text-white text-xs"
                             >By {{ soundItem.creator }}
                             </link>
                         </div>
