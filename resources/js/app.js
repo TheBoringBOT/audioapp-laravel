@@ -52,6 +52,13 @@ library.add(
     faInfo
 );
 
+// fix to remove the large data-page attribute interiajs adds
+const cleanApp = () => {
+    document.getElementById("app").removeAttribute("data-page");
+};
+
+document.addEventListener("inertia:finish", cleanApp);
+
 const appName =
     window.document.getElementsByTagName("title")[0]?.innerText || "Laravel";
 
@@ -80,6 +87,6 @@ createInertiaApp({
 
         myApp.mount(el);
     },
-});
+}).then(cleanApp);
 
 InertiaProgress.init({color: "#ffca00"});
